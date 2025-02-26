@@ -9,6 +9,14 @@ public class Tile {
         
     }
 
-    
+    public void setLandAction(TileAction landAction) {
+        this.landAction = landAction;
+    }
+
+    public void landPlayer(Player player) {
+        if (this.landAction != null) {
+        this.landAction.perform(player);
+        }
+    }
 
 }
