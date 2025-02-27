@@ -39,8 +39,4 @@ public class Tile {
         this.landAction = landAction;
     }
 
-    public int getTileId() {
-        return tileId;
-    }
-
 }
