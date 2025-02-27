@@ -53,7 +53,7 @@ public class Player implements Comparable<Player> {
       this.currentTile.leavePlayer(this);
     }
     this.currentTile = tile;
-    tile.landPlayer(this);
+    this.currentTile.landPlayer(this);
   }
 
   /**
@@ -81,5 +81,4 @@ public class Player implements Comparable<Player> {
   public int compareTo(Player other) {
     return Integer.compare(this.age, other.age);
   }
-
 }
