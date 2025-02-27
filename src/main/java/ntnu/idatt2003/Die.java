@@ -18,4 +18,8 @@ public class Die {
    */
   public int roll() { return random.nextInt(6) + 1; }
 
+  public int getValue() {
+    return roll();
+  }
+
 }
