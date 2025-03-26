@@ -1,4 +1,6 @@
-package ntnu.idatt2003;
+package ntnu.idatt2003.model;
+
+import ntnu.idatt2003.BoardGame;
 
 /**
  * Represents a player in the board game.
