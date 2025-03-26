@@ -1,6 +1,8 @@
-package ntnu.idatt2003;
+package ntnu.idatt2003.model;
 
 import java.util.Map;
+
+import ntnu.idatt2003.Tile;
 
 public class Board {
     //Add a map for tiles tiles: Map<Integer, Tile>
