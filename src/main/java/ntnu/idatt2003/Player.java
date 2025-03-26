@@ -7,15 +7,18 @@ public class Player implements Comparable<Player> {
   private String name;
   private int age;
   private Tile currentTile;
+  private BoardGame game;
 
   /**
    * Constructor for creating a player.
    * @param name The name of the player.
    * @param age The age of the player.
+   * @param game The board game the player is part of.
    */
-  public Player(String name, int age) {
+  public Player(String name, int age, BoardGame game) {
     this.name = name;
     this.age = age;
+    this.game = game;
     this.currentTile = null;
   }
 
@@ -46,7 +49,11 @@ public class Player implements Comparable<Player> {
    * @param tile The tile to place the player on.
    */
   public void placeOnTile(Tile tile) {
+    if (this.currentTile != null) {
+      this.currentTile.leavePlayer(this);
+    }
     this.currentTile = tile;
+    this.currentTile.landPlayer(this);
   }
 
   /**
@@ -61,14 +68,17 @@ public class Player implements Comparable<Player> {
           nextTile = nextTile.getNextTile();
         }
       }
-      this.currentTile = nextTile;
+      placeOnTile(nextTile);
     }
   }
 
+  /**
+   * Compares players based on their age for determining turn order.
+   * @param other The other player to compare to.
+   * @return A comparison result based on age.
+   */
   @Override
   public int compareTo(Player other) {
     return Integer.compare(this.age, other.age);
   }
-
-
 }

@@ -7,19 +7,24 @@ import java.util.Random;
  */
 public class Die {
   private Random random;
+  private int lastRolledValue;
 
   public Die() {
     this.random = new Random();
+  }
+
+  public int getValue() {
+    return lastRolledValue;
   }
 
   /**
    * Rolls the die and returns a number between 1 and 6.
    * @return The rolled number.
    */
-  public int roll() { return random.nextInt(6) + 1; }
-
-  public int getValue() {
-    return roll();
+  public int roll() {
+    lastRolledValue = random.nextInt(6) + 1;
+    return lastRolledValue;
   }
+
 
 }
