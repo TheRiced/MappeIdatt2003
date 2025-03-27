@@ -5,7 +5,7 @@ import java.util.Scanner;
 import ntnu.idatt2003.model.Board;
 import ntnu.idatt2003.model.BoardGame;
 import ntnu.idatt2003.model.Player;
-import ntnu.idatt2003.model.Die;
+import ntnu.idatt2003.core.Die;
 
 
 /**
