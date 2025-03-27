@@ -54,4 +54,8 @@ public class BoardGame {
     public boolean gameDone(){
         return winner != null;
     }
+
+    public Player getWinner() {
+        return winner;
+    }
 }
