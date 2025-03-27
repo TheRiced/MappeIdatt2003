@@ -2,6 +2,7 @@ package ntnu.idatt2003.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import ntnu.idatt2003.model.Player;
 
 import ntnu.idatt2003.TileAction;
 
