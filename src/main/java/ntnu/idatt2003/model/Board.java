@@ -1,10 +1,13 @@
 package ntnu.idatt2003.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import ntnu.idatt2003.Tile;
-
 public class Board {
+
+    public Board() {
+        tiles = new HashMap<>();
+    }
     //Add a map for tiles tiles: Map<Integer, Tile>
     //Add a method to get the tile at a given position
 
@@ -18,6 +21,10 @@ public class Board {
 
     public Tile getTile(int tileId) {
         return tiles.get(tileId);
+    }
+
+    public int size() {
+        return tiles.size();
     }
     
 

@@ -1,4 +1,4 @@
-package ntnu.idatt2003;
+package ntnu.idatt2003.model;
 
 /**
  * Represents a player in the board game.
@@ -8,6 +8,8 @@ public class Player implements Comparable<Player> {
   private int age;
   private Tile currentTile;
   private BoardGame game;
+
+
 
   /**
    * Constructor for creating a player.

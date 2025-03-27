@@ -1,7 +1,10 @@
-package ntnu.idatt2003;
+package ntnu.idatt2003.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import ntnu.idatt2003.model.Player;
+
+import ntnu.idatt2003.TileAction;
 
 public class Tile {
     private int tileId;
