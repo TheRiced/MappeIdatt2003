@@ -1,13 +1,16 @@
 package ntnu.idatt2003.model;
 
+import ntnu.idatt2003.core.PlayerIcon;
+
 /**
  * Represents a player in the board game.
  */
 public class Player implements Comparable<Player> {
-  private String name;
-  private int age;
+  private final String name;
+  private final int age;
+  private PlayerIcon icon;
   private Tile currentTile;
-  private BoardGame game;
+
 
 
 
@@ -20,7 +23,6 @@ public class Player implements Comparable<Player> {
   public Player(String name, int age, BoardGame game) {
     this.name = name;
     this.age = age;
-    this.game = game;
     this.currentTile = null;
   }
 
