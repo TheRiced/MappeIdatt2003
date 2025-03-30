@@ -2,7 +2,6 @@ package ntnu.idatt2003.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import ntnu.idatt2003.core.Die;
 
 /**
  * Represents a set of dice.
