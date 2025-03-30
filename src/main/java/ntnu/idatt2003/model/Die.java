@@ -1,4 +1,4 @@
-package ntnu.idatt2003;
+package ntnu.idatt2003.model;
 
 import java.util.Random;
 
@@ -26,8 +26,5 @@ public class Die {
     return lastRolledValue;
   }
 
-  public int getValue() {
-    return roll();
-  }
 
 }

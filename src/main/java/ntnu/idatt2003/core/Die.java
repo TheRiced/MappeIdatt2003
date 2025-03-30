@@ -13,6 +13,10 @@ public class Die {
     this.random = new Random();
   }
 
+  public int getValue() {
+    return lastRolledValue;
+  }
+
   /**
    * Rolls the die and returns a number between 1 and 6.
    * @return The rolled number.
@@ -22,8 +26,5 @@ public class Die {
     return lastRolledValue;
   }
 
-  public int getValue() {
-    return lastRolledValue;
-  }
 
 }

@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import ntnu.idatt2003.model.Board;
+
 public class BoardGame {
 
     
