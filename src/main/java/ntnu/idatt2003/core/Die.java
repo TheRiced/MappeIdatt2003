@@ -6,11 +6,15 @@ import java.util.Random;
  * Represents a single six-sided die.
  */
 public class Die {
-  private Random random;
+  private final Random random;
   private int lastRolledValue;
 
   public Die() {
     this.random = new Random();
+  }
+
+  public int getValue() {
+    return lastRolledValue;
   }
 
   /**
@@ -22,8 +26,5 @@ public class Die {
     return lastRolledValue;
   }
 
-  public int getValue() {
-    return lastRolledValue;
-  }
 
 }

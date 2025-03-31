@@ -33,8 +33,10 @@ public class Dice {
     return results;
   }
 
+
   public int numberOfDice() {
     return dice.size();
   }
+
 
 }
