@@ -3,10 +3,6 @@ package ntnu.idatt2003.model;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
-import ntnu.idatt2003.model.Dice;
-import ntnu.idatt2003.model.Player;
-import ntnu.idatt2003.model.Board;
-import java.util.Scanner;
 
 public class BoardGame {
 
