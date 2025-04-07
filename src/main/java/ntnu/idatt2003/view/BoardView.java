@@ -45,6 +45,43 @@ public class BoardView extends Application {
         primaryStage.show();
     }
 
+    private StackPane createTile(int tileId, int row, int col) {
+        Rectangle rect = new Rectangle(TILE_SIZE, TILE_SIZE);
+        Color baseColor = ((row + col) % 2 == 0) ? Color.BEIGE : Color.LIGHTBLUE;
+
+        if (tileId == 89) {
+            baseColor = Color.DARKGREEN; // End tile
+        } else if (isRedTile(tileId)) {
+            baseColor = Color.CRIMSON;
+        } else if (isYellowTile(tileId)) {
+            baseColor = Color.GOLD;
+        }
+
+        rect.setFill(baseColor);
+        rect.setStroke(Color.BLACK);
+
+        Label label = new Label(String.valueOf(tileId + 1));
+        label.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+
+        return new StackPane(rect, label);
+    }
+
+    private boolean isRedTile(int id) {
+        return switch (id) {
+            //1,14,23,28,32,38,43,55,60,61,63,72,82,88
+            case 0, 13, 22, 27, 31, 37, 42, 54, 59, 60, 62, 71, 81, 87 -> true;
+            default -> false;
+        };
+    }
+
+    private boolean isYellowTile(int id) {
+        return switch (id) {
+            //2, 17, 29, 34, 40, 50, 53, 57, 67, 70, 85
+            case 1, 9, 17, 28, 33, 39, 49, 52, 56, 66, 69, 84 -> true;
+            default -> false;
+        };
+    }
+
 
 
     public static void main(String[] args) {
