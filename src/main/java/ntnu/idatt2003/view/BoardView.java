@@ -11,7 +11,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+/**
+ *
+ */
+
 public class BoardView extends Application {
+
+    /**
+     *
+     */
 
     private static final int ROWS = 9;
     private static final int COLS = 10;
@@ -83,6 +91,10 @@ public class BoardView extends Application {
     }
 
 
+    /**
+     * Launches the application
+     * @param args
+     */
 
     public static void main(String[] args) {
         launch(args);
