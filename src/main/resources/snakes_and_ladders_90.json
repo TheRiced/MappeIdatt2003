@@ -2,28 +2,156 @@
 {
   "name": "Snake and ladder 90",
   "tiles": [
-    { "tileId": 1, "nextTileId": 2 },
-    { "tileId": 2, "nextTileId": 3 },
     {
-      "id": 3,
-      "nextTile": 4,
+      "id": 1,
+      "nextTile": 2,
+      "action": {
+      "type": "LADDER",
+      "destination": 18
+      }
+    },
+    {
+      "id": 2, "nextTile": 3
+    },
+    {
+      "id": 3, "nextTile": 4
+    },
+    {
+      "id": 4, "nextTile": 5
+    },
+    {
+      "id": 5, "nextTile": 6
+    },
+    {
+      "id": 6, "nextTile": 7
+    },
+    {
+      "id": 7, "nextTile": 8
+    },
+    {
+      "id": 8, "nextTile": 9
+    },
+    {
+      "id": 9,
+      "nextTile": 10,
       "action": {
         "type": "LADDER",
-        "destinationTileId": 15
+        "destination": 29
       }
     },
-    { "id": 4, "nextTile": 5 },
-    { "id": 5, "nextTile": 6 },
     {
-      "id": 6,
-      "nextTile": 7,
+      "id": 10, "nextTile": 11
+    },
+    {
+      "id": 11, "nextTile": 12
+    },
+    {
+      "id": 12, "nextTile": 13
+    },
+    {
+      "id": 13, "nextTile": 14
+    },
+    {
+      "id": 14, "nextTile": 15
+    },
+    {
+      "id": 15, "nextTile": 16
+    },
+    {
+      "id": 16, "nextTile": 17
+    },
+    {
+      "id": 17, "nextTile": 18
+    },
+    {
+      "id": 18, "nextTile": 19
+    },
+    {
+      "id": 19, "nextTile": 20
+    },
+    {
+      "id": 20, "nextTile": 21
+    },
+    {
+      "id": 21, "nextTile": 22
+    },
+    {
+      "id": 22,
+      "nextTile": 23,
       "action": {
         "type": "SNAKE",
-        "destinationTileId": 2
+        "destination": 1
       }
     },
+    {
+      "id": 23, "nextTile": 24
+    },
+    {
+      "id": 24, "nextTile": 25
+    },
+    {
+      "id": 25, "nextTile": 26
+    },
+    {
+      "id": 26, "nextTile": 27
+    },
+    {
+      "id": 27,
+      "nextTile": 28,
+      "action": {
+        "type": "SNAKE",
+        "destination": 14
+      }
+    },
+    {
+      "id": 28, "nextTile": 29
+    },
+    {
+      "id": 29, "nextTile": 30
+    },
+    {
+      "id": 30, "nextTile": 31
+    },
+    {
+      "id": 31, "nextTile": 32
+    },
+    {
+      "id": 32, "nextTile": 33
+    },
+    {
+      "id": 33,
+      "nextTile": 34,
+      "action": {
+        "type": "LADDER",
+        "destination": 53
+      }
+    },
+    {
+      "id": 34, "nextTile": 35
+    },
+    {
+      "id": 35, "nextTile": 36
+    },
+    {
+      "id": 36, "nextTile": 37
+    },
+    {
+      "id": 37, "nextTile": 38
+    },
+    {
+      "id": 38, "nextTile": 39
+    },
+    {
+      "id": 39,
+      "nextTile": 40,
+      "action": {
+        "type": "LADDER",
+        "destination": 57
+      }
+    },
+    {
+      "id": 40, "nextTile": 41
+    },
 
-    { "id": 89, "nextTile": 90 },
-    { "id": 90 }
   ]
 }
