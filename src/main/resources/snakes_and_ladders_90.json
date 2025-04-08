@@ -1,0 +1,29 @@
+
+{
+  "name": "Snake and ladder 90",
+  "tiles": [
+    { "tileId": 1, "nextTileId": 2 },
+    { "tileId": 2, "nextTileId": 3 },
+    {
+      "id": 3,
+      "nextTile": 4,
+      "action": {
+        "type": "LADDER",
+        "destinationTileId": 15
+      }
+    },
+    { "id": 4, "nextTile": 5 },
+    { "id": 5, "nextTile": 6 },
+    {
+      "id": 6,
+      "nextTile": 7,
+      "action": {
+        "type": "SNAKE",
+        "destinationTileId": 2
+      }
+    },
+
+    { "id": 89, "nextTile": 90 },
+    { "id": 90 }
+  ]
+}
