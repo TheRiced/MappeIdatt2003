@@ -53,7 +53,7 @@ public class Board {
         }
 
         // Set new tile
-        player.setCurrentTile(current);
+        player.setCurrentTile(next);
 
         // Apply tile action if exists (like ladder/snake)
         next.applyAction(player);
