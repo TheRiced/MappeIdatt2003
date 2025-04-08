@@ -13,7 +13,6 @@ public class HandleCSVPlayer {
       for (Player player : players) {
         writer.write(player.getName() + "," + player.getAge() + "\n");
       }
-      System.out.println("Players saved to " + filename);
     } catch (IOException e) {
       System.err.println("Failed to save players: " + e.getMessage());
     }
