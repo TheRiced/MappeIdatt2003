@@ -152,6 +152,190 @@
     {
       "id": 40, "nextTile": 41
     },
-
+    {
+      "id": 41, "nextTile": 42
+    },
+    {
+      "id": 42,
+      "nextTile": 43,
+      "action": {
+        "type": "SNAKE",
+        "destination": 38
+      }
+    },
+    {
+      "id": 43, "nextTile": 44
+    },
+    {
+      "id": 44, "nextTile": 45
+    },
+    {
+      "id": 45, "nextTile": 46
+    },
+    {
+      "id": 46, "nextTile": 47
+    },
+    {
+      "id": 47, "nextTile": 48
+    },
+    {
+      "id": 48, "nextTile": 49
+    },
+    {
+      "id": 49,
+      "nextTile": 50,
+      "action": {
+        "type": "LADDER",
+        "destination": 70
+      }
+    },
+    {
+      "id": 50, "nextTile": 51
+    },
+    {
+      "id": 51, "nextTile": 52
+    },
+    {
+      "id": 52, "nextTile": 53
+    },
+    {
+      "id": 53, "nextTile": 54
+    },
+    {
+      "id": 54,
+      "nextTile": 55,
+      "action": {
+        "type": "SNAKE",
+        "destination": 32
+      }
+    },
+    {
+      "id": 55, "nextTile": 56
+    },
+    {
+      "id": 56, "nextTile": 57
+    },
+    {
+      "id": 57, "nextTile": 58
+    },
+    {
+      "id": 58, "nextTile": 59
+    },
+    {
+      "id": 59, "nextTile": 60
+    },
+    {
+      "id": 60,
+      "nextTile": 61,
+      "action": {
+        "type": "SNAKE",
+        "destination": 60
+      }
+    },
+    {
+      "id": 61, "nextTile": 62
+    },
+    {
+      "id": 62, "nextTile": 63
+    },
+    {
+      "id": 63, "nextTile": 64
+    },
+    {
+      "id": 64, "nextTile": 65
+    },
+    {
+      "id": 65, "nextTile": 66
+    },
+    {
+      "id": 66,
+      "nextTile": 67,
+      "action": {
+        "type": "LADDER",
+        "destination": 85
+      }
+    },
+    {
+      "id": 67, "nextTile": 68
+    },
+    {
+      "id": 68, "nextTile": 69
+    },
+    {
+      "id": 69, "nextTile": 70
+    },
+    {
+      "id": 70, "nextTile": 71
+    },
+    {
+      "id": 71, "nextTile": 72
+    },
+    {
+      "id": 72, "nextTile": 73
+    },
+    {
+      "id": 73, "nextTile": 74
+    },
+    {
+      "id": 74, "nextTile": 75
+    },
+    {
+      "id": 75, "nextTile": 76
+    },
+    {
+      "id": 76, "nextTile": 77
+    },
+    {
+      "id": 77, "nextTile": 78
+    },
+    {
+      "id": 78, "nextTile": 79
+    },
+    {
+      "id": 79, "nextTile": 80
+    },
+    {
+      "id": 80, "nextTile": 81
+    },
+    {
+      "id": 81,
+      "nextTile": 82,
+      "action": {
+        "type": "SNAKE",
+        "destination": 63
+      }
+    },
+    {
+      "id": 82, "nextTile": 83
+    },
+    {
+      "id": 83, "nextTile": 84
+    },
+    {
+      "id": 84, "nextTile": 85
+    },
+    {
+      "id": 85, "nextTile": 86
+    },
+    {
+      "id": 86, "nextTile": 87
+    },
+    {
+      "id": 87,
+      "nextTile": 88,
+      "action": {
+        "type": "SNAKE",
+        "destination": 72
+      }
+    },
+    {
+      "id": 88, "nextTile": 89
+    },
+    {
+      "id": 89, "nextTile": 90
+    },
+    {
+      "id": 90
+    }
   ]
 }
