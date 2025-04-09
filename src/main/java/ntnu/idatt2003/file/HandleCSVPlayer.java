@@ -1,4 +1,4 @@
-package ntnu.idatt2003;
+package ntnu.idatt2003.file;
 
 
 import java.io.FileWriter;
