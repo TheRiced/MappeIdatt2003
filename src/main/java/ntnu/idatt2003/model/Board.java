@@ -41,10 +41,10 @@ public class Board {
      */
     public void movePlayer(Player player, int steps) {
         Tile current = player.getCurrentTile();
-        Tile next = current;
+        Tile next = getTile(current.getNextTileId());
 
         // Steps forward through the tiles
-        for (int i = 0; i < steps; i++) {
+        for (int i = 1; i < steps; i++) {
             if (next.getNextTileId() != 0) {
                 next = getTile(next.getNextTileId());
             } else {
