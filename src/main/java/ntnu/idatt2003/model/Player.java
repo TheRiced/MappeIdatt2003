@@ -64,16 +64,6 @@ public class Player implements Comparable<Player> {
   }
 
   /**
-   * Sets a pending move to a specific tile ID.
-   * This is used by TileActions (e.g., ladder or snake) that move the player after their normal
-   * move.
-   * @param tileId The ID of the tile the player should jump to.
-   */
-  public void setPendingMoveTo(int tileId) {
-    this.pendingMoveTo = tileId;
-  }
-
-  /**
    * Checks if the player has a pending move.
    * A pending move means the player must jump to another tile after normal movement.
    *
@@ -81,6 +71,16 @@ public class Player implements Comparable<Player> {
    */
   public boolean hasPendingMove() {
     return pendingMoveTo != -1;
+  }
+
+  /**
+   * Sets a pending move to a specific tile ID.
+   * This is used by TileActions (e.g., ladder or snake) that move the player after their normal
+   * move.
+   * @param destinationTileId The ID of the tile the player should jump to.
+   */
+  public void setPendingMoveTo(int destinationTileId) {
+    this.pendingMoveTo = destinationTileId;
   }
 
   /**
@@ -95,6 +95,14 @@ public class Player implements Comparable<Player> {
    */
   public void clearPendingMove() {
     this.pendingMoveTo = -1;
+  }
+
+  public void setPendingMoveTile(Board board) {
+    if (hasPendingMove()) {
+      Tile destinationTile = board.getTile(pendingMoveTo);
+      this.currentTile = destinationTile;
+      this.pendingMoveTo = -1;
+    }
   }
 
   /**
