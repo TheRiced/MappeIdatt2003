@@ -1,4 +1,4 @@
-package ntnu.idatt2003;
+package ntnu.idatt2003.actions;
 
 import ntnu.idatt2003.model.Player;
 
