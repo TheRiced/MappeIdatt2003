@@ -1,6 +1,6 @@
 package ntnu.idatt2003.model;
 
-import ntnu.idatt2003.TileAction;
+import ntnu.idatt2003.actions.TileAction;
 
 /**
  * Represents a tile on the game board.
