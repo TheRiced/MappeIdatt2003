@@ -48,6 +48,11 @@ public class BoardLoader {
       }
       board.addTile(tile);
 
+      System.out.println("Tile " + id + " -> next tile: " + nextTile);
+      if (tile.getAction() != null) {
+        System.out.println("  Action: " + tile.getAction().getClass().getSimpleName() +
+            " to destination " + tile.getAction().getDestinationTileId());
+      }
     }
     return board;
   }
