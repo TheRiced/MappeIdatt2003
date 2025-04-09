@@ -12,6 +12,7 @@ import ntnu.idatt2003.model.Player;
 public class HandleCSVPlayer {
 
   /**
+   *
    * Saves players to a CSV file
    * @param players the list of players to save
    * @param filename the name of the CSV file to write to
