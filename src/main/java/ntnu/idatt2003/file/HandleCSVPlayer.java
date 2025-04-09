@@ -6,12 +6,16 @@ import java.io.IOException;
 import java.util.List;
 import ntnu.idatt2003.model.Player;
 
+/**
+ * Handle saving player data to a CSV file.
+ */
 public class HandleCSVPlayer {
 
   public static void savePlayersToCSV(List<Player> players, String filename) {
     try (FileWriter writer = new FileWriter(filename)) {
+      writer.write("Name,Age,Icon\n");
       for (Player player : players) {
-        writer.write(player.getName() + "," + player.getAge() + "\n");
+        writer.write(player.getName() + "," + player.getAge() + player.getIcon() + "\n");
       }
       System.out.println("Players saved to " + filename);
     } catch (IOException e) {
