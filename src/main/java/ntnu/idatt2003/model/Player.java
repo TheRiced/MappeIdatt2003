@@ -4,30 +4,35 @@ import ntnu.idatt2003.core.PlayerIcon;
 
 /**
  * Represents a player in the board game.
+ * Each player has a name, age (used for determining turn order), an icon (visual identifier), and a
+ * current tile on the board.
+ * The player may also have a pending move, used when tile actions (like ladders or snakes) require
+ * the player to jump to another tile after a normal move.
  */
 public class Player implements Comparable<Player> {
   private final String name;
   private final int age;
-  private PlayerIcon icon;
+  private final PlayerIcon icon;
   private Tile currentTile;
-
-
-
+  private int pendingMoveTo = -1; // -1 means no pending move
 
   /**
    * Constructor for creating a player.
+   *
    * @param name The name of the player.
-   * @param age The age of the player.
-   * @param game The board game the player is part of.
+   * @param age The age of the player (used for sorting turn order).
+   * @param icon The visual icon representing the player.
+   * @param startingTile The tile where the player starts the game.
    */
-  public Player(String name, int age, BoardGame game) {
+  public Player(String name, int age, PlayerIcon icon, Tile startingTile) {
     this.name = name;
     this.age = age;
-    this.currentTile = null;
+    this.icon = icon;
+    this.currentTile = startingTile;
   }
 
   /**
-   * Returns the player's name.
+   * Gets the player's name.
    * @return The name of the player.
    */
   public String getName() {
@@ -35,7 +40,7 @@ public class Player implements Comparable<Player> {
   }
 
   /**
-   * Returns the player's age.
+   * Gets the player's age.
    * @return The age of the player.
    */
   public int getAge() {
@@ -43,46 +48,82 @@ public class Player implements Comparable<Player> {
   }
 
   /**
-   * Returns the player's current tile.
+   * Gets the player's icon.
+   * @return The icon of the player.
+   */
+  public PlayerIcon getIcon() { return icon;}
+
+  /**
+   * Gets the tile the player is currently on.
    * @return The current tile on the board.
    */
   public Tile getCurrentTile() { return currentTile; }
 
-  /**
-   * Places the player on a specific tile.
-   * @param tile The tile to place the player on.
-   */
-  public void placeOnTile(Tile tile) {
-    if (this.currentTile != null) {
-      this.currentTile.leavePlayer(this);
-    }
+  public void setCurrentTile(Tile tile) {
     this.currentTile = tile;
-    this.currentTile.landPlayer(this);
   }
 
   /**
-   * Moves the player by a number of steps.
-   * @param steps The number of steps to move forward.
+   * Checks if the player has a pending move.
+   * A pending move means the player must jump to another tile after normal movement.
+   *
+   * @return true if there is a pending move, false otherwise.
    */
-  public void move(int steps) {
-    if (currentTile != null) {
-      Tile nextTile = currentTile;
-      for (int i = 0; i < steps; i++) {
-        if (nextTile.getNextTile() != null) {
-          nextTile = nextTile.getNextTile();
-        }
-      }
-      placeOnTile(nextTile);
+  public boolean hasPendingMove() {
+    return pendingMoveTo != -1;
+  }
+
+  /**
+   * Sets a pending move to a specific tile ID.
+   * This is used by TileActions (e.g., ladder or snake) that move the player after their normal
+   * move.
+   * @param destinationTileId The ID of the tile the player should jump to.
+   */
+  public void setPendingMoveTo(int destinationTileId) {
+    this.pendingMoveTo = destinationTileId;
+  }
+
+  /**
+   * Gets the destination tile ID of the pending move.
+   *
+   * @return The destination tile ID
+   */
+  public int getPendingMoveTo() { return pendingMoveTo; }
+
+  /**
+   * Clears the pending move after it has been processed.
+   */
+  public void clearPendingMove() {
+    this.pendingMoveTo = -1;
+  }
+
+  public void setPendingMoveTile(Board board) {
+    if (hasPendingMove()) {
+      Tile destinationTile = board.getTile(pendingMoveTo);
+      this.currentTile = destinationTile;
+      this.pendingMoveTo = -1;
     }
   }
 
   /**
    * Compares players based on their age for determining turn order.
+   * Younger players go first.
+   *
    * @param other The other player to compare to.
-   * @return A comparison result based on age.
+   * @return Negative if this player is younger, positive if older, zero if same age.
    */
   @Override
   public int compareTo(Player other) {
     return Integer.compare(this.age, other.age);
+  }
+
+  /**
+   * Returns a string representation of the player for debugging or display.
+   *
+   * @return Player name, icon, age and current tile ID.
+   */
+  @Override
+  public String toString() {
+    return name + " (" + icon + ", " + age + ") on tile " + currentTile.getTileId();
   }
 }
