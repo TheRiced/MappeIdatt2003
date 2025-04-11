@@ -4,19 +4,24 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Path;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
 import ntnu.idatt2003.model.Board;
 import ntnu.idatt2003.model.Tile;
 
-/**
- * Loads a Board from a JSON file.
- */
-public class BoardLoader {
+public class BoardFileReaderGson implements BoardFileReader {
 
-  public static Board loadBoardFromJson(String path) throws Exception {
-    JsonObject json = JsonParser.parseReader(new FileReader(path)).getAsJsonObject();
+  @Override
+  public Board readBoard(Path path) throws Exception {
+    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path.toString());
+    if (inputStream == null) {
+      throw new IllegalArgumentException("File not found: " + path);
+    }
+
+    JsonObject json = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
     JsonArray tileArray = json.getAsJsonArray("tiles");
 
     Board board = new Board();
@@ -36,18 +41,14 @@ public class BoardLoader {
         int destination = actionJson.get("destination").getAsInt();
 
         switch (type.toUpperCase()) {
-          case "LADDER":
-            tile.setAction(new LadderAction(destination));
-            break;
-          case "SNAKE":
-            tile.setAction(new SnakeAction(destination));
-            break;
-          default:
-            throw new IllegalArgumentException("Unknown action type: " + type);
+          case "LADDER" -> tile.setAction(new LadderAction(destination));
+          case "SNAKE" -> tile.setAction(new SnakeAction(destination));
+          default -> throw new IllegalArgumentException("Unknown action type: " + type);
         }
       }
       board.addTile(tile);
     }
+
     return board;
   }
 }
