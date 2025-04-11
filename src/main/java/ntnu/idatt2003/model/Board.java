@@ -87,6 +87,15 @@ public class Board {
     public boolean hasTile(int tileId) {
         return tiles.containsKey(tileId);
     }
+
+    /**
+     * Returns all tiles (for purposes such as writing the board to a file).
+     *
+     * @return an iterable of tiles.
+     */
+    public Iterable<Tile> getTiles() {
+        return tiles.values();
+    }
     
 
 }
