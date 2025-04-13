@@ -6,7 +6,7 @@ import ntnu.idatt2003.core.Dice;
 import ntnu.idatt2003.file.HandleCSVPlayer;
 
 /**
- * A specific board game: Snakes and Ladders.
+ * Implements the game logic for Snakes and Ladders.
  */
 public class SnakeAndLadderGame implements BoardGame {
   private final Board board;
@@ -15,6 +15,13 @@ public class SnakeAndLadderGame implements BoardGame {
   private int currentPlayerIndex;
   private Player winner;
 
+  /**
+   * Constructs a SnakeAndLadderGame.
+   *
+   * @param board the game board.
+   * @param players the list of players.
+   * @param numberOfDice the number of dice to use.
+   */
   public SnakeAndLadderGame(Board board, List<Player> players, int numberOfDice) {
     this.board = board;
     this.players = players;
@@ -23,6 +30,9 @@ public class SnakeAndLadderGame implements BoardGame {
     this.winner = null;
   }
 
+  /**
+   * Starts the game loop.
+   */
   @Override
   public void start() {
     Scanner scanner = new Scanner(System.in);
@@ -69,5 +79,14 @@ public class SnakeAndLadderGame implements BoardGame {
   public Player getWinner() {
     return winner;
   }
+
+  public Board getBoard() {
+    return board;
+  }
+
+  public List<Player> getPlayers() {
+    return players;
+  }
+
 
 }
