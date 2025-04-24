@@ -32,11 +32,9 @@ public class SnakeAndLadderGame implements BoardGame {
 
   private void playTurn(Scanner scanner) {
     Player currentPlayer = players.get(currentPlayerIndex);
-    boolean repeat;
+    int extraTurns = 1;
 
     do {
-      repeat = false;
-
       System.out.println(currentPlayer.getName() + "'s turn. Press enter to roll the dice.");
       scanner.nextLine();
 
@@ -45,9 +43,17 @@ public class SnakeAndLadderGame implements BoardGame {
 
       if (dice.numberOfDice() == 1) {
         System.out.println(currentPlayer.getName() + " rolled a " + roll);
+        if (roll == 1) {
+          System.out.println("You rolled a 1! You get an extra turn!");
+          extraTurns++;
+        }
       } else {
         System.out.println(currentPlayer.getName() + " rolled " + individualRolls +
             " (Total: " + roll + ")");
+        if (individualRolls.get(0) == 6 && individualRolls.get(1) == 6) {
+          System.out.println("You rolled double sixes! You get an extra turn!");
+          extraTurns++;
+        }
       }
 
       String result = board.movePlayer(currentPlayer, roll);
@@ -66,21 +72,15 @@ public class SnakeAndLadderGame implements BoardGame {
         return;
       }
 
-      if (dice.numberOfDice() == 1 && individualRolls.get(0) == 1) {
-        System.out.println("You rolled a 1! Roll again!");
-        repeat = true;
-      } else if (dice.numberOfDice() == 2 && individualRolls.get(0) == 6 &&
-          individualRolls.get(1) == 6) {
-        System.out.println("You rolled double sixes! Roll again!");
-        repeat = true;
-      }
-
       if (currentPlayer.hasExtraTurn()) {
         currentPlayer.clearExtraTurn();
-        System.out.println("Bonus! " + currentPlayer.getName() + " gets to roll again!");
-        repeat = true;
+        System.out.println("Bonus tile! " + currentPlayer.getName() + " gets to roll again!");
+        extraTurns++;
       }
-    } while (repeat);
+
+      extraTurns--;
+
+    } while (extraTurns > 0);
 
     currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
   }
