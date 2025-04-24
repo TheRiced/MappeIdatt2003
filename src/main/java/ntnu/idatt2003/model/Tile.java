@@ -1,5 +1,7 @@
 package ntnu.idatt2003.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import ntnu.idatt2003.actions.TileAction;
 
 /**
@@ -10,6 +12,7 @@ public class Tile {
     private final int tileId;
     private int nextTileId;
     private TileAction action;
+    private final List<Player> playersOnTile = new ArrayList<Player>();
 
 
     public Tile(int tileId) {
@@ -35,6 +38,20 @@ public class Tile {
         if (action != null) {
             action.perform(player);
         }
+    }
+
+    public void landPlayer(Player player) {
+        if (!playersOnTile.contains(player)) {
+            playersOnTile.add(player);
+        }
+    }
+
+    public void leavePlayer(Player player) {
+        playersOnTile.remove(player);
+    }
+
+    public List<Player> getPlayers() {
+        return new ArrayList<>(playersOnTile);
     }
 
 

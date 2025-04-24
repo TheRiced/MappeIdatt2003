@@ -30,6 +30,61 @@ public class SnakeAndLadderGame implements BoardGame {
     this.winner = null;
   }
 
+  private void playTurn(Scanner scanner) {
+    Player currentPlayer = players.get(currentPlayerIndex);
+    int extraTurns = 1;
+
+    do {
+      System.out.println(currentPlayer.getName() + "'s turn. Press enter to roll the dice.");
+      scanner.nextLine();
+
+      List<Integer> individualRolls = dice.rollEach();
+      int roll = individualRolls.stream().mapToInt(Integer::intValue).sum();
+
+      if (dice.numberOfDice() == 1) {
+        System.out.println(currentPlayer.getName() + " rolled a " + roll);
+        if (roll == 1) {
+          System.out.println("You rolled a 1! You get an extra turn!");
+          extraTurns++;
+        }
+      } else {
+        System.out.println(currentPlayer.getName() + " rolled " + individualRolls +
+            " (Total: " + roll + ")");
+        if (individualRolls.get(0) == 6 && individualRolls.get(1) == 6) {
+          System.out.println("You rolled double sixes! You get an extra turn!");
+          extraTurns++;
+        }
+      }
+
+      String result = board.movePlayer(currentPlayer, roll);
+      System.out.print(result);
+
+      if (currentPlayer.hasPendingMove()) {
+        currentPlayer.setPendingMoveTile(board);
+        System.out.println(currentPlayer.getName() + " moved to tile " +
+            currentPlayer.getCurrentTile().getTileId());
+      }
+
+      if (currentPlayer.getCurrentTile().getTileId() == board.size()) {
+        winner = currentPlayer;
+        System.out.println("And the winner is: " + winner.getName() + "!");
+        HandleCSVPlayer.savePlayersToCSV(players, "src/main/resources/players.csv");
+        return;
+      }
+
+      if (currentPlayer.hasExtraTurn()) {
+        currentPlayer.clearExtraTurn();
+        System.out.println("Bonus tile! " + currentPlayer.getName() + " gets to roll again!");
+        extraTurns++;
+      }
+
+      extraTurns--;
+
+    } while (extraTurns > 0);
+
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+  }
+
   /**
    * Starts the game loop.
    */
@@ -39,32 +94,7 @@ public class SnakeAndLadderGame implements BoardGame {
     System.out.println("\n--- Game started! ---\n");
 
     while (!gameDone()) {
-      Player currentPlayer = players.get(currentPlayerIndex);
-      System.out.println(currentPlayer.getName() + "'s turn. Press enter to roll the dice.");
-      scanner.nextLine();
-
-      int roll = dice.rollAll();
-      System.out.println(currentPlayer.getName() + " rolled a " + roll);
-
-      board.movePlayer(currentPlayer, roll);
-      System.out.println(currentPlayer.getName() + " is now on tile " +
-          currentPlayer.getCurrentTile().getTileId());
-
-      if (currentPlayer.hasPendingMove()) {
-        currentPlayer.setPendingMoveTile(board);
-        System.out.println(currentPlayer.getName() + " move to tile " +
-            currentPlayer.getCurrentTile().getTileId());
-      }
-
-      if (currentPlayer.getCurrentTile().getTileId() == board.size()) {
-        winner = currentPlayer;
-        System.out.println("And the winner is: " + winner.getName() + "!");
-
-        HandleCSVPlayer.savePlayersToCSV(players, "src/main/resources/players.csv");
-        break;
-      }
-
-      currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+      playTurn(scanner);
     }
 
     scanner.close();

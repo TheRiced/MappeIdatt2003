@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
+import ntnu.idatt2003.actions.BonusTileAction;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
 import ntnu.idatt2003.model.Board;
@@ -38,11 +39,17 @@ public class BoardFileReaderGson implements BoardFileReader {
       if (tileJson.has("action")) {
         JsonObject actionJson = tileJson.getAsJsonObject("action");
         String type = actionJson.get("type").getAsString();
-        int destination = actionJson.get("destination").getAsInt();
 
         switch (type.toUpperCase()) {
-          case "LADDER" -> tile.setAction(new LadderAction(destination));
-          case "SNAKE" -> tile.setAction(new SnakeAction(destination));
+          case "LADDER" -> {
+            int destination = actionJson.get("destination").getAsInt();
+            tile.setAction(new LadderAction(destination));
+          }
+          case "SNAKE" -> {
+            int destination = actionJson.get("destination").getAsInt();
+            tile.setAction(new SnakeAction(destination));
+          }
+          case "BONUS" -> tile.setAction(new BonusTileAction());
           default -> throw new IllegalArgumentException("Unknown action type: " + type);
         }
       }

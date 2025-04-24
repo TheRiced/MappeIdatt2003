@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class Dice {
   private final List<Die> dice;
+  private List<Integer> lastRolls;
 
   public Dice(int numberOfDice) {
     if (numberOfDice < 1) throw new IllegalArgumentException("At least one die is required.");
@@ -22,7 +23,18 @@ public class Dice {
    * @return Sum of all dice rolls.
    */
   public int rollAll() {
-    return dice.stream().mapToInt(Die::roll).sum();
+    lastRolls = new ArrayList<>();
+    int total = 0;
+    for (Die die : dice) {
+      int result = die.roll();
+      lastRolls.add(result);
+      total += result;
+    }
+    return total;
+  }
+
+  public List<Integer> getLastRolls() {
+    return lastRolls;
   }
 
   public List<Integer> rollEach() {
