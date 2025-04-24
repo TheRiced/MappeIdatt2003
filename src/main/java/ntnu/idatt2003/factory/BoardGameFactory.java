@@ -1,7 +1,6 @@
 package ntnu.idatt2003.factory;
 
 import java.util.List;
-import ntnu.idatt2003.file.BoardLoader;
 import ntnu.idatt2003.model.Board;
 import ntnu.idatt2003.model.Player;
 import ntnu.idatt2003.model.SnakeAndLadderGame;
@@ -13,10 +12,8 @@ import ntnu.idatt2003.model.SnakeAndLadderGame;
  */
 public class BoardGameFactory {
 
-  public static SnakeAndLadderGame createSnakeAndLadderGame(String jsonFilePath,
-      List<Player> players, int numberOfDice) throws Exception {
-
-    Board board = BoardLoader.loadBoardFromJson(jsonFilePath);
+  public static SnakeAndLadderGame createSnakeAndLadderGame(Board board, List<Player> players
+      , int numberOfDice) throws Exception {
     return new SnakeAndLadderGame(board, players, numberOfDice);
   }
 

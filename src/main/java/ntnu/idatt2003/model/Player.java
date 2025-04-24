@@ -1,6 +1,7 @@
 package ntnu.idatt2003.model;
 
 import ntnu.idatt2003.core.PlayerIcon;
+import ntnu.idatt2003.model.Tile;
 
 /**
  * Represents a player in the board game.
@@ -15,6 +16,7 @@ public class Player implements Comparable<Player> {
   private final PlayerIcon icon;
   private Tile currentTile;
   private int pendingMoveTo = -1; // -1 means no pending move
+  private boolean extraTurn = false;
 
   /**
    * Constructor for creating a player.
@@ -60,7 +62,11 @@ public class Player implements Comparable<Player> {
   public Tile getCurrentTile() { return currentTile; }
 
   public void setCurrentTile(Tile tile) {
+    if (this.currentTile != null) {
+      this.currentTile.leavePlayer(this);
+    }
     this.currentTile = tile;
+    tile.landPlayer(this);
   }
 
   /**
@@ -82,6 +88,12 @@ public class Player implements Comparable<Player> {
   public void setPendingMoveTo(int destinationTileId) {
     this.pendingMoveTo = destinationTileId;
   }
+
+  public boolean hasExtraTurn() { return extraTurn; }
+
+  public void setExtraTurn(boolean extraTurn) { this.extraTurn = extraTurn; }
+
+  public void clearExtraTurn() { this.extraTurn = false; }
 
   /**
    * Gets the destination tile ID of the pending move.

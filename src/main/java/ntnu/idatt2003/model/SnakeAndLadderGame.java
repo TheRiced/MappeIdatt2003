@@ -6,7 +6,7 @@ import ntnu.idatt2003.core.Dice;
 import ntnu.idatt2003.file.HandleCSVPlayer;
 
 /**
- * A specific board game: Snakes and Ladders.
+ * Implements the game logic for Snakes and Ladders.
  */
 public class SnakeAndLadderGame implements BoardGame {
   private final Board board;
@@ -15,6 +15,13 @@ public class SnakeAndLadderGame implements BoardGame {
   private int currentPlayerIndex;
   private Player winner;
 
+  /**
+   * Constructs a SnakeAndLadderGame.
+   *
+   * @param board the game board.
+   * @param players the list of players.
+   * @param numberOfDice the number of dice to use.
+   */
   public SnakeAndLadderGame(Board board, List<Player> players, int numberOfDice) {
     this.board = board;
     this.players = players;
@@ -23,38 +30,71 @@ public class SnakeAndLadderGame implements BoardGame {
     this.winner = null;
   }
 
-  @Override
-  public void start() {
-    Scanner scanner = new Scanner(System.in);
-    System.out.println("\n--- Game started! ---\n");
+  private void playTurn(Scanner scanner) {
+    Player currentPlayer = players.get(currentPlayerIndex);
+    int extraTurns = 1;
 
-    while (!gameDone()) {
-      Player currentPlayer = players.get(currentPlayerIndex);
+    do {
       System.out.println(currentPlayer.getName() + "'s turn. Press enter to roll the dice.");
       scanner.nextLine();
 
-      int roll = dice.rollAll();
-      System.out.println(currentPlayer.getName() + " rolled a " + roll);
+      List<Integer> individualRolls = dice.rollEach();
+      int roll = individualRolls.stream().mapToInt(Integer::intValue).sum();
 
-      board.movePlayer(currentPlayer, roll);
-      System.out.println(currentPlayer.getName() + " is now on tile " +
-          currentPlayer.getCurrentTile().getTileId());
+      if (dice.numberOfDice() == 1) {
+        System.out.println(currentPlayer.getName() + " rolled a " + roll);
+        if (roll == 1) {
+          System.out.println("You rolled a 1! You get an extra turn!");
+          extraTurns++;
+        }
+      } else {
+        System.out.println(currentPlayer.getName() + " rolled " + individualRolls +
+            " (Total: " + roll + ")");
+        if (individualRolls.get(0) == 6 && individualRolls.get(1) == 6) {
+          System.out.println("You rolled double sixes! You get an extra turn!");
+          extraTurns++;
+        }
+      }
+
+      String result = board.movePlayer(currentPlayer, roll);
+      System.out.print(result);
 
       if (currentPlayer.hasPendingMove()) {
         currentPlayer.setPendingMoveTile(board);
-        System.out.println(currentPlayer.getName() + " move to tile " +
+        System.out.println(currentPlayer.getName() + " moved to tile " +
             currentPlayer.getCurrentTile().getTileId());
       }
 
       if (currentPlayer.getCurrentTile().getTileId() == board.size()) {
         winner = currentPlayer;
         System.out.println("And the winner is: " + winner.getName() + "!");
-
         HandleCSVPlayer.savePlayersToCSV(players, "src/main/resources/players.csv");
-        break;
+        return;
       }
 
-      currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+      if (currentPlayer.hasExtraTurn()) {
+        currentPlayer.clearExtraTurn();
+        System.out.println("Bonus tile! " + currentPlayer.getName() + " gets to roll again!");
+        extraTurns++;
+      }
+
+      extraTurns--;
+
+    } while (extraTurns > 0);
+
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+  }
+
+  /**
+   * Starts the game loop.
+   */
+  @Override
+  public void start() {
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("\n--- Game started! ---\n");
+
+    while (!gameDone()) {
+      playTurn(scanner);
     }
 
     scanner.close();
@@ -69,5 +109,14 @@ public class SnakeAndLadderGame implements BoardGame {
   public Player getWinner() {
     return winner;
   }
+
+  public Board getBoard() {
+    return board;
+  }
+
+  public List<Player> getPlayers() {
+    return players;
+  }
+
 
 }
