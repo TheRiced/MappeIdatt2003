@@ -1,5 +1,6 @@
 package ntnu.idatt2003.view;
 
-public class Observer {
+public interface Observer {
+  void update();
 
 }

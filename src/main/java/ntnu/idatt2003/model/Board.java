@@ -39,7 +39,9 @@ public class Board {
      * @param player The player to move.
      * @param steps The number of steps to move forward.
      */
-    public void movePlayer(Player player, int steps) {
+    public String movePlayer(Player player, int steps) {
+        StringBuilder result = new StringBuilder();
+
         Tile current = player.getCurrentTile();
         Tile next = getTile(current.getNextTileId());
 
@@ -67,6 +69,56 @@ public class Board {
             player.clearPendingMove();
         }
 
+        result.append(player.getName()).append(" is now on tile ")
+            .append(player.getCurrentTile().getTileId()).append("\n");
+
+        // Check for collision: are there other players already on this tile?
+        for (Player other : next.getPlayers()) {
+            if (!other.equals(player)) {
+                result.append("Collision! ").append(player.getName())
+                    .append(" and ").append(other.getName())
+                    .append(" collided!\n");
+
+                // Move both players 7 tiles back if possible
+                moveBack(player, 8);
+                moveBack(other, 8);
+
+                result.append(player.getName())
+                    .append(" is now on tile ").append(player.getCurrentTile().getTileId())
+                    .append("\n");
+                result.append(other.getName())
+                    .append(" is now on tile ").append(other.getCurrentTile().getTileId())
+                    .append("\n");
+                break; // Only handle one collision per move
+            }
+        }
+
+        return result.toString();
+    }
+
+    private void moveBack(Player player, int stepsBack) {
+        Tile current = player.getCurrentTile();
+        Tile target = current;
+
+        for (int i = 1; i < stepsBack; i++) {
+            int id = target.getTileId();
+            if (id > 1 && hasTile(id - 1)) {
+                target = getTile(id - 1);
+            } else {
+                break; // Can't go back further
+            }
+        }
+
+        player.setCurrentTile(target);
+        target.applyAction(player);
+
+        if (player.hasPendingMove()) {
+            Tile destination = getTile(player.getPendingMoveTo());
+            if (destination != null) {
+                player.setCurrentTile(destination);
+            }
+            player.clearPendingMove();
+        }
     }
 
     /**
@@ -86,6 +138,15 @@ public class Board {
      */
     public boolean hasTile(int tileId) {
         return tiles.containsKey(tileId);
+    }
+
+    /**
+     * Returns all tiles (for purposes such as writing the board to a file).
+     *
+     * @return an iterable of tiles.
+     */
+    public Iterable<Tile> getTiles() {
+        return tiles.values();
     }
     
 

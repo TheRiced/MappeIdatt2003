@@ -63,6 +63,8 @@ public class BoardView extends Application {
             baseColor = Color.CRIMSON;
         } else if (isYellowTile(tileId)) {
             baseColor = Color.GOLD;
+        } else if (isBonusTile(tileId)) {
+            baseColor = Color.MEDIUMPURPLE;
         }
 
         rect.setFill(baseColor);
@@ -71,7 +73,18 @@ public class BoardView extends Application {
         Label label = new Label(String.valueOf(tileId + 1));
         label.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
+        if (isBonusTile(tileId)) {
+            Label bonusLabel = new Label("★");
+            bonusLabel.setTextFill(Color.WHITE);
+            bonusLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+            return new StackPane(rect, label, bonusLabel);
+        }
+
         return new StackPane(rect, label);
+    }
+
+    private boolean isBonusTile(int id) {
+        return id == 6 || id == 44 || id == 76;
     }
 
     private boolean isRedTile(int id) {
