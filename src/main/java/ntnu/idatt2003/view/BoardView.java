@@ -3,6 +3,8 @@ package ntnu.idatt2003.view;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -10,6 +12,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import ntnu.idatt2003.model.Player;
 
 /**
  *
@@ -102,6 +105,15 @@ public class BoardView extends Application {
             default -> false;
         };
     }
+
+  public void showWelcomeMessage() {
+        Image welcomeImage = new Image(getClass().getResourceAsStream("welcome.png"));
+
+        ImageView imageView = new ImageView(welcomeImage);
+        imageView.setFitWidth(300);
+        imageView.setPreserveRatio(true);
+  }
+
 
 
     /**
