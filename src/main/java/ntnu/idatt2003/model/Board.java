@@ -31,97 +31,6 @@ public class Board {
     }
 
     /**
-     * Moves a player forward by the specified number of steps, updates their current tile, and
-     * applies any tile actions.
-     * If the tile action (like a ladder or snake) sets a pending move, this method handles jumping
-     * the player to the target tile.
-     *
-     * @param player The player to move.
-     * @param steps The number of steps to move forward.
-     */
-    public String movePlayer(Player player, int steps) {
-        StringBuilder result = new StringBuilder();
-
-        Tile current = player.getCurrentTile();
-        Tile next = getTile(current.getNextTileId());
-
-        // Steps forward through the tiles
-        for (int i = 1; i < steps; i++) {
-            if (next.getNextTileId() != 0) {
-                next = getTile(next.getNextTileId());
-            } else {
-                break; // Reached the end of the board
-            }
-        }
-
-        // Set new tile
-        player.setCurrentTile(next);
-
-        // Apply tile action if exists (like ladder/snake)
-        next.applyAction(player);
-
-        // If there's a pending move from a tile action, process it
-        if (player.hasPendingMove()) {
-            Tile destination = getTile(player.getPendingMoveTo());
-            if (destination != null) {
-                player.setCurrentTile(destination);
-            }
-            player.clearPendingMove();
-        }
-
-        result.append(player.getName()).append(" is now on tile ")
-            .append(player.getCurrentTile().getTileId()).append("\n");
-
-        // Check for collision: are there other players already on this tile?
-        for (Player other : next.getPlayers()) {
-            if (!other.equals(player)) {
-                result.append("Collision! ").append(player.getName())
-                    .append(" and ").append(other.getName())
-                    .append(" collided!\n");
-
-                // Move both players 7 tiles back if possible
-                moveBack(player, 8);
-                moveBack(other, 8);
-
-                result.append(player.getName())
-                    .append(" is now on tile ").append(player.getCurrentTile().getTileId())
-                    .append("\n");
-                result.append(other.getName())
-                    .append(" is now on tile ").append(other.getCurrentTile().getTileId())
-                    .append("\n");
-                break; // Only handle one collision per move
-            }
-        }
-
-        return result.toString();
-    }
-
-    private void moveBack(Player player, int stepsBack) {
-        Tile current = player.getCurrentTile();
-        Tile target = current;
-
-        for (int i = 1; i < stepsBack; i++) {
-            int id = target.getTileId();
-            if (id > 1 && hasTile(id - 1)) {
-                target = getTile(id - 1);
-            } else {
-                break; // Can't go back further
-            }
-        }
-
-        player.setCurrentTile(target);
-        target.applyAction(player);
-
-        if (player.hasPendingMove()) {
-            Tile destination = getTile(player.getPendingMoveTo());
-            if (destination != null) {
-                player.setCurrentTile(destination);
-            }
-            player.clearPendingMove();
-        }
-    }
-
-    /**
      * Returns the number of tiles on the board.
      *
      * @return The total number of tiles
@@ -148,6 +57,105 @@ public class Board {
     public Iterable<Tile> getTiles() {
         return tiles.values();
     }
-    
+
+    /**
+     * Moves a player forward by the specified number of steps, updates their current tile, and
+     * applies any tile actions.
+     * If the tile action (like a ladder or snake) sets a pending move, this method handles jumping
+     * the player to the target tile.
+     *
+     * @param player The player to move.
+     * @param steps The number of steps to move forward.
+     */
+    public String movePlayer(Player player, int steps) {
+        StringBuilder log = new StringBuilder();
+
+        Tile current = player.getCurrentTile();
+        current.leavePlayer(player);
+
+        Tile next = getTile(current.getNextTileId());
+        // Steps forward through the tiles
+        for (int i = 1; i < steps; i++) {
+            if (next.getNextTileId() != 0) {
+                next = getTile(next.getNextTileId());
+            } else {
+                break; // Reached the end of the board
+            }
+        }
+
+        // Set new tile
+        player.setCurrentTile(next);
+        next.landPlayer(player);
+
+        // Apply tile action if exists (like ladder/snake)
+        next.applyAction(player);
+
+        // If there's a pending move from a tile action, process it
+        if (player.hasPendingMove()) {
+            Tile destination = getTile(player.getPendingMoveTo());
+            if (destination != null) {
+                next.leavePlayer(player);
+                player.setCurrentTile(destination);
+                destination.landPlayer(player);
+            }
+            player.clearPendingMove();
+        }
+
+        log.append(player.getName()).append(" is now on tile ")
+            .append(player.getCurrentTile().getTileId()).append("\n");
+
+        // Check for collision: are there other players already on this tile?
+        for (Player other : next.getPlayers()) {
+            if (!other.equals(player)) {
+                log.append("Collision! ").append(player.getName())
+                    .append(" and ").append(other.getName())
+                    .append(" collided!\n");
+
+                // Move both players 7 tiles back if possible
+                moveBack(player, 7);
+                moveBack(other, 7);
+
+                log.append(player.getName())
+                    .append(" is now on tile ").append(player.getCurrentTile().getTileId())
+                    .append("\n");
+                log.append(other.getName())
+                    .append(" is now on tile ").append(other.getCurrentTile().getTileId())
+                    .append("\n");
+                break; // Only handle one collision per move
+            }
+        }
+
+        return log.toString();
+    }
+
+    private void moveBack(Player player, int stepsBack) {
+        Tile current = player.getCurrentTile();
+        current.leavePlayer(player);
+
+        Tile target = current;
+
+        for (int i = 1; i < stepsBack; i++) {
+            int id = target.getTileId();
+            if (id > 1 && hasTile(id - 1)) {
+                target = getTile(id - 1);
+            } else {
+                break; // Can't go back further
+            }
+        }
+
+        player.setCurrentTile(target);
+        target.landPlayer(player);
+
+        target.applyAction(player);
+        if (player.hasPendingMove()) {
+            Tile destination = getTile(player.getPendingMoveTo());
+            if (destination != null) {
+                target.leavePlayer(player);
+                player.setCurrentTile(destination);
+                destination.landPlayer(player);
+            }
+            player.clearPendingMove();
+        }
+    }
 
 }
