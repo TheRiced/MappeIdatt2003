@@ -3,9 +3,12 @@ package ntnu.idatt2003.view;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -15,14 +18,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
 import ntnu.idatt2003.model.Board;
 import ntnu.idatt2003.model.Player;
 import ntnu.idatt2003.model.Tile;
 
 /**
- *
+ * Main view for the NTNU board game.
  */
-
 public class BoardView extends BorderPane {
 
     private static final int ROWS = 9;
@@ -57,7 +61,7 @@ public class BoardView extends BorderPane {
         for (int row = 0; row < ROWS; row++) {
             int actualRow = ROWS - 1 - row;
             for (int col = 0; col < COLS; col++) {
-                int indexInRow =  (actualRow % 2 == 0)
+                int indexInRow = (actualRow % 2 == 0)
                     ? col
                     : (COLS - 1 - col);
                 int tileIndex = actualRow * COLS + indexInRow;
@@ -66,7 +70,7 @@ public class BoardView extends BorderPane {
                 Tile tile = board.getTile(tileId);
                 StackPane pane = createTilePane(tileId, tile);
                 boardGrid.add(pane, col, row);
-                tilePanes.put(tileId, pane);
+                tilePanes.put(tile, pane);
             }
         }
     }
@@ -80,7 +84,7 @@ public class BoardView extends BorderPane {
         idText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
 
         StackPane stack = new StackPane(rect, idText);
-        stack.setPrefSize(TILE_SIZE,TILE_SIZE);
+        stack.setPrefSize(TILE_SIZE, TILE_SIZE);
 
         if (isBonusTile(tileId)) {
             Text star = new Text("★");
@@ -100,25 +104,29 @@ public class BoardView extends BorderPane {
     }
 
     private Color getTileColor(int tileId) {
-        if (tileId == ROWS * COLS) return Color.DARKGREEN; // End tile
-        if (isRedTile(tileId)) return Color.CRIMSON;
-        if (isYellowTile(tileId)) return Color.GOLD;
-        if (isBonusTile(tileId)) return Color.MEDIUMPURPLE;
+        if (tileId == ROWS * COLS) return Color.DARKGREEN;  // End tile
+        if (isRedTile(tileId))         return Color.CRIMSON;
+        if (isYellowTile(tileId))      return Color.GOLD;
+        if (isBonusTile(tileId))       return Color.MEDIUMPURPLE;
         return Color.BEIGE;
     }
 
     private boolean isRedTile(int id) {
-        return switch (id) {
-            case 1, 14, 23, 28, 32, 38, 43, 55, 60, 61, 63, 72, 82, 88 -> true;
-            default -> false;
-        };
+        switch (id) {
+            case 1, 14, 23, 28, 32, 38, 43, 55, 60, 61, 63, 72, 82, 88:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private boolean isYellowTile(int id) {
-        return switch (id) {
-            case 2, 10, 17, 29, 34, 40, 50, 53, 57, 67, 70, 85 -> true;
-            default -> false;
-        };
+        switch (id) {
+            case 2, 10, 17, 29, 34, 40, 50, 53, 57, 67, 70, 85:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private boolean isBonusTile(int id) {
@@ -133,8 +141,8 @@ public class BoardView extends BorderPane {
 
     private void placeAllPlayers() {
         for (Player player : players) {
-            int tileId = player.getCurrentTile().getTileId();
-            StackPane pane = tilePanes.get(tileId);
+            Tile tile = player.getCurrentTile();
+            StackPane pane = tilePanes.get(tile);
             Label icon = new Label(player.getIcon().getSymbol());
             icon.setFont(Font.font(20));
             pane.getChildren().add(icon);
@@ -143,7 +151,7 @@ public class BoardView extends BorderPane {
 
     private void addPlayerToTile(Player player) {
         Tile tile = player.getCurrentTile();
-        StackPane tilePane = createTilePane(tile);
+        StackPane tilePane = tilePanes.get(tile);
 
         Label playerIcon = new Label(player.getIcon().getSymbol());
         playerIcon.setFont(Font.font(18));
@@ -151,14 +159,24 @@ public class BoardView extends BorderPane {
         tilePane.getChildren().add(playerIcon);
     }
 
+    /** From the “dev” branch: show a welcome image when the board loads */
+    public void showWelcomeMessage() {
+        Image welcomeImage = new Image(getClass().getResourceAsStream("welcome.png"));
+        ImageView imageView = new ImageView(welcomeImage);
+        imageView.setFitWidth(300);
+        imageView.setPreserveRatio(true);
+        // (You’ll want to add `imageView` into your scene graph somewhere here)
+    }
+
     public void movePlayer(Player player, int oldTileId) {
         String symbol = player.getIcon().getSymbol();
-        StackPane oldPane = tilePanes.get(oldTileId);
-        oldPane.getChildren().removeIf(node -> node instanceof Label && ((Label) node).getText()
-            .equals(symbol));
+        StackPane oldPane = tilePanes.get(board.getTile(oldTileId));
+        oldPane.getChildren().removeIf(node ->
+            node instanceof Label && ((Label) node).getText().equals(symbol)
+        );
 
         int newId = player.getCurrentTile().getTileId();
-        StackPane newPane = tilePanes.get(newId);
+        StackPane newPane = tilePanes.get(player.getCurrentTile());
         Label icon = new Label(symbol);
         icon.setFont(Font.font(20));
         newPane.getChildren().add(icon);
