@@ -4,8 +4,9 @@ import ntnu.idatt2003.model.Player;
 
 public interface Observer {
 
-  void movePlayer(Player player);
-  void endGame(Player winner);
+  void onPlayerMoved(Player player, int fromTileId, int toTileId);
+  void onNextPlayer(Player next);
+  void onGameOver(Player winner);
 
   }
 

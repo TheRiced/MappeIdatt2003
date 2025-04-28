@@ -31,6 +31,7 @@ public class Player implements Comparable<Player> {
     this.age = age;
     this.icon = icon;
     this.currentTile = startingTile;
+    startingTile.landPlayer(this);
   }
 
   /**
@@ -129,13 +130,4 @@ public class Player implements Comparable<Player> {
     return Integer.compare(this.age, other.age);
   }
 
-  /**
-   * Returns a string representation of the player for debugging or display.
-   *
-   * @return Player name, icon, age and current tile ID.
-   */
-  @Override
-  public String toString() {
-    return name + " (" + icon + ", " + age + ") on tile " + currentTile.getTileId();
-  }
 }
