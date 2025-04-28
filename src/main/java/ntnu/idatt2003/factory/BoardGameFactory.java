@@ -26,25 +26,46 @@ public class BoardGameFactory {
     return new SnakeAndLadderGame(board, players, numberOfDice);
   }
 
-  public BoardGame createDefaultSnakeAndLadderGame(List<Player> players, int numberOfDice) {
-    Board board = new Board();
+//
+//  public BoardGame createLudoGameFromFile(Path jsonPath, List<Player> players, int numberOfDice) throws Exception {
+//  }
 
-    for (int i = 0; i <= 90; i++) {
-      board.addTile(new Tile(i));
+
+  public BoardGame createGameFromFile(Path jsonPath, List<Player> players, int numberOfDice)
+      throws Exception {
+    if (jsonPath.getFileName().toString().startsWith("snakes_")) {
+      return createSnakeAndLadderGameFromFile(jsonPath, players, numberOfDice);
+    } else if (jsonPath.getFileName().toString().startsWith("ludo_")) {
+//      return createLudoGameFromFile(jsonPath, players, numberOfDice);
     }
 
-    for (int i = 0; i < 90; i++) {
-      board.getTile(i).setNextTileId(i + 1);
-    }
-
-    board.getTile(4).setAction(new LadderAction(14));
-    board.getTile(17).setAction(new SnakeAction(7));
-    board.getTile(19).setAction(new LadderAction(27));
-    board.getTile(50).setAction(new SnakeAction(37));
-    board.getTile(39).setAction(new LadderAction(70));
-    board.getTile(85).setAction(new SnakeAction(67));
-
-    return new SnakeAndLadderGame(board, players, numberOfDice);
+    return null;
   }
+
+
+
+
+    public BoardGame createDefaultSnakeAndLadderGame (List < Player > players,int numberOfDice){
+      Board board = new Board();
+
+      for (int i = 0; i <= 90; i++) {
+        board.addTile(new Tile(i));
+      }
+
+      for (int i = 0; i < 90; i++) {
+        board.getTile(i).setNextTileId(i + 1);
+      }
+
+      board.getTile(4).setAction(new LadderAction(14));
+      board.getTile(17).setAction(new SnakeAction(7));
+      board.getTile(19).setAction(new LadderAction(27));
+      board.getTile(50).setAction(new SnakeAction(37));
+      board.getTile(39).setAction(new LadderAction(70));
+      board.getTile(85).setAction(new SnakeAction(67));
+
+      return new SnakeAndLadderGame(board, players, numberOfDice);
+    }
+
+
 
 }

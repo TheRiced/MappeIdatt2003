@@ -40,6 +40,7 @@ public class BoardView extends BorderPane {
     private final Label currentPlayerLabel = new Label("Current Player: ");
     private final Button rollDiceButton = new Button("Roll Dice");
 
+
     private Map<Tile, StackPane> tilePanes = new HashMap<>();
 
     public BoardView(Board board, List<Player> players) {
@@ -139,7 +140,7 @@ public class BoardView extends BorderPane {
         sidebar.getChildren().addAll(currentPlayerLabel, rollDiceButton);
     }
 
-    private void placeAllPlayers() {
+    public void placeAllPlayers() {
         for (Player player : players) {
             Tile tile = player.getCurrentTile();
             StackPane pane = tilePanes.get(tile);
@@ -188,5 +189,13 @@ public class BoardView extends BorderPane {
 
     public void updateCurrentPlayer(String playerName) {
         currentPlayerLabel.setText("Current player: " + playerName);
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void showWinner(String name) {
+
     }
 }
