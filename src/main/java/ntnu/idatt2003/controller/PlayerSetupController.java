@@ -45,12 +45,14 @@ public class PlayerSetupController {
 
       BoardView boardView = new BoardView(board, players);
 
-      GameController gameCtrl = new GameController(stage, boardView, players, diceCount);
+      GameController gameCtrl = new GameController(stage, (Path) boardView, players, diceCount);
 
       gameCtrl.start();
 
     } catch (IOException e) {
       e.printStackTrace();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
 
   }
