@@ -1,10 +1,9 @@
 package ntnu.idatt2003.view;
 
 
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.application.Application;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,37 +11,33 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 
-public class GameHomePage extends Application {
 
-  @Override
-  public void start(Stage stage) {
-    StackPane root = new StackPane();
+public class HomePage {
+  private final StackPane root;
+  private final Label snakesLabel;
+  private final Label ludoLabel;
+
+
+  public HomePage() {
+    root = new StackPane();
     root.setStyle("-fx-background-color: linear-gradient(to bottom right, #111111, #000000);");
 
     // Load the background image
-    Image image = new Image(getClass().getResource("/images/homeimage.png").toExternalForm());
-    ImageView imageView = new ImageView(image);
+    ImageView imageView = new ImageView(new Image(getClass()
+        .getResource("/images/homeimage.png").toExternalForm()));
     imageView.setPreserveRatio(true);
     imageView.setFitWidth(700); // Adjust this as needed
     imageView.setOpacity(0.9);  // Optional: make it semi-transparent
 
-    VBox content = new VBox(40);
+    snakesLabel = createHoverLabel("Snakes And Ladders", Color.ORANGERED);
+    ludoLabel = createHoverLabel("Ludo", Color.LIMEGREEN);
+
+    VBox content = new VBox(40, snakesLabel, ludoLabel);
     content.setAlignment(Pos.CENTER);
 
-    Label snakesAndLadders = createHoverLabel("Snakes And Ladders", Color.ORANGERED);
-    Label ludo = createHoverLabel("Ludo", Color.LIMEGREEN);
-
-    content.getChildren().addAll(snakesAndLadders, ludo);
-
     root.getChildren().addAll(imageView, content);
-
-    Scene scene = new Scene(root, 800, 600);
-    stage.setTitle("Game Hub");
-    stage.setScene(scene);
-    stage.show();
   }
 
   private Label createHoverLabel(String text, Color glowColor) {
@@ -68,7 +63,7 @@ public class GameHomePage extends Application {
     return label;
   }
 
-  public static void main(String[] args) {
-    launch(args);
-  }
+  public Parent getRoot() { return root;}
+  public Label getSnakesLabel() { return snakesLabel;}
+  public Label getLudoLabel() { return ludoLabel;}
 }

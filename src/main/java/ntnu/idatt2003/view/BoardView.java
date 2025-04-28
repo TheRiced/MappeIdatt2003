@@ -1,115 +1,174 @@
 package ntnu.idatt2003.view;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
+import javafx.scene.text.Text;
+import ntnu.idatt2003.model.Board;
+import ntnu.idatt2003.model.Player;
+import ntnu.idatt2003.model.Tile;
 
 /**
  *
  */
 
-public class BoardView extends Application {
-
-    /**
-     *
-     */
+public class BoardView extends BorderPane {
 
     private static final int ROWS = 9;
     private static final int COLS = 10;
     private static final int TILE_SIZE = 60;
 
-    @Override
-    public void start(Stage primaryStage) {
-        GridPane grid = new GridPane();
-        grid.setGridLinesVisible(true);
+    private final Board board;
+    private final List<Player> players;
+    private final GridPane boardGrid = new GridPane();
+    private final VBox sidebar = new VBox(10);
+    private final Label currentPlayerLabel = new Label("Current Player: ");
+    private final Button rollDiceButton = new Button("Roll Dice");
+
+    private Map<Tile, StackPane> tilePanes = new HashMap<>();
+
+    public BoardView(Board board, List<Player> players) {
+        this.board = board;
+        this.players = players;
+
+        setupBoard();
+        setupSidebar();
+
+        setCenter(boardGrid);
+        setRight(sidebar);
+
+        placeAllPlayers();
+    }
+
+    private void setupBoard() {
+        boardGrid.setGridLinesVisible(true);
 
         for (int row = 0; row < ROWS; row++) {
+            int actualRow = ROWS - 1 - row;
             for (int col = 0; col < COLS; col++) {
-                int actualRow = ROWS - 1 - row;
-                int tileId;
-                if (actualRow % 2 == 0) {
-                    tileId = actualRow * COLS + col;
-                    // left to right
-                } else {
-                    tileId = actualRow * COLS + (COLS - 1 - col);
-                    // right to left
-                }
+                int indexInRow =  (actualRow % 2 == 0)
+                    ? col
+                    : (COLS - 1 - col);
+                int tileIndex = actualRow * COLS + indexInRow;
+                int tileId = tileIndex + 1;
 
-                StackPane tilePane = createTile(tileId, row, col);
-                grid.add(tilePane, col, row);
+                Tile tile = board.getTile(tileId);
+                StackPane pane = createTilePane(tileId, tile);
+                boardGrid.add(pane, col, row);
+                tilePanes.put(tileId, pane);
             }
         }
-
-        Scene scene = new Scene(grid);
-        primaryStage.setTitle("Snakes and Ladders Board");
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
-    private StackPane createTile(int tileId, int row, int col) {
+    private StackPane createTilePane(int tileId, Tile tile) {
         Rectangle rect = new Rectangle(TILE_SIZE, TILE_SIZE);
-        Color baseColor = ((row + col) % 2 == 0) ? Color.BEIGE : Color.LIGHTBLUE;
-
-        if (tileId == 89) {
-            baseColor = Color.DARKGREEN; // End tile
-        } else if (isRedTile(tileId)) {
-            baseColor = Color.CRIMSON;
-        } else if (isYellowTile(tileId)) {
-            baseColor = Color.GOLD;
-        } else if (isBonusTile(tileId)) {
-            baseColor = Color.MEDIUMPURPLE;
-        }
-
-        rect.setFill(baseColor);
         rect.setStroke(Color.BLACK);
+        rect.setFill(getTileColor(tileId));
 
-        Label label = new Label(String.valueOf(tileId + 1));
-        label.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        Text idText = new Text(String.valueOf(tileId));
+        idText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+
+        StackPane stack = new StackPane(rect, idText);
+        stack.setPrefSize(TILE_SIZE,TILE_SIZE);
 
         if (isBonusTile(tileId)) {
-            Label bonusLabel = new Label("★");
-            bonusLabel.setTextFill(Color.WHITE);
-            bonusLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-            return new StackPane(rect, label, bonusLabel);
+            Text star = new Text("★");
+            star.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+            star.setFill(Color.WHITE);
+            stack.getChildren().add(star);
         }
 
-        return new StackPane(rect, label);
+        if (tile.getAction() != null) {
+            String actionName = tile.getAction().getClass().getSimpleName();
+            Text icon = new Text(actionName.equals("SnakeAction") ? "\uD83D\uDC0D" : "\uD83E\uDE9C");
+            icon.setFont(Font.font(18));
+            stack.getChildren().add(icon);
+        }
+
+        return stack;
     }
 
-    private boolean isBonusTile(int id) {
-        return id == 6 || id == 44 || id == 76;
+    private Color getTileColor(int tileId) {
+        if (tileId == ROWS * COLS) return Color.DARKGREEN; // End tile
+        if (isRedTile(tileId)) return Color.CRIMSON;
+        if (isYellowTile(tileId)) return Color.GOLD;
+        if (isBonusTile(tileId)) return Color.MEDIUMPURPLE;
+        return Color.BEIGE;
     }
 
     private boolean isRedTile(int id) {
         return switch (id) {
-            //1,14,23,28,32,38,43,55,60,61,63,72,82,88
-            case 0, 13, 22, 27, 31, 37, 42, 54, 59, 60, 62, 71, 81, 87 -> true;
+            case 1, 14, 23, 28, 32, 38, 43, 55, 60, 61, 63, 72, 82, 88 -> true;
             default -> false;
         };
     }
 
     private boolean isYellowTile(int id) {
         return switch (id) {
-            //2, 17, 29, 34, 40, 50, 53, 57, 67, 70, 85
-            case 1, 9, 17, 28, 33, 39, 49, 52, 56, 66, 69, 84 -> true;
+            case 2, 10, 17, 29, 34, 40, 50, 53, 57, 67, 70, 85 -> true;
             default -> false;
         };
     }
 
+    private boolean isBonusTile(int id) {
+        return id == 7 || id == 45 || id == 77;
+    }
 
-    /**
-     * Launches the application
-     * @param args
-     */
+    private void setupSidebar() {
+        sidebar.setPadding(new Insets(10));
+        currentPlayerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        sidebar.getChildren().addAll(currentPlayerLabel, rollDiceButton);
+    }
 
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
+    private void placeAllPlayers() {
+        for (Player player : players) {
+            int tileId = player.getCurrentTile().getTileId();
+            StackPane pane = tilePanes.get(tileId);
+            Label icon = new Label(player.getIcon().getSymbol());
+            icon.setFont(Font.font(20));
+            pane.getChildren().add(icon);
+        }
+    }
+
+    private void addPlayerToTile(Player player) {
+        Tile tile = player.getCurrentTile();
+        StackPane tilePane = createTilePane(tile);
+
+        Label playerIcon = new Label(player.getIcon().getSymbol());
+        playerIcon.setFont(Font.font(18));
+
+        tilePane.getChildren().add(playerIcon);
+    }
+
+    public void movePlayer(Player player, int oldTileId) {
+        String symbol = player.getIcon().getSymbol();
+        StackPane oldPane = tilePanes.get(oldTileId);
+        oldPane.getChildren().removeIf(node -> node instanceof Label && ((Label) node).getText()
+            .equals(symbol));
+
+        int newId = player.getCurrentTile().getTileId();
+        StackPane newPane = tilePanes.get(newId);
+        Label icon = new Label(symbol);
+        icon.setFont(Font.font(20));
+        newPane.getChildren().add(icon);
+    }
+
+    public Button getRollDiceButton() {
+        return rollDiceButton;
+    }
+
+    public void updateCurrentPlayer(String playerName) {
+        currentPlayerLabel.setText("Current player: " + playerName);
+    }
 }
