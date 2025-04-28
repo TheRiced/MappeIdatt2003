@@ -53,6 +53,3 @@ public class GameController {
     game.nextPlayer();
     boardView.updateCurrentPlayer(game.getCurrentPlayer().getName());
   }
-
-
-}
