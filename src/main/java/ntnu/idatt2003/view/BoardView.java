@@ -3,6 +3,8 @@ package ntnu.idatt2003.view;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -10,6 +12,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import ntnu.idatt2003.model.Player;
 
 /**
  *
@@ -63,6 +66,8 @@ public class BoardView extends Application {
             baseColor = Color.CRIMSON;
         } else if (isYellowTile(tileId)) {
             baseColor = Color.GOLD;
+        } else if (isBonusTile(tileId)) {
+            baseColor = Color.MEDIUMPURPLE;
         }
 
         rect.setFill(baseColor);
@@ -71,7 +76,18 @@ public class BoardView extends Application {
         Label label = new Label(String.valueOf(tileId + 1));
         label.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
+        if (isBonusTile(tileId)) {
+            Label bonusLabel = new Label("★");
+            bonusLabel.setTextFill(Color.WHITE);
+            bonusLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+            return new StackPane(rect, label, bonusLabel);
+        }
+
         return new StackPane(rect, label);
+    }
+
+    private boolean isBonusTile(int id) {
+        return id == 6 || id == 44 || id == 76;
     }
 
     private boolean isRedTile(int id) {
@@ -90,13 +106,22 @@ public class BoardView extends Application {
         };
     }
 
+  public void showWelcomeMessage() {
+        Image welcomeImage = new Image(getClass().getResourceAsStream("welcome.png"));
+
+        ImageView imageView = new ImageView(welcomeImage);
+        imageView.setFitWidth(300);
+        imageView.setPreserveRatio(true);
+  }
+
+
 
     /**
      * Launches the application
      * @param args
      */
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+//    public static void main(String[] args) {
+//        launch(args);
+//    }
 }

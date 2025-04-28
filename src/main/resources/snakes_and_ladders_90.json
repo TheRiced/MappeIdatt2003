@@ -26,7 +26,11 @@
       "id": 6, "nextTile": 7
     },
     {
-      "id": 7, "nextTile": 8
+      "id": 7,
+      "nextTile": 8,
+      "action": {
+        "type": "BONUS"
+      }
     },
     {
       "id": 8, "nextTile": 9
@@ -170,7 +174,11 @@
       "id": 44, "nextTile": 45
     },
     {
-      "id": 45, "nextTile": 46
+      "id": 45,
+      "nextTile": 46,
+      "action": {
+        "type": "BONUS"
+      }
     },
     {
       "id": 46, "nextTile": 47
@@ -286,7 +294,11 @@
       "id": 76, "nextTile": 77
     },
     {
-      "id": 77, "nextTile": 78
+      "id": 77,
+      "nextTile": 78,
+      "action": {
+        "type": "BONUS"
+      }
     },
     {
       "id": 78, "nextTile": 79
