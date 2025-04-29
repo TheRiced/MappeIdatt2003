@@ -5,10 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -18,15 +17,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 import ntnu.idatt2003.model.Board;
 import ntnu.idatt2003.model.Player;
 import ntnu.idatt2003.model.Tile;
 
-/**
- * Main view for the NTNU board game.
- */
+
+//Used chatgpt to correct the code here
 public class BoardView extends BorderPane {
 
     private static final int ROWS = 9;
@@ -38,10 +35,11 @@ public class BoardView extends BorderPane {
     private final GridPane boardGrid = new GridPane();
     private final VBox sidebar = new VBox(10);
     private final Label currentPlayerLabel = new Label("Current Player: ");
-    private final Button rollDiceButton = new Button("Roll Dice");
+    private final Label lastRollLabel     = new Label("Last Roll: -");
+    private final Button rollDiceButton   = new Button("Roll Dice");
 
 
-    private Map<Tile, StackPane> tilePanes = new HashMap<>();
+    private Map<Integer, StackPane> tilePanes = new HashMap<>();
 
     public BoardView(Board board, List<Player> players) {
         this.board = board;
@@ -62,16 +60,15 @@ public class BoardView extends BorderPane {
         for (int row = 0; row < ROWS; row++) {
             int actualRow = ROWS - 1 - row;
             for (int col = 0; col < COLS; col++) {
-                int indexInRow = (actualRow % 2 == 0)
-                    ? col
-                    : (COLS - 1 - col);
-                int tileIndex = actualRow * COLS + indexInRow;
-                int tileId = tileIndex + 1;
+                int indexInRow = (actualRow % 2 == 0) ? col : (COLS - 1 - col);
+                int tileIndex  = actualRow * COLS + indexInRow;
+                int tileId     = tileIndex + 1;
 
                 Tile tile = board.getTile(tileId);
                 StackPane pane = createTilePane(tileId, tile);
                 boardGrid.add(pane, col, row);
-                tilePanes.put(tile, pane);
+
+                tilePanes.put(tileId, pane);
             }
         }
     }
@@ -105,10 +102,10 @@ public class BoardView extends BorderPane {
     }
 
     private Color getTileColor(int tileId) {
-        if (tileId == ROWS * COLS) return Color.DARKGREEN;  // End tile
-        if (isRedTile(tileId))         return Color.CRIMSON;
-        if (isYellowTile(tileId))      return Color.GOLD;
-        if (isBonusTile(tileId))       return Color.MEDIUMPURPLE;
+        if (tileId == ROWS * COLS)      return Color.DARKGREEN;
+        if (isRedTile(tileId))          return Color.CRIMSON;
+        if (isYellowTile(tileId))       return Color.GOLD;
+        if (isBonusTile(tileId))        return Color.MEDIUMPURPLE;
         return Color.BEIGE;
     }
 
@@ -137,50 +134,52 @@ public class BoardView extends BorderPane {
     private void setupSidebar() {
         sidebar.setPadding(new Insets(10));
         currentPlayerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-        sidebar.getChildren().addAll(currentPlayerLabel, rollDiceButton);
+        lastRollLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+
+        sidebar.getChildren().addAll(
+            currentPlayerLabel,
+            lastRollLabel,
+            rollDiceButton
+        );
+    }
+
+
+    public void updateDiceResult(int rolled) {
+        lastRollLabel.setText("Last Roll: " + rolled);
     }
 
     public void placeAllPlayers() {
         for (Player player : players) {
-            Tile tile = player.getCurrentTile();
-            StackPane pane = tilePanes.get(tile);
+            int id = player.getCurrentTile().getTileId();
+            StackPane pane = tilePanes.get(id);
+            if (pane == null) {
+                System.err.println("No pane for tile ID " + id);
+                continue;
+            }
             Label icon = new Label(player.getIcon().getSymbol());
             icon.setFont(Font.font(20));
             pane.getChildren().add(icon);
         }
     }
 
-    private void addPlayerToTile(Player player) {
-        Tile tile = player.getCurrentTile();
-        StackPane tilePane = tilePanes.get(tile);
-
-        Label playerIcon = new Label(player.getIcon().getSymbol());
-        playerIcon.setFont(Font.font(18));
-
-        tilePane.getChildren().add(playerIcon);
-    }
-
-    /** From the “dev” branch: show a welcome image when the board loads */
-    public void showWelcomeMessage() {
-        Image welcomeImage = new Image(getClass().getResourceAsStream("welcome.png"));
-        ImageView imageView = new ImageView(welcomeImage);
-        imageView.setFitWidth(300);
-        imageView.setPreserveRatio(true);
-        // (You’ll want to add `imageView` into your scene graph somewhere here)
-    }
-
     public void movePlayer(Player player, int oldTileId) {
-        String symbol = player.getIcon().getSymbol();
-        StackPane oldPane = tilePanes.get(board.getTile(oldTileId));
-        oldPane.getChildren().removeIf(node ->
-            node instanceof Label && ((Label) node).getText().equals(symbol)
-        );
+        // remove from old pane
+        StackPane oldPane = tilePanes.get(oldTileId);
+        if (oldPane != null) {
+            oldPane.getChildren().removeIf(node ->
+                node instanceof Label &&
+                    ((Label) node).getText().equals(player.getIcon().getSymbol())
+            );
+        }
 
+        // add to new pane
         int newId = player.getCurrentTile().getTileId();
-        StackPane newPane = tilePanes.get(player.getCurrentTile());
-        Label icon = new Label(symbol);
-        icon.setFont(Font.font(20));
-        newPane.getChildren().add(icon);
+        StackPane newPane = tilePanes.get(newId);
+        if (newPane != null) {
+            Label icon = new Label(player.getIcon().getSymbol());
+            icon.setFont(Font.font(20));
+            newPane.getChildren().add(icon);
+        }
     }
 
     public Button getRollDiceButton() {
@@ -196,6 +195,14 @@ public class BoardView extends BorderPane {
     }
 
     public void showWinner(String name) {
+        rollDiceButton.setDisable(true);
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText(null);
+        alert.setContentText(name + " wins the game!");
+
+
 
     }
 }
