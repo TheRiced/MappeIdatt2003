@@ -23,7 +23,7 @@ public class HomeController {
 
   private void goToSetup() {
     PlayerSetupPage setupView = new PlayerSetupPage();
-    PlayerSetupController sc = new PlayerSetupController(stage, view);
+    PlayerSetupController sc = new PlayerSetupController(stage,setupView);
     sc.showSetup();
   }
 
