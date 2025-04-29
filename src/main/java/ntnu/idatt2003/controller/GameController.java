@@ -21,8 +21,9 @@ public class GameController {
       Exception {
     this.stage = stage;
     BoardGameFactory factory = new BoardGameFactory();
-    this.game = factory.createGameFromFile (boardJson, players, diceCount); factory.createSnakeAndLadderGameFromFile(boardJson,
-      players, diceCount);
+    this.game = factory.createGameFromFile(boardJson, players, diceCount);
+    factory.createSnakeAndLadderGameFromFile(boardJson,
+        players, diceCount);
     this.boardView = new BoardView(game.getBoard(), game.getPlayers());
     this.boardView.getRollDiceButton().setOnAction(e -> handleRoll());
   }
@@ -41,10 +42,14 @@ public class GameController {
     int fromId = current.getCurrentTile().getTileId();
 
     int rolled = game.rollDice();
+    boardView.updateDiceResult(rolled);
+
     game.moveCurrentPlayer(rolled);
+    boardView.movePlayer(current, fromId);
 
     int toId = current.getCurrentTile().getTileId();
     boardView.movePlayer(current, fromId);
+
     if (game.gameDone()) {
       boardView.showWinner(current.getName());
       boardView.getRollDiceButton().setDisable(true);
@@ -53,3 +58,4 @@ public class GameController {
     game.nextPlayer();
     boardView.updateCurrentPlayer(game.getCurrentPlayer().getName());
   }
+}
