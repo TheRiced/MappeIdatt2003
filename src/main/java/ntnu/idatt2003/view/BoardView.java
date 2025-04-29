@@ -35,11 +35,11 @@ public class BoardView extends BorderPane {
     private final GridPane boardGrid = new GridPane();
     private final VBox sidebar = new VBox(10);
     private final Label currentPlayerLabel = new Label("Current Player: ");
-    private final Label lastRollLabel     = new Label("Last Roll: -");
+    private final Label RolledLabel = new Label("Rolled: -");
     private final Button rollDiceButton   = new Button("Roll Dice");
 
 
-    private Map<Integer, StackPane> tilePanes = new HashMap<>();
+    private final Map<Integer, StackPane> tilePanes = new HashMap<>();
 
     public BoardView(Board board, List<Player> players) {
         this.board = board;
@@ -65,7 +65,7 @@ public class BoardView extends BorderPane {
                 int tileId     = tileIndex + 1;
 
                 Tile tile = board.getTile(tileId);
-                StackPane pane = createTilePane(tileId, tile);
+                StackPane pane = createTilePane(tileId, tile, row, col);
                 boardGrid.add(pane, col, row);
 
                 tilePanes.put(tileId, pane);
@@ -73,10 +73,24 @@ public class BoardView extends BorderPane {
         }
     }
 
-    private StackPane createTilePane(int tileId, Tile tile) {
+    private StackPane createTilePane(int tileId, Tile tile, int row, int col) {
         Rectangle rect = new Rectangle(TILE_SIZE, TILE_SIZE);
-        rect.setStroke(Color.BLACK);
-        rect.setFill(getTileColor(tileId));
+        rect.setStroke(Color.BLACK);        Color base = ((row + col) % 2 == 0)
+            ? Color.BEIGE
+            : Color.LIGHTBLUE;
+
+        // Override for special tiles:
+        if (tileId == ROWS * COLS) {
+            base = Color.DARKGREEN;
+        } else if (isRedTile(tileId)) {
+            base = Color.CRIMSON;
+        } else if (isYellowTile(tileId)) {
+            base = Color.GOLD;
+        } else if (isBonusTile(tileId)) {
+            base = Color.MEDIUMPURPLE;
+        }
+
+        rect.setFill(base);
 
         Text idText = new Text(String.valueOf(tileId));
         idText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
@@ -93,7 +107,9 @@ public class BoardView extends BorderPane {
 
         if (tile.getAction() != null) {
             String actionName = tile.getAction().getClass().getSimpleName();
-            Text icon = new Text(actionName.equals("SnakeAction") ? "\uD83D\uDC0D" : "\uD83E\uDE9C");
+            Text icon = new Text(
+                actionName.equals("SnakeAction") ? "\uD83D\uDC0D" : "\uD83E\uDE9C"
+            );
             icon.setFont(Font.font(18));
             stack.getChildren().add(icon);
         }
@@ -101,30 +117,18 @@ public class BoardView extends BorderPane {
         return stack;
     }
 
-    private Color getTileColor(int tileId) {
-        if (tileId == ROWS * COLS)      return Color.DARKGREEN;
-        if (isRedTile(tileId))          return Color.CRIMSON;
-        if (isYellowTile(tileId))       return Color.GOLD;
-        if (isBonusTile(tileId))        return Color.MEDIUMPURPLE;
-        return Color.BEIGE;
-    }
-
     private boolean isRedTile(int id) {
-        switch (id) {
-            case 1, 14, 23, 28, 32, 38, 43, 55, 60, 61, 63, 72, 82, 88:
-                return true;
-            default:
-                return false;
-        }
+      return switch (id) {
+        case 1, 14, 23, 28, 32, 38, 43, 55, 60, 61, 63, 72, 82, 88 -> true;
+        default -> false;
+      };
     }
 
     private boolean isYellowTile(int id) {
-        switch (id) {
-            case 2, 10, 17, 29, 34, 40, 50, 53, 57, 67, 70, 85:
-                return true;
-            default:
-                return false;
-        }
+      return switch (id) {
+        case 2, 10, 17, 29, 34, 40, 50, 53, 57, 67, 70, 85 -> true;
+        default -> false;
+      };
     }
 
     private boolean isBonusTile(int id) {
@@ -134,18 +138,18 @@ public class BoardView extends BorderPane {
     private void setupSidebar() {
         sidebar.setPadding(new Insets(10));
         currentPlayerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-        lastRollLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        RolledLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
         sidebar.getChildren().addAll(
             currentPlayerLabel,
-            lastRollLabel,
+            RolledLabel,
             rollDiceButton
         );
     }
 
 
     public void updateDiceResult(int rolled) {
-        lastRollLabel.setText("Last Roll: " + rolled);
+        RolledLabel.setText("Last Roll: " + rolled);
     }
 
     public void placeAllPlayers() {
