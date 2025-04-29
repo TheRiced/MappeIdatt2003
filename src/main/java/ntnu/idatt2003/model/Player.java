@@ -1,7 +1,6 @@
 package ntnu.idatt2003.model;
 
 import ntnu.idatt2003.core.PlayerIcon;
-import ntnu.idatt2003.model.Tile;
 
 /**
  * Represents a player in the board game.
@@ -22,9 +21,8 @@ public class Player implements Comparable<Player> {
    * Constructor for creating a player.
    *
    * @param name The name of the player.
-   * @param age The age of the player (used for sorting turn order).
+   * @param age  The age of the player (used for sorting turn order).
    * @param icon The visual icon representing the player.
-   * @param startingTile The tile where the player starts the game.
    */
   public Player(String name, int age, PlayerIcon icon, Tile startingTile) {
     this.name = name;
