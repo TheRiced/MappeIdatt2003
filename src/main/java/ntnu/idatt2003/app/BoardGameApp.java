@@ -1,22 +1,9 @@
 package ntnu.idatt2003.app;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 import ntnu.idatt2003.controller.HomeController;
-import ntnu.idatt2003.core.PlayerIcon;
-import ntnu.idatt2003.factory.BoardGameFactory;
-import ntnu.idatt2003.file.BoardFileReader;
-import ntnu.idatt2003.file.BoardFileReaderGson;
-import ntnu.idatt2003.model.Board;
-import ntnu.idatt2003.model.BoardGame;
-import ntnu.idatt2003.model.Player;
-import ntnu.idatt2003.model.SnakeAndLadderGame;
-import ntnu.idatt2003.model.Tile;
 import ntnu.idatt2003.view.HomePage;
 
 /**
