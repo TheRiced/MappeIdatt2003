@@ -1,23 +1,29 @@
 package ntnu.idatt2003.model;
 
-import java.util.ArrayList;
+
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import ntnu.idatt2003.core.PlayerColor;
 
 public class LudoPlayer {
   private final String name;
   private final int age;
   private final PlayerColor color;
-  private final List<Token> tokens = new ArrayList<Token>();
+  private final List<Token> tokens;
 
-  public LudoPlayer(String name, int age, PlayerColor color) {
+  public LudoPlayer(String name, int age, PlayerColor color, List<LudoTile> homeTiles) {
+    if (name == null || name.isBlank()) throw new IllegalArgumentException("Name cannot be blank");
+    if (age < 0) throw new IllegalArgumentException("Age cannot be negative");
+    if (color == null) throw new IllegalArgumentException("Color cannot be null");
+    if (homeTiles == null || homeTiles.size() != 4)
+      throw new IllegalArgumentException("HomeTiles cannot be null");
     this.name = name;
     this.age = age;
     this.color = color;
 
-    for (int i = 0; i < 4; i++) {
-      tokens.add(new Token(i, this));
-    }
+    this.tokens = IntStream.range(0,4).mapToObj(i -> new Token(i, this, homeTiles.get(i)))
+        .collect(Collectors.toList());
   }
 
   public String getName() { return name; }
@@ -31,6 +37,18 @@ public class LudoPlayer {
 
   public int getFinishEntry() {
     return color.getFinishEntryIndex();
+  }
+
+  public boolean hasFinishedAll() {
+    return tokens.stream().allMatch(Token::isFinished);
+  }
+
+  public long countAtHome() {
+    return tokens.stream().filter(Token::isAtHome).count();
+  }
+
+  public long countFinished() {
+    return tokens.stream().filter(Token::isFinished).count();
   }
 
 }
