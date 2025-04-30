@@ -1,8 +1,11 @@
 package ntnu.idatt2003.core;
 
+import java.util.List;
+import ntnu.idatt2003.model.LudoTile;
+
 /**
- * Enumeration of possible player colors in the Ludo game, each with its own indices for the
- * starting square on the main track and the entry square into its finish lane.
+ * Enumeration of the four Ludo player colors, each with the index of its START square on the main
+ * track and the index where it branches into its private finish lane.
  */
 public enum PlayerColor {
   RED(0, 50),
@@ -15,8 +18,9 @@ public enum PlayerColor {
 
   /**
    * Constructors a PlayerColor with the given start and finish-entry indices.
-   * @param startIndex index of the starting square on the main track.
-   * @param finishEntryIndex index where the token enters its finish lane.
+   * @param startIndex the tile index on the main loop where its color's tokens enter play
+   * @param finishEntryIndex the tile index on the main loop where its color's tokens branch into
+   *                         the finish lane
    */
   PlayerColor(int startIndex, int finishEntryIndex) {
     this.startIndex = startIndex;
