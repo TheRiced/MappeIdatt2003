@@ -6,7 +6,7 @@ package ntnu.idatt2003.core;
 public enum LudoTileType {
   HOME,
   START,
-  Normal,
+  NORMAL,
   SAFE,
   FINISH_ENTRY,
   FINISH;
