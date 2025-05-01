@@ -43,10 +43,14 @@ public class GameController {
     int fromId = current.getCurrentTile().getTileId();
 
     int rolled = game.rollDice();
+    boardView.updateDiceResult(rolled);
+
     game.moveCurrentPlayer(rolled);
+    boardView.movePlayer(current, fromId);
 
     int toId = current.getCurrentTile().getTileId();
     boardView.movePlayer(current, fromId);
+
     if (game.gameDone()) {
       boardView.showWinner(current.getName());
       boardView.getRollDiceButton().setDisable(true);

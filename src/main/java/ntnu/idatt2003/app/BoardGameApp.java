@@ -1,5 +1,6 @@
 package ntnu.idatt2003.app;
 
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 import ntnu.idatt2003.controller.HomeController;
