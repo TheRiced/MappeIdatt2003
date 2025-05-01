@@ -13,6 +13,7 @@ import ntnu.idatt2003.model.SnakeAndLadderGame;
 import ntnu.idatt2003.view.BoardView;
 
 public class GameController {
+
   private final Stage stage;
   private final BoardView boardView;
   private final BoardGame game;
@@ -22,9 +23,10 @@ public class GameController {
     this.stage = stage;
     BoardGameFactory factory = new BoardGameFactory();
     this.game = factory.createGameFromFile(boardJson, players, diceCount);
-    factory.createSnakeAndLadderGameFromFile(boardJson,
-        players, diceCount);
+    //factory.createSnakeAndLadderGameFromFile(boardJson,
+        //players, diceCount);
     this.boardView = new BoardView(game.getBoard(), game.getPlayers());
+    game.addObserver(boardView);
     this.boardView.getRollDiceButton().setOnAction(e -> handleRoll());
   }
 
@@ -41,9 +43,9 @@ public class GameController {
     Player current = game.getCurrentPlayer();
     int fromId = current.getCurrentTile().getTileId();
 
-    int rolled = game.rollDice();
+    List<Integer> lastRoll = game.rollIndividual();
+    int rolled = lastRoll.stream().mapToInt(Integer::intValue).sum();
     boardView.updateDiceResult(rolled);
-
     game.moveCurrentPlayer(rolled);
     boardView.movePlayer(current, fromId);
 
@@ -51,11 +53,15 @@ public class GameController {
     boardView.movePlayer(current, fromId);
 
     if (game.gameDone()) {
-      boardView.showWinner(current.getName());
+      boardView.showWinner(game.getWinner().getName());
       boardView.getRollDiceButton().setDisable(true);
       return;
     }
-    game.nextPlayer();
+    if (!game.playerGetsExtraTurn(lastRoll)) {
+      game.nextPlayer();
+    }
+
     boardView.updateCurrentPlayer(game.getCurrentPlayer().getName());
   }
+
 }

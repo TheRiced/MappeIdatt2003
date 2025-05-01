@@ -7,6 +7,7 @@ import java.util.Map;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -29,7 +30,8 @@ import ntnu.idatt2003.model.Tile;
  * BoardView renders the game board and players using PNG icons
  * with fallbacks to text if resources aren't found.
  */
-public class BoardView extends BorderPane {
+public class BoardView extends BorderPane implements Observer {
+
     private static final int ROWS = 9;
     private static final int COLS = 10;
     private static final int TILE_SIZE = 60;
@@ -41,6 +43,7 @@ public class BoardView extends BorderPane {
     private final Text currentPlayerLabel = new Text("Current Player: ");
     private final Text rolledLabel = new Text("Last Roll: -");
     private final Button rollDiceButton = new Button("Roll Dice");
+    private final Label statusLabel = new Label();
 
     private final Map<Integer, StackPane> tilePanes = new HashMap<>();
 
@@ -140,7 +143,7 @@ public class BoardView extends BorderPane {
         sidebar.setPadding(new Insets(10));
         currentPlayerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
         rolledLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        sidebar.getChildren().addAll(currentPlayerLabel, rolledLabel, rollDiceButton);
+        sidebar.getChildren().addAll(currentPlayerLabel, rolledLabel, rollDiceButton, statusLabel);
     }
 
     public void placeAllPlayers() {
@@ -187,11 +190,29 @@ public class BoardView extends BorderPane {
     }
 
     public void showWinner(String name) {
-        rollDiceButton.setDisable(true);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Game Over");
-        alert.setHeaderText(null);
-        alert.setContentText(name + " wins the game!");
-        alert.showAndWait();
+      rollDiceButton.setDisable(true);
+      statusLabel.setText("Winner: " + name);
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Game Over");
+      alert.setHeaderText(null);
+      alert.setContentText(name + " wins the game!");
+      alert.showAndWait();
     }
+
+  @Override
+  public void onPlayerMoved(Player player, int fromTileId, int toTileId) {
+    movePlayer(player, fromTileId);
+  }
+
+  @Override
+  public void onNextPlayer(Player next) {
+    updateCurrentPlayer(next.getName());
+  }
+
+  @Override
+  public void onGameOver(Player winner) {
+    showWinner(winner.getName());
+    rollDiceButton.setDisable(true);
+  }
+
 }
