@@ -143,7 +143,7 @@ public class BoardView extends BorderPane implements Observer {
         sidebar.setPadding(new Insets(10));
         currentPlayerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
         rolledLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        sidebar.getChildren().addAll(currentPlayerLabel, rolledLabel, rollDiceButton);
+        sidebar.getChildren().addAll(currentPlayerLabel, rolledLabel, rollDiceButton, statusLabel);
     }
 
     public void placeAllPlayers() {
@@ -191,6 +191,7 @@ public class BoardView extends BorderPane implements Observer {
 
     public void showWinner(String name) {
       rollDiceButton.setDisable(true);
+      statusLabel.setText("Winner: " + name);
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Game Over");
       alert.setHeaderText(null);
