@@ -190,29 +190,29 @@ public class BoardView extends BorderPane implements Observer {
     }
 
     public void showWinner(String name) {
-      rollDiceButton.setDisable(true);
-      statusLabel.setText("Winner: " + name);
-      Alert alert = new Alert(Alert.AlertType.INFORMATION);
-      alert.setTitle("Game Over");
-      alert.setHeaderText(null);
-      alert.setContentText(name + " wins the game!");
-      alert.showAndWait();
+        rollDiceButton.setDisable(true);
+        statusLabel.setText("Winner: " + name);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText(null);
+        alert.setContentText(name + " wins the game!");
+        alert.showAndWait();
     }
 
-  @Override
-  public void onPlayerMoved(Player player, int fromTileId, int toTileId) {
-    movePlayer(player, fromTileId);
-  }
+    @Override
+    public void onPlayerMoved(Player player, int fromTileId, int toTileId) {
+        movePlayer(player, fromTileId);
+    }
 
-  @Override
-  public void onNextPlayer(Player next) {
-    updateCurrentPlayer(next.getName());
-  }
+    @Override
+    public void onNextPlayer(Player next) {
+        updateCurrentPlayer(next.getName());
+    }
 
-  @Override
-  public void onGameOver(Player winner) {
-    showWinner(winner.getName());
-    rollDiceButton.setDisable(true);
-  }
+    @Override
+    public void onGameOver(Player winner) {
+        showWinner(winner.getName());
+        rollDiceButton.setDisable(true);
+    }
 
 }
