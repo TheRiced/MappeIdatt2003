@@ -1,8 +1,7 @@
-package ntnu.idatt2003.model;
+package ntnu.idatt2003.model.ludo;
 
 import java.util.ArrayList;
 import java.util.List;
-import ntnu.idatt2003.core.LudoTileType;
 
 /**
  * A single square (tile) on the Ludo board.
@@ -14,16 +13,35 @@ public class LudoTile {
   private final LudoTileType type;
   private final List<Token> tokens = new ArrayList<>();
 
+  /**
+   * @param index position index on main loop or finish lane.
+   * @param type tile type (HOME, NORMAL, SAFE, FINISH_ENTRY, FINISH)
+   */
   public LudoTile(int index, LudoTileType type) {
     this.index = index;
     this.type = type;
   }
 
-
   public int getIndex() { return index; }
   public LudoTileType getType() { return type; }
 
+  /**
+   * @return unmodifiable list of tokens currently on this tile.
+   */
   public List<Token> getTokens() { return List.copyOf(tokens); }
+
+  /**
+   * @return number of tokens present on this tile.
+   */
+  public int occupantCount() { return tokens.size(); }
+
+  /**
+   * @param token the reference token.
+   * @return true if at least one token here belongs to a different player.
+   */
+  public boolean hasOpponent(Token token) {
+    return tokens.stream().anyMatch(other -> !other.getOwner().equals(token.getOwner()));
+  }
 
   /**
    * A token arrives in this tile.
@@ -45,6 +63,10 @@ public class LudoTile {
     tokens.add(token);
   }
 
+  /**
+   * Removes the token form this tile.
+   * @param token
+   */
   public void leave(Token token) {
     tokens.remove(token);
   }
