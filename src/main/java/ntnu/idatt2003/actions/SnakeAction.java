@@ -1,8 +1,6 @@
 package ntnu.idatt2003.actions;
 
-import ntnu.idatt2003.model.Player;
-
-import ntnu.idatt2003.model.Player;
+import ntnu.idatt2003.model.SnakeLadderPlayer;
 
 /**
  * Represents a snake action that moves the player backward to a lower tile.
@@ -25,7 +23,7 @@ public class SnakeAction implements TileAction {
    * @param player The player who landed on the snake tile.
    */
   @Override
-  public void perform(Player player) {
+  public void perform(SnakeLadderPlayer player) {
     player.setPendingMoveTo(destinationTileId);
   }
 

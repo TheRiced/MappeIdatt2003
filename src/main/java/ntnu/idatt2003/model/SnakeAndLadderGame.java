@@ -11,13 +11,13 @@ import ntnu.idatt2003.view.Observer;
 /**
  * Implements the game logic for Snakes and Ladders.
  */
-public class SnakeAndLadderGame implements BoardGame {
-  private final Board board;
-  private final List<Player> players;
+public class SnakeAndLadderGame implements BoardGame<SnakeLadderPlayer, SnakeLadderBoard> {
+  private final SnakeLadderBoard board;
+  private final List<SnakeLadderPlayer> players;
   private final Dice dice;
   private final List<Observer> observers = new ArrayList<>();
   private int currentPlayerIndex = 0;
-  private Player winner = null;
+  private SnakeLadderPlayer winner = null;
 
   /**
    * Constructs a SnakeAndLadderGame.
@@ -26,7 +26,7 @@ public class SnakeAndLadderGame implements BoardGame {
    * @param players the list of players.
    * @param numberOfDice the number of dice to use.
    */
-  public SnakeAndLadderGame(Board board, List<Player> players, int numberOfDice) {
+  public SnakeAndLadderGame(SnakeLadderBoard board, List<SnakeLadderPlayer> players, int numberOfDice) {
     if (players.size() < 2) throw new IllegalArgumentException("At least two player is required");
     this.board = board;
     this.players = new ArrayList<>(players);
@@ -46,7 +46,7 @@ public class SnakeAndLadderGame implements BoardGame {
 
   @Override
   public void moveCurrentPlayer(int steps) {
-    Player p = getCurrentPlayer();
+    SnakeLadderPlayer p = getCurrentPlayer();
     int from = p.getCurrentTile().getTileId();
     board.movePlayer(p, steps);
     if (p.hasPendingMove()) {
@@ -83,20 +83,20 @@ public class SnakeAndLadderGame implements BoardGame {
   public boolean gameDone() { return winner != null; }
 
   @Override
-  public Player getWinner() { return winner; }
+  public SnakeLadderPlayer getWinner() { return winner; }
 
   @Override
-  public Player getCurrentPlayer() {
+  public SnakeLadderPlayer getCurrentPlayer() {
     return players.get(currentPlayerIndex);
   }
 
   @Override
-  public List<Player> getPlayers() {
+  public List<SnakeLadderPlayer> getPlayers() {
     return List.copyOf(players);
   }
 
   @Override
-  public Board getBoard() { return board; }
+  public SnakeLadderBoard getBoard() { return board; }
 
   @Override
   public void addObserver(Observer observer) { observers.add(observer); }
@@ -104,19 +104,19 @@ public class SnakeAndLadderGame implements BoardGame {
   @Override
   public void removeObserver(Observer observer) { observers.remove(observer); }
 
-  private void notifyPlayerMoved(Player player, int from, int to) {
+  private void notifyPlayerMoved(SnakeLadderPlayer player, int from, int to) {
     Platform.runLater(() -> {
       for (var observer : observers) observer.onPlayerMoved(player, from, to);
     });
 
   }
-  private void notifyNextPlayer(Player next) {
+  private void notifyNextPlayer(SnakeLadderPlayer next) {
     Platform.runLater(() -> {
       for (var observer : observers) observer.onNextPlayer(next);
     });
 
   }
-  private void notifyGameOver(Player winner) {
+  private void notifyGameOver(SnakeLadderPlayer winner) {
     Platform.runLater(() -> {
       for (var observer : observers) observer.onGameOver(winner);
     });

@@ -1,6 +1,6 @@
 package ntnu.idatt2003.actions;
 
-import ntnu.idatt2003.model.Player;
+import ntnu.idatt2003.model.SnakeLadderPlayer;
 
 /**
  * Represents a bonus tile action where the player gets to roll again.
@@ -8,7 +8,7 @@ import ntnu.idatt2003.model.Player;
 public class BonusTileAction implements TileAction {
 
   @Override
-  public void perform(Player player) {
+  public void perform(SnakeLadderPlayer player) {
     player.setExtraTurn(true);
   }
 

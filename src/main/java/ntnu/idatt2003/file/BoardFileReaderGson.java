@@ -10,13 +10,13 @@ import java.nio.file.Path;
 import ntnu.idatt2003.actions.BonusTileAction;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
-import ntnu.idatt2003.model.Board;
+import ntnu.idatt2003.model.SnakeLadderBoard;
 import ntnu.idatt2003.model.Tile;
 
 public class BoardFileReaderGson implements BoardFileReader {
 
   @Override
-  public Board readBoard(Path path) throws Exception {
+  public SnakeLadderBoard readBoard(Path path) throws Exception {
     InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path.toString());
     if (inputStream == null) {
       throw new IllegalArgumentException("File not found: " + path);
@@ -25,7 +25,7 @@ public class BoardFileReaderGson implements BoardFileReader {
     JsonObject json = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
     JsonArray tileArray = json.getAsJsonArray("tiles");
 
-    Board board = new Board();
+    SnakeLadderBoard board = new SnakeLadderBoard();
 
     for (JsonElement element : tileArray) {
       JsonObject tileJson = element.getAsJsonObject();

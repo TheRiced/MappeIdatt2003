@@ -21,9 +21,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
-import ntnu.idatt2003.core.PlayerIcon;
-import ntnu.idatt2003.model.Board;
-import ntnu.idatt2003.model.Player;
+import ntnu.idatt2003.model.SnakeLadderBoard;
+import ntnu.idatt2003.model.SnakeLadderPlayer;
 import ntnu.idatt2003.model.Tile;
 
 /**
@@ -36,8 +35,8 @@ public class BoardView extends BorderPane implements Observer {
     private static final int COLS = 10;
     private static final int TILE_SIZE = 60;
 
-    private final Board board;
-    private final List<Player> players;
+    private final SnakeLadderBoard board;
+    private final List<SnakeLadderPlayer> players;
     private final GridPane boardGrid = new GridPane();
     private final VBox sidebar = new VBox(10);
     private final Text currentPlayerLabel = new Text("Current Player: ");
@@ -47,7 +46,7 @@ public class BoardView extends BorderPane implements Observer {
 
     private final Map<Integer, StackPane> tilePanes = new HashMap<>();
 
-    public BoardView(Board board, List<Player> players) {
+    public BoardView(SnakeLadderBoard board, List<SnakeLadderPlayer> players) {
         this.board = board;
         this.players = players;
         setupBoard();
@@ -147,7 +146,7 @@ public class BoardView extends BorderPane implements Observer {
     }
 
     public void placeAllPlayers() {
-        for (Player player : players) {
+        for (SnakeLadderPlayer player : players) {
             int id = player.getCurrentTile().getTileId();
             StackPane pane = tilePanes.get(id);
             ImageView iv = new ImageView(player.getIcon().getImage());
@@ -157,7 +156,7 @@ public class BoardView extends BorderPane implements Observer {
         }
     }
 
-    public void movePlayer(Player player, int oldTileId) {
+    public void movePlayer(SnakeLadderPlayer player, int oldTileId) {
         StackPane oldPane = tilePanes.get(oldTileId);
         if (oldPane != null) {
             oldPane.getChildren().removeIf(node -> node instanceof ImageView &&
@@ -185,7 +184,7 @@ public class BoardView extends BorderPane implements Observer {
         rolledLabel.setText("Last Roll: " + rolled);
     }
 
-    public Board getBoard() {
+    public SnakeLadderBoard getBoard() {
         return board;
     }
 
@@ -200,17 +199,17 @@ public class BoardView extends BorderPane implements Observer {
     }
 
   @Override
-  public void onPlayerMoved(Player player, int fromTileId, int toTileId) {
+  public void onPlayerMoved(SnakeLadderPlayer player, int fromTileId, int toTileId) {
     movePlayer(player, fromTileId);
   }
 
   @Override
-  public void onNextPlayer(Player next) {
+  public void onNextPlayer(SnakeLadderPlayer next) {
     updateCurrentPlayer(next.getName());
   }
 
   @Override
-  public void onGameOver(Player winner) {
+  public void onGameOver(SnakeLadderPlayer winner) {
     showWinner(winner.getName());
     rollDiceButton.setDisable(true);
   }
