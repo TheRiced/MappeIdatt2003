@@ -16,7 +16,7 @@ public class SnakeAndLadderGame implements BoardGame<SnakeLadderPlayer, SnakeLad
   private final SnakeLadderBoard board;
   private final List<SnakeLadderPlayer> players;
   private final Dice dice;
-  private final List<Observer> observers = new ArrayList<>();
+  private final List<Observer<SnakeLadderPlayer>> observers = new ArrayList<>();
   private int currentPlayerIndex = 0;
   private SnakeLadderPlayer winner = null;
 
@@ -100,10 +100,10 @@ public class SnakeAndLadderGame implements BoardGame<SnakeLadderPlayer, SnakeLad
   public SnakeLadderBoard getBoard() { return board; }
 
   @Override
-  public void addObserver(Observer observer) { observers.add(observer); }
+  public void addObserver(Observer<SnakeLadderPlayer> observer) { observers.add(observer); }
 
   @Override
-  public void removeObserver(Observer observer) { observers.remove(observer); }
+  public void removeObserver(Observer<SnakeLadderPlayer> observer) { observers.remove(observer); }
 
   private void notifyPlayerMoved(SnakeLadderPlayer player, int from, int to) {
     Platform.runLater(() -> {

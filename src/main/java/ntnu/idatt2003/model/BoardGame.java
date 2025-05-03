@@ -17,6 +17,6 @@ public interface BoardGame<P, B> {
   void nextPlayer();
   boolean gameDone();
   P getWinner();
-  void addObserver(Observer observer);
-  void removeObserver(Observer observer);
+  void addObserver(Observer<P> observer);
+  void removeObserver(Observer<P> observer);
 }

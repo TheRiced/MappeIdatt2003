@@ -29,7 +29,7 @@ import ntnu.idatt2003.model.snakeandladder.Tile;
  * BoardView renders the game board and players using PNG icons
  * with fallbacks to text if resources aren't found.
  */
-public class BoardView extends BorderPane implements Observer {
+public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer> {
 
     private static final int ROWS = 9;
     private static final int COLS = 10;
