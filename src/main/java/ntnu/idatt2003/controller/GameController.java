@@ -21,12 +21,19 @@ public class GameController {
   public GameController(Stage stage, Path boardJson, List<Player> players, int diceCount) throws
       Exception {
     this.stage = stage;
+
+
     BoardGameFactory factory = new BoardGameFactory();
     this.game = factory.createGameFromFile(boardJson, players, diceCount);
     //factory.createSnakeAndLadderGameFromFile(boardJson,
-        //players, diceCount);
+    //players, diceCount);
     this.boardView = new BoardView(game.getBoard(), game.getPlayers());
+
+    boardView.drawActions();
+
     game.addObserver(boardView);
+
+
     this.boardView.getRollDiceButton().setOnAction(e -> handleRoll());
   }
 
