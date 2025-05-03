@@ -1,4 +1,4 @@
-package ntnu.idatt2003.model;
+package ntnu.idatt2003.model.snakeandladder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.application.Platform;
 import ntnu.idatt2003.core.Dice;
 import ntnu.idatt2003.file.HandleCSVPlayer;
+import ntnu.idatt2003.model.BoardGame;
 import ntnu.idatt2003.view.Observer;
 
 /**

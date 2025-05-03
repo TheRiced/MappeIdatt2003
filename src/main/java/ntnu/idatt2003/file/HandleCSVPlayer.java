@@ -4,7 +4,7 @@ package ntnu.idatt2003.file;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-import ntnu.idatt2003.model.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 
 /**
  * Handle saving player data to a CSV file.

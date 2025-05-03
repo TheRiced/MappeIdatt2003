@@ -21,9 +21,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
-import ntnu.idatt2003.model.SnakeLadderBoard;
-import ntnu.idatt2003.model.SnakeLadderPlayer;
-import ntnu.idatt2003.model.Tile;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 
 /**
  * BoardView renders the game board and players using PNG icons

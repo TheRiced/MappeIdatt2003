@@ -8,9 +8,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import ntnu.idatt2003.file.BoardFileReaderGson;
-import ntnu.idatt2003.model.SnakeLadderBoard;
-import ntnu.idatt2003.model.SnakeLadderPlayer;
-import ntnu.idatt2003.model.Tile;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 import ntnu.idatt2003.view.PlayerFormData;
 import ntnu.idatt2003.view.PlayerSetupPage;
 

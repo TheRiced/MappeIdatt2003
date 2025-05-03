@@ -1,6 +1,6 @@
 package ntnu.idatt2003.view;
 
-import ntnu.idatt2003.model.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 
 public interface Observer {
 

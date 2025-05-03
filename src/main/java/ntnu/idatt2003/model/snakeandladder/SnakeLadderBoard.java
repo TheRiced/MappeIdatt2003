@@ -1,4 +1,4 @@
-package ntnu.idatt2003.model;
+package ntnu.idatt2003.model.snakeandladder;
 
 import java.util.HashMap;
 import java.util.Map;

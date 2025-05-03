@@ -10,8 +10,8 @@ import java.nio.file.Path;
 import ntnu.idatt2003.actions.BonusTileAction;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
-import ntnu.idatt2003.model.SnakeLadderBoard;
-import ntnu.idatt2003.model.Tile;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 
 public class BoardFileReaderGson implements BoardFileReader {
 

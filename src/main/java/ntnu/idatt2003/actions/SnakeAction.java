@@ -1,6 +1,6 @@
 package ntnu.idatt2003.actions;
 
-import ntnu.idatt2003.model.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 
 /**
  * Represents a snake action that moves the player backward to a lower tile.

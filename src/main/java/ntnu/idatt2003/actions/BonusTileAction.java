@@ -1,6 +1,6 @@
 package ntnu.idatt2003.actions;
 
-import ntnu.idatt2003.model.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 
 /**
  * Represents a bonus tile action where the player gets to roll again.

@@ -1,6 +1,6 @@
 package ntnu.idatt2003.actions;
 
-import ntnu.idatt2003.model.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 
 /**
  * Represents an action that can be performed when a player lands on a specific tile.

@@ -7,8 +7,8 @@ import javafx.stage.Stage;
 
 import ntnu.idatt2003.factory.BoardGameFactory;
 import ntnu.idatt2003.model.BoardGame;
-import ntnu.idatt2003.model.SnakeLadderBoard;
-import ntnu.idatt2003.model.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 import ntnu.idatt2003.view.BoardView;
 
 public class GameController {

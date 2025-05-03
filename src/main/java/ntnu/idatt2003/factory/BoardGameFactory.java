@@ -5,11 +5,11 @@ import java.util.List;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
 import ntnu.idatt2003.file.BoardFileReaderGson;
-import ntnu.idatt2003.model.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
 import ntnu.idatt2003.model.BoardGame;
-import ntnu.idatt2003.model.SnakeLadderPlayer;
-import ntnu.idatt2003.model.SnakeAndLadderGame;
-import ntnu.idatt2003.model.Tile;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.SnakeAndLadderGame;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 
 /**
  * A factory class for creating board games.

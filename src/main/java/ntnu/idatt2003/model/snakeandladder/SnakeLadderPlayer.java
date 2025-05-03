@@ -1,6 +1,7 @@
-package ntnu.idatt2003.model;
+package ntnu.idatt2003.model.snakeandladder;
 
 import ntnu.idatt2003.core.PlayerIcon;
+import ntnu.idatt2003.model.Player;
 
 /**
  * Represents a player in the board game.
