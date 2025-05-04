@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.scene.shape.Ellipse;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
@@ -18,8 +17,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
@@ -75,7 +72,6 @@ public class BoardView extends BorderPane implements Observer {
             for (int col = 0; col < COLS; col++) {
                 int indexInRow = (actualRow % 2 == 0) ? col : (COLS - 1 - col);
                 int tileId = actualRow * COLS + indexInRow + 1;
-                Tile tile = board.getTile(tileId);
                 StackPane pane = new StackPane();
                 pane.setPrefSize(TILE_SIZE, TILE_SIZE);
                 Rectangle rect = new Rectangle(TILE_SIZE, TILE_SIZE);
@@ -136,7 +132,6 @@ public class BoardView extends BorderPane implements Observer {
 
         for (int i = 0; i <= segments; i++) {
             double t = (double) i / segments;
-            // base point along straight line
             double bx = p1.getX() + dx * t;
             double by = p1.getY() + dy * t;
             // sin wave with (wiggles) cycles over t in [0,1]
