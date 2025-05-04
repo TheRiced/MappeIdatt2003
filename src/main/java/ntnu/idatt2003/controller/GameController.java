@@ -43,7 +43,7 @@ public class GameController {
     stage.show();
 
     boardView.updateCurrentPlayer(game.getCurrentPlayer().getName());
-    boardView.placeAllPlayers();
+
   }
 
   private void handleRoll() {
