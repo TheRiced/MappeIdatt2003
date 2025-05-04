@@ -17,10 +17,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -51,7 +56,9 @@ public class BoardView extends BorderPane implements Observer {
     private final Text rolledLabel = new Text("Last Roll: -");
     private final Button rollDiceButton = new Button("Roll Dice");
     private final Label statusLabel = new Label();
+
     private final Map<Integer, StackPane> tilePanes = new HashMap<>();
+    private final Map<Player, ImageView> playerIcons = new HashMap<>();
 
     public BoardView(Board board, List<Player> players) {
         this.board = board;
@@ -115,63 +122,64 @@ public class BoardView extends BorderPane implements Observer {
     /**
      * Draws a sinuous snake curve from p1 to p2.
      */
+
     private void drawSnake(Point2D p1, Point2D p2) {
-        int wiggles = 3;                    // number of full back-and-forths
-        int segments = wiggles * 20;       // resolution of the curve
+        int wiggles = 2;
+        int segments = wiggles * 20;
+
+        // Build the wavy body
         Polyline snake = new Polyline();
         snake.setStroke(Color.FORESTGREEN);
-        snake.setStrokeWidth(6);
+        snake.setStrokeWidth(TILE_SIZE * 0.2);
+        snake.setStrokeLineCap(StrokeLineCap.ROUND);
+        snake.setStrokeLineJoin(StrokeLineJoin.ROUND);
 
         double dx = p2.getX() - p1.getX();
         double dy = p2.getY() - p1.getY();
         double length = Math.hypot(dx, dy);
-        // unit direction from p1 to p2
         double ux = dx / length, uy = dy / length;
-        // perpendicular unit vector for offset
         double px = -uy, py = ux;
 
         for (int i = 0; i <= segments; i++) {
-            double t = (double) i / segments;
+            double t = (double)i / segments;
             double bx = p1.getX() + dx * t;
             double by = p1.getY() + dy * t;
-            // sin wave with (wiggles) cycles over t in [0,1]
-            double sineValue = Math.sin(2 * Math.PI * wiggles * t);
-            double amplitude = TILE_SIZE * 0.2;
-            double offset = sineValue * amplitude;
-            // apply perpendicular offset
+            double sine = Math.sin(2 * Math.PI * wiggles * t);
+            double offset = sine * TILE_SIZE * 0.25;
             double sx = bx + px * offset;
             double sy = by + py * offset;
             snake.getPoints().addAll(sx, sy);
         }
         overlay.getChildren().add(snake);
 
-
-        // Draw triangular head at start
-        double headLength = TILE_SIZE * 0.5;
-        double headWidth = TILE_SIZE * 0.2;
-
-        // Tip of triangle
-        double tipX = p1.getX() + ux * headLength;
-        double tipY = p1.getY() + uy * headLength;
-        // Base corners
-        double leftX = p1.getX() + px * headWidth;
-        double leftY = p1.getY() + py * headWidth;
-        double rightX = p1.getX() - px * headWidth;
-        double rightY = p1.getY() - py * headWidth;
-
-        Polygon head = new Polygon();
-        head.getPoints().addAll(
-            leftX, leftY,
-            rightX, rightY,
-            tipX, tipY
-        );
+        // Draw round head
+        // Draw round head
+        double headRadius = TILE_SIZE * 0.20;
+        Circle head = new Circle(p1.getX(), p1.getY(), headRadius);
         head.setFill(Color.FORESTGREEN);
         head.setStroke(Color.FORESTGREEN);
-        head.setStrokeWidth(1);
         overlay.getChildren().add(head);
-        head.toFront();
-    }
 
+        double eyeDistance = headRadius * 0.25;
+        double eyeOffset  = headRadius * 0.45;
+        double eyeRadius  = TILE_SIZE * 0.04;
+        double raise      = headRadius * 0.6;
+
+// Left eye
+        double lx = p1.getX() + ux * eyeDistance + px * eyeOffset;
+        double ly = p1.getY() + uy * eyeDistance + py * eyeOffset - raise;
+        Circle leftEye = new Circle(lx, ly, eyeRadius);
+        leftEye.setFill(Color.BLACK);
+
+// Right eye
+        double rx = p1.getX() + ux * eyeDistance - px * eyeOffset;
+        double ry = p1.getY() + uy * eyeDistance - py * eyeOffset - raise;
+        Circle rightEye = new Circle(rx, ry, eyeRadius);
+        rightEye.setFill(Color.BLACK);
+
+        overlay.getChildren().addAll(leftEye, rightEye);
+
+    }
 
 
     /** Draws a ladder with rails and rungs from p1 to p2. */
@@ -221,22 +229,6 @@ public class BoardView extends BorderPane implements Observer {
 
 
 
-
-    private ImageView loadImageView(String path, int w, int h) {
-        InputStream is = getClass().getResourceAsStream(path);
-        if (is == null) return null;
-        Image img = new Image(is, w, h, true, true);
-        ImageView iv = new ImageView(img);
-        iv.setFitWidth(w);
-        iv.setFitHeight(h);
-        return iv;
-    }
-
-    private void addFallbackSymbol(StackPane stack, String symbol) {
-        Text t = new Text(symbol);
-        t.setFont(Font.font(18));
-        stack.getChildren().add(t);
-    }
 
     private boolean isRedTile(int id) {
         return switch (id) {
@@ -328,12 +320,10 @@ public class BoardView extends BorderPane implements Observer {
      * @param fromTileId
      * @param toTileId
      */
-
     @Override
     public void onPlayerMoved(Player player, int fromTileId, int toTileId) {
         movePlayer(player, fromTileId);
     }
-
 
     /**
      *
