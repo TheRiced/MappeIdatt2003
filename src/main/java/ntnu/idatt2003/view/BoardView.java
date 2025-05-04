@@ -322,6 +322,7 @@ public class BoardView extends BorderPane implements Observer {
         alert.showAndWait();
     }
 
+
     /**
      *
      * @param player
@@ -333,6 +334,7 @@ public class BoardView extends BorderPane implements Observer {
     public void onPlayerMoved(Player player, int fromTileId, int toTileId) {
         movePlayer(player, fromTileId);
     }
+
 
 
     /**
@@ -349,6 +351,7 @@ public class BoardView extends BorderPane implements Observer {
      *
      * @param next
      */
+
     @Override
     public void onNextPlayer(Player next) {
         updateCurrentPlayer(next.getName());
