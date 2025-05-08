@@ -2,6 +2,9 @@ package ntnu.idatt2003.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,14 +12,14 @@ import ntnu.idatt2003.core.PlayerIcon;
 
 class PlayerTest {
 
-  private Board board;
+  private SnakeLadderBoard board;
   private Tile tileA;
   private Tile tileB;
-  private Player mother;
+  private SnakeLadderPlayer mother;
 
   @BeforeEach
   void setUp() {
-    board = new Board();
+    board = new SnakeLadderBoard();
     tileA = new Tile(1);
     tileB = new Tile(2);
     board.addTile(tileA);
@@ -25,7 +28,7 @@ class PlayerTest {
     tileA.setNextTileId(2);
     tileB.setNextTileId(0);
 
-    mother = new Player("Mother", 30, PlayerIcon.CAT, tileA);
+    mother = new SnakeLadderPlayer("Mother", 30, PlayerIcon.CAT, tileA);
   }
 
   @Test
@@ -84,12 +87,12 @@ class PlayerTest {
 
   @Test
   void compareTo_ordersByAge() {
-    Player younger = new Player("Young", 20, PlayerIcon.DOG, tileA);
-    Player older  = new Player("Old",   40, PlayerIcon.CAT, tileA);
+    SnakeLadderPlayer younger = new SnakeLadderPlayer("Young", 20, PlayerIcon.DOG, tileA);
+    SnakeLadderPlayer older  = new SnakeLadderPlayer("Old",   40, PlayerIcon.CAT, tileA);
 
     assertTrue(younger.compareTo(older) < 0, "Younger player should compare as less than older");
     assertTrue(older.compareTo(younger) > 0, "Older player should compare as greater than younger");
-    Player sameAge = new Player("Clone", 30, PlayerIcon.TOP_HAT, tileA);
+    SnakeLadderPlayer sameAge = new SnakeLadderPlayer("Clone", 30, PlayerIcon.TOP_HAT, tileA);
     assertEquals(0, mother.compareTo(sameAge));
   }
 }
