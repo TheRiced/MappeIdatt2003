@@ -16,9 +16,7 @@ public class SnakeLadderBoard {
      *
      * @param tile the tile to add.
      */
-    public void addTile(Tile tile) {
-        tiles.put(tile.getTileId(), tile);
-    }
+    public void addTile(Tile tile) { tiles.put(tile.getTileId(), tile); }
 
     /**
      * Gets the tile by its ID.
@@ -79,18 +77,24 @@ public class SnakeLadderBoard {
             if (next.getNextTileId() != 0) {
                 next = getTile(next.getNextTileId());
             } else {
-                break; // Reached the end of the board
+                break;
             }
         }
 
-        // Set new tile
+
         player.setCurrentTile(next);
         next.landPlayer(player);
-
-        // Apply tile action if exists (like ladder/snake)
         next.applyAction(player);
 
-        // If there's a pending move from a tile action, process it
+
+        log.append(player.getName())
+            .append(" is now on tile ")
+            .append(player.getCurrentTile().getTileId())
+            .append("\n");
+
+
+
+
         if (player.hasPendingMove()) {
             Tile destination = getTile(player.getPendingMoveTo());
             if (destination != null) {

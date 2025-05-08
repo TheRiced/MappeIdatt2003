@@ -1,9 +1,9 @@
-package ntnu.idatt2003;
+package ntnu.idatt2003.core;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
+
 
 
 class DieTest {
@@ -14,7 +14,7 @@ class DieTest {
         die = new Die();
     }
 
-    @Test
+
     @RepeatedTest(50)
     void testRoll() {
         die.roll();

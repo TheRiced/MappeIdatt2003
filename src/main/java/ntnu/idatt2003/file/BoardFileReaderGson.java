@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import ntnu.idatt2003.actions.BonusTileAction;
 import ntnu.idatt2003.actions.LadderAction;
@@ -18,6 +19,10 @@ public class BoardFileReaderGson implements BoardFileReader {
   @Override
   public SnakeLadderBoard readBoard(Path path) throws Exception {
     InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path.toString());
+    if (inputStream == null) {
+      // Fallback to file system
+      inputStream = Files.newInputStream(path);
+    }
     if (inputStream == null) {
       throw new IllegalArgumentException("File not found: " + path);
     }
