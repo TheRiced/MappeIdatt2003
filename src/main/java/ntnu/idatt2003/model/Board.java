@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class Board {
     private final Map<Integer, Tile> tiles = new HashMap<>();
-
+    private int diceCount = 1;
     /**
      * Adds a tile to the board.
      *
@@ -69,6 +69,7 @@ public class Board {
      */
     public String movePlayer(Player player, int steps) {
         StringBuilder log = new StringBuilder();
+
 
         Tile current = player.getCurrentTile();
         current.leavePlayer(player);
@@ -164,4 +165,7 @@ public class Board {
         }
     }
 
+  public int getDiceCount() {
+        return  diceCount;
+  }
 }
