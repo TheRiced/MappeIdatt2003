@@ -1,12 +1,12 @@
 package ntnu.idatt2003.view;
 
-import ntnu.idatt2003.model.Player;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 
-public interface Observer {
+public interface Observer<P> {
 
-  void onPlayerMoved(Player player, int fromTileId, int toTileId);
-  void onNextPlayer(Player next);
-  void onGameOver(Player winner);
+  void onPlayerMoved(P player, int fromTileId, int toTileId);
+  void onNextPlayer(P next);
+  void onGameOver(P winner);
 
   void placeAllPlayers();
 }

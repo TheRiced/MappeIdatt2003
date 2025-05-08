@@ -1,4 +1,4 @@
-package ntnu.idatt2003.core;
+package ntnu.idatt2003.model.ludo;
 
 /**
  * Defines the different types of tiles on Ludo board.

@@ -1,8 +1,6 @@
-package ntnu.idatt2003.model;
+package ntnu.idatt2003.model.ludo;
 
 import java.util.Objects;
-import ntnu.idatt2003.core.LudoTileType;
-import ntnu.idatt2003.core.PlayerColor;
 
 /**
  * Represents a single token in a Ludo game.
@@ -11,15 +9,24 @@ import ntnu.idatt2003.core.PlayerColor;
 public class Token {
   private final int id;
   private final LudoPlayer owner;
+  private final TokenColor color;
   private final LudoTile homeTile;
   private LudoTile position;
 
 
-  public Token(int id, LudoPlayer owner, LudoTile homeTile) {
+  /**
+   * @param id unique identifier (0-3) per player
+   * @param owner the LudoPlayer who owns this token
+   * @param color this token's color (must match owner)
+   * @param homeTile the HOME tile where this token starts
+   */
+  public Token(int id, LudoPlayer owner, TokenColor color, LudoTile homeTile) {
     if (owner == null) throw new IllegalArgumentException("Owner can not be null");
+    if (color == null) throw new IllegalArgumentException("Color can not be null");
     if (homeTile == null) throw new IllegalArgumentException("Home tile can not be null");
     this.id = id;
     this.owner = owner;
+    this.color = color;
     this.homeTile = homeTile;
     this.position = homeTile;
     homeTile.enter(this);
@@ -27,22 +34,23 @@ public class Token {
 
   public int getId() { return id; }
   public LudoPlayer getOwner() { return owner; }
-  public PlayerColor getColor() { return owner.getColor(); }
+  public TokenColor getColor() { return color; }
   public LudoTile getPosition() { return position; }
 
   /**
-   * Moves this token onto the given tile, handling removal from the previous tile and addition to
-   * the new one.
-   * @param newTile the next tile on the board.
+   * Moves this token onto the given tile, handling removal from the previous tile and placement to
+   * the new tile.
+   * @param newTile the destination tile (must not be null)
    */
   public void moveTo(LudoTile newTile) {
+    if (newTile == null) throw new IllegalArgumentException("New tile can not be null");
     position.leave(this);
     newTile.enter(this);
     this.position = newTile;
   }
 
   /**
-   * Sends the token back to its home area.
+   * Sends the token back to its HOME tile.
    */
   public void sendHome() {
     moveTo(homeTile);

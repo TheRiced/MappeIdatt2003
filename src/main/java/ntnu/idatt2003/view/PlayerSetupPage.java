@@ -160,9 +160,6 @@ public class PlayerSetupPage extends BorderPane {
 
     }
 
-    //errorLabel.setText("");
-    //fieldsBox.getChildren().add(errorLabel);
-
     // Add and enable the Start button once fields exist
     HBox startBox = new HBox(start);
     startBox.setAlignment(Pos.CENTER);

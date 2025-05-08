@@ -8,9 +8,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import ntnu.idatt2003.file.BoardFileReaderGson;
-import ntnu.idatt2003.model.Board;
-import ntnu.idatt2003.model.Player;
-import ntnu.idatt2003.model.Tile;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 import ntnu.idatt2003.view.PlayerFormData;
 import ntnu.idatt2003.view.PlayerSetupPage;
 
@@ -46,10 +46,10 @@ public class PlayerSetupController {
     }
 
     try {
-      Board board = new BoardFileReaderGson().readBoard(Path.of("snakes_and_ladders_90.json"));
+      SnakeLadderBoard board = new BoardFileReaderGson().readBoard(Path.of("snakes_and_ladders_90.json"));
       Tile startTile = board.getTile(1);
-      List<Player> players = forms.stream()
-          .map(f -> new Player(f.name(), f.age(), f.icon(), startTile))
+      List<SnakeLadderPlayer> players = forms.stream()
+          .map(f -> new SnakeLadderPlayer(f.name(), f.age(), f.icon(), startTile))
           .collect(Collectors.toList());
 
       GameController gameCtrl =

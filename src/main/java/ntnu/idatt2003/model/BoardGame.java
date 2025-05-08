@@ -6,17 +6,17 @@ import ntnu.idatt2003.view.Observer;
 /**
  * Interface for a board game.
  */
-public interface BoardGame {
-  Player getCurrentPlayer();
-  List<Player> getPlayers();
-  Board getBoard();
+public interface BoardGame<P, B> {
+  P getCurrentPlayer();
+  List<P> getPlayers();
+  B getBoard();
   List<Integer> rollIndividual();
   int rollDice();
   void moveCurrentPlayer(int steps);
   boolean playerGetsExtraTurn(List<Integer> lastRoll);
   void nextPlayer();
   boolean gameDone();
-  Player getWinner();
-  void addObserver(Observer observer);
-  void removeObserver(Observer observer);
+  P getWinner();
+  void addObserver(Observer<P> observer);
+  void removeObserver(Observer<P> observer);
 }
