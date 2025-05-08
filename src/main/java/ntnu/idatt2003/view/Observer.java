@@ -8,5 +8,6 @@ public interface Observer {
   void onNextPlayer(Player next);
   void onGameOver(Player winner);
 
-  }
+  void placeAllPlayers();
+}
 
