@@ -1,15 +1,19 @@
 package ntnu.idatt2003.view;
 
-import java.io.InputStream;
+
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import javafx.util.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -17,15 +21,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -35,11 +32,16 @@ import ntnu.idatt2003.actions.TileAction;
 import ntnu.idatt2003.model.Board;
 import ntnu.idatt2003.model.Player;
 import ntnu.idatt2003.model.Tile;
+import ntnu.idatt2003.view.actions.ActionView;
+import ntnu.idatt2003.view.actions.LadderActionView;
+import ntnu.idatt2003.view.actions.SnakeActionView;
 
 /**
  * BoardView renders the game board and players using PNG icons
  * with fallbacks to text if resources aren't found.
  */
+
+
 public class BoardView extends BorderPane implements Observer {
 
     private static final int ROWS = 9;
@@ -50,7 +52,8 @@ public class BoardView extends BorderPane implements Observer {
     private final List<Player> players;
     private final GridPane boardGrid = new GridPane();
     private final Pane overlay = new Pane();
-    private final StackPane boardContainer = new StackPane(boardGrid, overlay);
+    private final Pane tokenLayer = new Pane();
+    private final StackPane boardContainer = new StackPane(boardGrid, overlay, tokenLayer);
     private final VBox sidebar = new VBox(10);
     private final Text currentPlayerLabel = new Text("Current Player: ");
     private final Text rolledLabel = new Text("Last Roll: -");
@@ -60,16 +63,35 @@ public class BoardView extends BorderPane implements Observer {
     private final Map<Integer, StackPane> tilePanes = new HashMap<>();
     private final Map<Player, ImageView> playerIcons = new HashMap<>();
 
-    public BoardView(Board board, List<Player> players) {
-        this.board = board;
-        this.players = players;
+    private final Animator animator;
+
+    public BoardView(Board board, List<Player> players, Animator animator) {
+        this.board    = board;
+        this.players  = players;
+        this.animator = animator;
         setupBoard();
+
+        boardContainer.getChildren().setAll(boardGrid, overlay);
+        boardContainer.setAlignment(Pos.TOP_LEFT);
+
+
+        overlay.prefWidthProperty().bind(boardGrid.widthProperty());
+        overlay.prefHeightProperty().bind(boardGrid.heightProperty());
+        overlay.setMouseTransparent(true);
+
+
+        boardContainer.getChildren().setAll(boardGrid, overlay, tokenLayer);
+
+
+        placeAllPlayers();
+
         setupSidebar();
         setCenter(boardContainer);
         setRight(sidebar);
-        placeAllPlayers();
         drawActions();
+
     }
+
 
 
     private void setupBoard() {
@@ -104,115 +126,28 @@ public class BoardView extends BorderPane implements Observer {
 
     public void drawActions() {
         overlay.getChildren().clear();
+
         for (Tile tile : board.getTiles()) {
             TileAction a = tile.getAction();
-            Point2D p1, p2;
-            if (a instanceof SnakeAction snake) {
-                p1 = tileCenter(tile.getTileId());
-                p2 = tileCenter(snake.getDestinationTileId());
-                drawSnake(p1, p2);
-            } else if (a instanceof LadderAction ladder) {
-                p1 = tileCenter(tile.getTileId());
-                p2 = tileCenter(ladder.getDestinationTileId());
-                drawLadder(p1, p2);
+            Point2D p1 = tileCenter(tile.getTileId());
+            Point2D p2 = (a instanceof SnakeAction)
+                ? tileCenter(((SnakeAction)a).getDestinationTileId())
+                : (a instanceof LadderAction)
+                ? tileCenter(((LadderAction)a).getDestinationTileId())
+                : null;
+
+            if (p2 != null) {
+                ActionView av = (a instanceof SnakeAction)
+                    ? new SnakeActionView(2, TILE_SIZE * .2)
+                    :         new LadderActionView(5, TILE_SIZE * .15, 4, 3);
+
+                overlay.getChildren().add(av.build(p1, p2));
             }
         }
     }
 
-    /**
-     * Draws a sinuous snake curve from p1 to p2.
-     */
-
-    private void drawSnake(Point2D p1, Point2D p2) {
-        int wiggles = 2;
-        int segments = wiggles * 20;
-
-        // Build the wavy body
-        Polyline snake = new Polyline();
-        snake.setStroke(Color.FORESTGREEN);
-        snake.setStrokeWidth(TILE_SIZE * 0.2);
-        snake.setStrokeLineCap(StrokeLineCap.ROUND);
-        snake.setStrokeLineJoin(StrokeLineJoin.ROUND);
-
-        double dx = p2.getX() - p1.getX();
-        double dy = p2.getY() - p1.getY();
-        double length = Math.hypot(dx, dy);
-        double ux = dx / length, uy = dy / length;
-        double px = -uy, py = ux;
-
-        for (int i = 0; i <= segments; i++) {
-            double t = (double)i / segments;
-            double bx = p1.getX() + dx * t;
-            double by = p1.getY() + dy * t;
-            double sine = Math.sin(2 * Math.PI * wiggles * t);
-            double offset = sine * TILE_SIZE * 0.25;
-            double sx = bx + px * offset;
-            double sy = by + py * offset;
-            snake.getPoints().addAll(sx, sy);
-        }
-        overlay.getChildren().add(snake);
-
-        // Draw round head
-        // Draw round head
-        double headRadius = TILE_SIZE * 0.20;
-        Circle head = new Circle(p1.getX(), p1.getY(), headRadius);
-        head.setFill(Color.FORESTGREEN);
-        head.setStroke(Color.FORESTGREEN);
-        overlay.getChildren().add(head);
-
-        double eyeDistance = headRadius * 0.25;
-        double eyeOffset  = headRadius * 0.45;
-        double eyeRadius  = TILE_SIZE * 0.04;
-        double raise      = headRadius * 0.6;
-
-// Left eye
-        double lx = p1.getX() + ux * eyeDistance + px * eyeOffset;
-        double ly = p1.getY() + uy * eyeDistance + py * eyeOffset - raise;
-        Circle leftEye = new Circle(lx, ly, eyeRadius);
-        leftEye.setFill(Color.BLACK);
-
-// Right eye
-        double rx = p1.getX() + ux * eyeDistance - px * eyeOffset;
-        double ry = p1.getY() + uy * eyeDistance - py * eyeOffset - raise;
-        Circle rightEye = new Circle(rx, ry, eyeRadius);
-        rightEye.setFill(Color.BLACK);
-
-        overlay.getChildren().addAll(leftEye, rightEye);
-
-    }
 
 
-    /** Draws a ladder with rails and rungs from p1 to p2. */
-    private void drawLadder(Point2D p1, Point2D p2) {
-        int rungCount = 5;
-        double railOffset = TILE_SIZE * 0.15;
-        double dx = p2.getX() - p1.getX();
-        double dy = p2.getY() - p1.getY();
-        double length = Math.hypot(dx, dy);
-        double ux = dx / length, uy = dy / length;
-        double px = -uy, py = ux;
-        Point2D leftStart  = new Point2D(p1.getX() + px * railOffset, p1.getY() + py * railOffset);
-        Point2D leftEnd    = new Point2D(p2.getX() + px * railOffset, p2.getY() + py * railOffset);
-        Point2D rightStart = new Point2D(p1.getX() - px * railOffset, p1.getY() - py * railOffset);
-        Point2D rightEnd   = new Point2D(p2.getX() - px * railOffset, p2.getY() - py * railOffset);
-        Line rail1 = new Line(leftStart.getX(), leftStart.getY(), leftEnd.getX(), leftEnd.getY());
-        Line rail2 = new Line(rightStart.getX(), rightStart.getY(), rightEnd.getX(), rightEnd.getY());
-        rail1.setStroke(Color.SADDLEBROWN); rail1.setStrokeWidth(4);
-        rail2.setStroke(Color.SADDLEBROWN); rail2.setStrokeWidth(4);
-        overlay.getChildren().addAll(rail1, rail2);
-        for (int i = 1; i <= rungCount; i++) {
-            double t = (double)i / (rungCount + 1);
-            double mx = p1.getX() + dx * t;
-            double my = p1.getY() + dy * t;
-            double x1 = mx + px * railOffset;
-            double y1 = my + py * railOffset;
-            double x2 = mx - px * railOffset;
-            double y2 = my - py * railOffset;
-            Line rung = new Line(x1, y1, x2, y2);
-            rung.setStroke(Color.ROSYBROWN); rung.setStrokeWidth(3);
-            overlay.getChildren().add(rung);
-        }
-    }
 
     /** Computes the center of a zig-zag tileId. */
     private Point2D tileCenter(int tileId) {
@@ -255,38 +190,14 @@ public class BoardView extends BorderPane implements Observer {
         sidebar.getChildren().addAll(currentPlayerLabel, rolledLabel, rollDiceButton, statusLabel);
     }
 
-    public void placeAllPlayers() {
-        for (Player player : players) {
-            int id = player.getCurrentTile().getTileId();
-            StackPane pane = tilePanes.get(id);
-            ImageView iv = new ImageView(player.getIcon().getImage());
-            iv.setFitWidth(32);
-            iv.setFitHeight(32);
-            pane.getChildren().add(iv);
+
+    public void startPlayerDrift(Player player) {
+        ImageView iv = playerIcons.get(player);
+        if (iv != null) {
+            animator.drift(iv);
         }
     }
 
-    /**
-     *
-     * @param player
-     * @param oldTileId
-     */
-
-    public void movePlayer(Player player, int oldTileId) {
-        StackPane oldPane = tilePanes.get(oldTileId);
-        if (oldPane != null) {
-            oldPane.getChildren().removeIf(node -> node instanceof ImageView &&
-                ((ImageView)node).getImage() == player.getIcon().getImage());
-        }
-        int newId = player.getCurrentTile().getTileId();
-        StackPane newPane = tilePanes.get(newId);
-        if (newPane != null) {
-            ImageView iv = new ImageView(player.getIcon().getImage());
-            iv.setFitWidth(32);
-            iv.setFitHeight(32);
-            newPane.getChildren().add(iv);
-        }
-    }
 
     public Button getRollDiceButton() {
         return rollDiceButton;
@@ -296,13 +207,28 @@ public class BoardView extends BorderPane implements Observer {
         currentPlayerLabel.setText("Current player: " + playerName);
     }
 
+    /**
+     *
+     * @param rolled
+     */
+
     public void updateDiceResult(int rolled) {
         rolledLabel.setText("Last Roll: " + rolled);
     }
 
+    /**
+     *
+     * @return
+     */
+
     public Board getBoard() {
         return board;
     }
+
+    /**
+     *
+     * @param name
+     */
 
     public void showWinner(String name) {
         rollDiceButton.setDisable(true);
@@ -314,15 +240,93 @@ public class BoardView extends BorderPane implements Observer {
         alert.showAndWait();
     }
 
+
     /**
      *
+     *
      * @param player
-     * @param fromTileId
-     * @param toTileId
+     * @param fromId
+     * @param toId
+     * @param onFinished
      */
+
+
+
+    public void animatePlayerMove(Player player, int fromId, int toId, Runnable onFinished) {
+        ImageView iv = playerIcons.get(player);
+        if (iv == null) return;
+        iv.toFront();
+
+        int delta = toId - fromId, steps = Math.abs(delta), dir = Integer.signum(delta);
+        List<Point2D> path = IntStream.rangeClosed(1, steps)
+            .mapToObj(i -> {
+                Point2D c = tileCenter(fromId + i*dir);
+                return new Point2D(c.getX() - iv.getFitWidth()/2, c.getY() - iv.getFitHeight()/2);
+            })
+            .collect(Collectors.toList());
+
+        animator.moveAlong(iv, path, Duration.millis(600), onFinished);
+    }
+
+
+
+    private void finishActionJump(ImageView iv, int landed) {
+        TileAction action = board.getTile(landed).getAction();
+        if (action instanceof SnakeAction snake) {
+            Point2D start = tileCenter(landed), end = tileCenter(snake.getDestinationTileId());
+            // Create a SnakeActionView with its own wiggles & thickness…
+            SnakeActionView sav = new SnakeActionView(2, TILE_SIZE * .25);
+
+            Path snakePath = sav.buildSnakePath(
+                start,
+                end,
+                2,
+                TILE_SIZE * .25
+            );
+
+            animator.moveAlongPath(iv, snakePath, Duration.seconds(1), this::placeAllPlayers);
+
+        }
+        else if (action instanceof LadderAction ladder) {
+            Point2D start = tileCenter(landed), end = tileCenter(ladder.getDestinationTileId());
+            Path path = new LadderActionView(5, TILE_SIZE*.15, 4,3).buildLadderPath(start, end);
+            animator.moveAlongPath(iv, path, Duration.seconds(1), this::placeAllPlayers);
+        }
+        else {
+            placeAllPlayers();
+        }
+    }
+
+    public void finishActionJump(Player player, int midId) {
+        ImageView iv = playerIcons.get(player);
+        if (iv == null) {
+            placeAllPlayers();
+        } else {
+            finishActionJump(iv, midId);
+        }
+    }
+
     @Override
-    public void onPlayerMoved(Player player, int fromTileId, int toTileId) {
-        movePlayer(player, fromTileId);
+    public void onPlayerMoved(Player player, int fromId, int toId) {
+        ImageView iv = playerIcons.get(player);
+        if (iv == null) return;
+
+        int delta = toId - fromId;
+        int steps = Math.abs(delta);
+        int dir   = Integer.signum(delta);
+
+        List<Point2D> path = IntStream.rangeClosed(1, steps)
+            .mapToObj(i -> {
+                Point2D c = tileCenter(fromId + i*dir);
+                return new Point2D(c.getX() - iv.getFitWidth()/2,
+                    c.getY() - iv.getFitHeight()/2);
+            })
+            .collect(Collectors.toList());
+
+        final int landed = toId;
+        animator.moveAlong(iv, path, Duration.millis(600), () ->
+            finishActionJump(iv, landed)
+        );
     }
 
     /**
@@ -355,4 +359,31 @@ public class BoardView extends BorderPane implements Observer {
         rollDiceButton.setDisable(true);
     }
 
+    public void placeAllPlayers() {
+        // Clear any previous icons (if you re-call this)
+        tokenLayer.getChildren().clear();
+        playerIcons.clear();
+
+        for (Player player : players) {
+            ImageView iv = new ImageView(player.getIcon().getImage());
+            iv.setFitWidth(32);
+            iv.setFitHeight(32);
+
+            Point2D c = tileCenter(player.getCurrentTile().getTileId());
+            // Center the icon on the tile
+            iv.setTranslateX(c.getX() - iv.getFitWidth()/2);
+            iv.setTranslateY(c.getY() - iv.getFitHeight()/2);
+
+            // Record and add to the tokenLayer (on top of snakes/ladders)
+            playerIcons.put(player, iv);
+            tokenLayer.getChildren().add(iv);
+
+        }
+    }
+
+
+
+
 }
+
+
