@@ -1,4 +1,4 @@
-package ntnu.idatt2003.model;
+package ntnu.idatt2003.model.snakeandladder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class Tile {
     private final int tileId;
     private int nextTileId;
     private TileAction action;
-    private final List<Player> playersOnTile = new ArrayList<Player>();
+    private final List<SnakeLadderPlayer> playersOnTile = new ArrayList<SnakeLadderPlayer>();
 
 
     public Tile(int tileId) {
@@ -34,23 +34,23 @@ public class Tile {
      * Performs the action associated with this tile, if any.
      * @param player The player who landed on the tile.
      */
-    public void applyAction(Player player) {
+    public void applyAction(SnakeLadderPlayer player) {
         if (action != null) {
             action.perform(player);
         }
     }
 
-    public void landPlayer(Player player) {
+    public void landPlayer(SnakeLadderPlayer player) {
         if (!playersOnTile.contains(player)) {
             playersOnTile.add(player);
         }
     }
 
-    public void leavePlayer(Player player) {
+    public void leavePlayer(SnakeLadderPlayer player) {
         playersOnTile.remove(player);
     }
 
-    public List<Player> getPlayers() {
+    public List<SnakeLadderPlayer> getPlayers() {
         return new ArrayList<>(playersOnTile);
     }
 

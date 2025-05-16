@@ -5,11 +5,11 @@ import java.util.List;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
 import ntnu.idatt2003.file.BoardFileReaderGson;
-import ntnu.idatt2003.model.Board;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
 import ntnu.idatt2003.model.BoardGame;
-import ntnu.idatt2003.model.Player;
-import ntnu.idatt2003.model.SnakeAndLadderGame;
-import ntnu.idatt2003.model.Tile;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.SnakeAndLadderGame;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 
 /**
  * A factory class for creating board games.
@@ -20,9 +20,9 @@ public class BoardGameFactory {
 
   private final BoardFileReaderGson boardReader = new BoardFileReaderGson();
 
-  public BoardGame createSnakeAndLadderGameFromFile(Path jsonPath, List<Player> players
+  public BoardGame createSnakeAndLadderGameFromFile(Path jsonPath, List<SnakeLadderPlayer> players
       , int numberOfDice) throws Exception {
-    Board board = boardReader.readBoard(jsonPath);
+    SnakeLadderBoard board = boardReader.readBoard(jsonPath);
     return new SnakeAndLadderGame(board, players, numberOfDice);
   }
 
@@ -31,7 +31,7 @@ public class BoardGameFactory {
 //  }
 
 
-  public BoardGame createGameFromFile(Path jsonPath, List<Player> players, int numberOfDice)
+  public BoardGame createGameFromFile(Path jsonPath, List<SnakeLadderPlayer> players, int numberOfDice)
       throws Exception {
     if (jsonPath.getFileName().toString().startsWith("snakes_")) {
       return createSnakeAndLadderGameFromFile(jsonPath, players, numberOfDice);
@@ -45,8 +45,8 @@ public class BoardGameFactory {
 
 
 
-    public BoardGame createDefaultSnakeAndLadderGame (List < Player > players,int numberOfDice){
-      Board board = new Board();
+    public BoardGame createDefaultSnakeAndLadderGame (List <SnakeLadderPlayer> players,int numberOfDice){
+      SnakeLadderBoard board = new SnakeLadderBoard();
 
       for (int i = 0; i <= 90; i++) {
         board.addTile(new Tile(i));

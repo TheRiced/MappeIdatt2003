@@ -8,20 +8,21 @@ import javafx.stage.Stage;
 
 import ntnu.idatt2003.factory.BoardGameFactory;
 import ntnu.idatt2003.model.BoardGame;
-import ntnu.idatt2003.model.Player;
-import ntnu.idatt2003.model.SnakeAndLadderGame;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.SnakeAndLadderGame;
 import ntnu.idatt2003.view.Animator;
 import ntnu.idatt2003.view.BoardView;
+
 
 public class GameController {
 
   private final Stage stage;
   private final BoardView boardView;
-  private final BoardGame game;
+  private final BoardGame<SnakeLadderPlayer, SnakeLadderBoard> game;
 
-
-
-  public GameController(Stage stage, Path boardJson, List<Player> players, int diceCount) throws Exception {
+  public GameController(Stage stage, Path boardJson, List<SnakeLadderPlayer> players, int diceCount) throws
+      Exception {
     this.stage = stage;
 
     BoardGameFactory factory = new BoardGameFactory();
@@ -39,7 +40,6 @@ public class GameController {
     boardView.getRollDiceButton().setOnAction(e -> handleRoll());
   }
 
-
   public void start() {
     Scene scene = new Scene(boardView, 900, 600);
     stage.setScene(scene);
@@ -55,7 +55,7 @@ public class GameController {
   }
 
   private void handleRoll() {
-    Player current = game.getCurrentPlayer();
+    SnakeLadderPlayer current = game.getCurrentPlayer();
     int fromId = current.getCurrentTile().getTileId();
 
     List<Integer> lastRoll = game.rollIndividual();
@@ -77,7 +77,5 @@ public class GameController {
       }
     });
   }
-
-
 
 }

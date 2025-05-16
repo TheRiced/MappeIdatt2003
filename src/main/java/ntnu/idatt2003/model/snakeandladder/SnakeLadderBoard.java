@@ -1,4 +1,4 @@
-package ntnu.idatt2003.model;
+package ntnu.idatt2003.model.snakeandladder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,7 @@ import java.util.Map;
  * Responsible for storing all tiles and managing player movement, including applying tile actions
  * like ladders and snakes.
  */
-public class Board {
+public class SnakeLadderBoard {
     private final Map<Integer, Tile> tiles = new HashMap<>();
     private int diceCount = 1;
     /**
@@ -16,9 +16,7 @@ public class Board {
      *
      * @param tile the tile to add.
      */
-    public void addTile(Tile tile) {
-        tiles.put(tile.getTileId(), tile);
-    }
+    public void addTile(Tile tile) { tiles.put(tile.getTileId(), tile); }
 
     /**
      * Gets the tile by its ID.
@@ -67,7 +65,7 @@ public class Board {
      * @param player The player to move.
      * @param steps The number of steps to move forward.
      */
-    public String movePlayer(Player player, int steps) {
+    public String movePlayer(SnakeLadderPlayer player, int steps) {
         StringBuilder log = new StringBuilder();
 
 
@@ -112,15 +110,15 @@ public class Board {
             .append(player.getCurrentTile().getTileId()).append("\n");
 
         // Check for collision: are there other players already on this tile?
-        for (Player other : next.getPlayers()) {
+        for (SnakeLadderPlayer other : next.getPlayers()) {
             if (!other.equals(player)) {
                 log.append("Collision! ").append(player.getName())
                     .append(" and ").append(other.getName())
                     .append(" collided!\n");
 
                 // Move both players 7 tiles back if possible
-                moveBack(player, 7);
-                moveBack(other, 7);
+                moveBack(player, 8);
+                moveBack(other, 8);
 
                 log.append(player.getName())
                     .append(" is now on tile ").append(player.getCurrentTile().getTileId())
@@ -135,7 +133,7 @@ public class Board {
         return log.toString();
     }
 
-    private void moveBack(Player player, int stepsBack) {
+    private void moveBack(SnakeLadderPlayer player, int stepsBack) {
         Tile current = player.getCurrentTile();
         current.leavePlayer(player);
 

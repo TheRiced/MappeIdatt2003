@@ -2,6 +2,9 @@ package ntnu.idatt2003.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,15 +17,15 @@ import ntnu.idatt2003.core.PlayerIcon;
  */
 class BoardTest {
 
-  private Board board;
+  private SnakeLadderBoard board;
   private Tile tile1;
   private Tile tile2;
 
-  private Player mash;
+  private SnakeLadderPlayer mash;
 
   @BeforeEach
   void setUp() {
-    board = new Board();
+    board = new SnakeLadderBoard();
     tile1 = new Tile(1);
     tile2 = new Tile(2);
     board.addTile(tile1);
@@ -33,7 +36,7 @@ class BoardTest {
     tile2.setNextTileId(0);
 
 
-    mash = new Player("Mash", 30, PlayerIcon.CAT, tile1);
+    mash = new SnakeLadderPlayer("Mash", 30, PlayerIcon.CAT, tile1);
   }
 
   @Test
@@ -81,7 +84,7 @@ class BoardTest {
 
   @Test
   void movePlayerCollisionMovesBothBack() {
-    Player rice = new Player("Rice", 20, PlayerIcon.DOG, tile2);
+    SnakeLadderPlayer rice = new SnakeLadderPlayer("Rice", 20, PlayerIcon.DOG, tile2);
     String log = board.movePlayer(mash, 1);
     // Both should end up back on tile1
     assertSame(tile1, mash.getCurrentTile());

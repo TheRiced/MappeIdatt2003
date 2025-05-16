@@ -4,8 +4,7 @@ package ntnu.idatt2003.view;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.application.Platform;
 import javafx.util.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -31,27 +30,24 @@ import javafx.scene.text.Text;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
 import ntnu.idatt2003.actions.TileAction;
-import ntnu.idatt2003.model.Board;
-import ntnu.idatt2003.model.Player;
-import ntnu.idatt2003.model.Tile;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 import ntnu.idatt2003.view.actions.ActionView;
 import ntnu.idatt2003.view.actions.LadderActionView;
 import ntnu.idatt2003.view.actions.SnakeActionView;
-
 /**
  * BoardView renders the game board and players using PNG icons
  * with fallbacks to text if resources aren't found.
  */
-
-
-public class BoardView extends BorderPane implements Observer {
+public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer> {
 
     private static final int ROWS = 9;
     private static final int COLS = 10;
     private static final int TILE_SIZE = 60;
 
-    private final Board board;
-    private final List<Player> players;
+    private final SnakeLadderBoard board;
+    private final List<SnakeLadderPlayer> players;
     private final GridPane boardGrid = new GridPane();
     private final Pane overlay = new Pane();
     private final Pane tokenLayer = new Pane();
@@ -63,27 +59,17 @@ public class BoardView extends BorderPane implements Observer {
     private final Label statusLabel = new Label();
 
     private final Map<Integer, StackPane> tilePanes = new HashMap<>();
-    private final Map<Player, ImageView> playerIcons = new HashMap<>();
-
-    private DieDiceView diceView;
-
+    private final Map<SnakeLadderPlayer, ImageView> playerIcons = new HashMap<>();
     private final Animator animator;
 
-    public BoardView(Board board, List<Player> players, Animator animator) {
-        this.board    = board;
-        this.players  = players;
+    public BoardView(SnakeLadderBoard board, List<SnakeLadderPlayer> players, Animator animator) {
+        this.board = board;
+        this.players = players;
         this.animator = animator;
         setupBoard();
 
-        diceView = new DieDiceView(board.getDiceCount());
-
-        boardContainer.setPadding(new Insets(20));
-        boardContainer.setStyle("-fx-background-color: ivory; -fx-border-color: sienna; -fx-border-width: 5; -fx-border-radius: 10; -fx-background-radius: 10;");
-        BorderPane.setAlignment(boardContainer, Pos.CENTER);
-
         boardContainer.getChildren().setAll(boardGrid, overlay);
-        boardContainer.setAlignment(Pos.CENTER);
-
+        boardContainer.setAlignment(Pos.TOP_LEFT);
 
 
         overlay.prefWidthProperty().bind(boardGrid.widthProperty());
@@ -93,46 +79,15 @@ public class BoardView extends BorderPane implements Observer {
 
         boardContainer.getChildren().setAll(boardGrid, overlay, tokenLayer);
 
-        currentPlayerLabel.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 18));
-        rolledLabel.setFont(Font.font("Comic Sans MS", FontWeight.NORMAL, 16));
-        rollDiceButton.setStyle("-fx-font-family: 'Comic Sans MS'; -fx-font-size: 14;");
-        diceView.getChildren().forEach(iv -> {
-            ((ImageView)iv).setFitWidth(48);
-            ((ImageView)iv).setFitHeight(48);
-        });
-
 
         placeAllPlayers();
 
         setupSidebar();
-
-        HBox content = new HBox(20, boardContainer, sidebar);
-        content.setAlignment(Pos.CENTER);
-        content.setPadding(new Insets(20));
-        HBox.setHgrow(boardContainer, Priority.NEVER);
-        HBox.setHgrow(sidebar, Priority.ALWAYS);
-
-        setCenter(content);
-
-        sidebar.setPadding(new Insets(15));
-        sidebar.setSpacing(12);
-        sidebar.setStyle(
-            "-fx-background-color: #fdf6e3; " +
-                "-fx-border-color: #b58900; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-radius: 8; " +
-                "-fx-background-radius: 8;"
-        );
-
-        sidebar.setAlignment(Pos.TOP_CENTER);
-
-
-
+        setCenter(boardContainer);
+        setRight(sidebar);
         drawActions();
 
     }
-
-
 
     private void setupBoard() {
         boardGrid.setGridLinesVisible(true);
@@ -202,9 +157,6 @@ public class BoardView extends BorderPane implements Observer {
     }
 
 
-
-
-
     private boolean isRedTile(int id) {
         return switch (id) {
             case 1,14,23,28,32,38,43,55,60,61,63,72,82,88 -> true;
@@ -224,43 +176,19 @@ public class BoardView extends BorderPane implements Observer {
     }
 
     private void setupSidebar() {
-        sidebar.setPrefWidth(200);
-        sidebar.setMinWidth(200);
-        sidebar.setMaxWidth(200);
-
-        sidebar.setPadding(new Insets(15));
-        sidebar.setSpacing(12);
-        sidebar.setAlignment(Pos.TOP_CENTER);
-        sidebar.setStyle(
-            "-fx-background-color: #fdf6e3; " +
-                "-fx-border-color: #b58900; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-radius: 8; " +
-                "-fx-background-radius: 8;"
-        );
-
-        currentPlayerLabel.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 18));
-        rolledLabel.setFont(Font.font("Comic Sans MS", FontWeight.NORMAL, 16));
-        rollDiceButton.setStyle("-fx-font-family: 'Comic Sans MS'; -fx-font-size: 14;");
-
-        // add everything exactly once:
-        sidebar.getChildren().addAll(
-            currentPlayerLabel,
-            rolledLabel,
-            diceView,
-            rollDiceButton,
-            statusLabel
-        );
+        sidebar.setPadding(new Insets(10));
+        currentPlayerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        rolledLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        sidebar.getChildren().addAll(currentPlayerLabel, rolledLabel, rollDiceButton, statusLabel);
     }
 
 
-    public void startPlayerDrift(Player player) {
+    public void startPlayerDrift(SnakeLadderPlayer player) {
         ImageView iv = playerIcons.get(player);
         if (iv != null) {
             animator.drift(iv);
         }
     }
-
 
     public Button getRollDiceButton() {
         return rollDiceButton;
@@ -270,23 +198,16 @@ public class BoardView extends BorderPane implements Observer {
         currentPlayerLabel.setText("Current player: " + playerName);
     }
 
-
-    public void updateDiceResult(List<Integer> rolls) {
-        // push the raw rolls into the DieDiceView
-        diceView.updateDice(rolls);
-
-        // update the text label too
-        rolledLabel.setText("Rolled: " +
-            rolls.stream().map(String::valueOf).collect(Collectors.joining(", "))
-        );
-    }
-
     /**
      *
-     * @return
+     * @param rolled
      */
 
-    public Board getBoard() {
+    public void updateDiceResult(int rolled) {
+        rolledLabel.setText("Last Roll: " + rolled);
+    }
+
+    public SnakeLadderBoard getBoard() {
         return board;
     }
 
@@ -298,11 +219,15 @@ public class BoardView extends BorderPane implements Observer {
     public void showWinner(String name) {
         rollDiceButton.setDisable(true);
         statusLabel.setText("Winner: " + name);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Game Over");
-        alert.setHeaderText(null);
-        alert.setContentText(name + " wins the game!");
-        alert.showAndWait();
+
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Game Over");
+            alert.setHeaderText(null);
+            alert.setContentText(name + " wins the game!");
+            alert.showAndWait();
+        });
+
     }
 
 
@@ -315,9 +240,7 @@ public class BoardView extends BorderPane implements Observer {
      * @param onFinished
      */
 
-
-
-    public void animatePlayerMove(Player player, int fromId, int toId, Runnable onFinished) {
+    public void animatePlayerMove(SnakeLadderPlayer player, int fromId, int toId, Runnable onFinished) {
         ImageView iv = playerIcons.get(player);
         if (iv == null) return;
         iv.toFront();
@@ -330,13 +253,19 @@ public class BoardView extends BorderPane implements Observer {
             })
             .collect(Collectors.toList());
 
-        animator.moveAlong(iv, path, Duration.millis(700), onFinished);
+        animator.moveAlong(iv, path, Duration.millis(600), onFinished);
     }
 
 
 
     private void finishActionJump(ImageView iv, int landed) {
-        TileAction action = board.getTile(landed).getAction();
+        Tile tile = board.getTile(landed);
+        if (tile == null) {
+            System.out.println("No tile found for landed: " + landed);
+            placeAllPlayers();
+            return;
+        }
+        TileAction action = tile.getAction();
         if (action instanceof SnakeAction snake) {
             Point2D start = tileCenter(landed), end = tileCenter(snake.getDestinationTileId());
             // Create a SnakeActionView with its own wiggles & thickness…
@@ -362,7 +291,7 @@ public class BoardView extends BorderPane implements Observer {
         }
     }
 
-    public void finishActionJump(Player player, int midId) {
+    public void finishActionJump(SnakeLadderPlayer player, int midId) {
         ImageView iv = playerIcons.get(player);
         if (iv == null) {
             placeAllPlayers();
@@ -372,7 +301,7 @@ public class BoardView extends BorderPane implements Observer {
     }
 
     @Override
-    public void onPlayerMoved(Player player, int fromId, int toId) {
+    public void onPlayerMoved(SnakeLadderPlayer player, int fromId, int toId) {
         ImageView iv = playerIcons.get(player);
         if (iv == null) return;
 
@@ -404,44 +333,27 @@ public class BoardView extends BorderPane implements Observer {
         boardContainer.resize(getWidth(), getHeight());
     }
 
-    @Override
-    public void onDiceRolled(List<Integer> values) {
-        // 5) Update the DieDiceView
-        diceView.updateDice(values);
-        // Also update the text label if desired
-        rolledLabel.setText("Last Roll: " +
-            values.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(", "))
-        );
-    }
-
     /**
      *
      * @param next
      */
     @Override
-    public void onNextPlayer(Player next) {
+    public void onNextPlayer(SnakeLadderPlayer next) {
         updateCurrentPlayer(next.getName());
     }
 
-
-    /**
-     *
-     * @param winner
-     */
-    @Override
-    public void onGameOver(Player winner) {
-        showWinner(winner.getName());
-        rollDiceButton.setDisable(true);
-    }
+  @Override
+  public void onGameOver(SnakeLadderPlayer winner) {
+    showWinner(winner.getName());
+    rollDiceButton.setDisable(true);
+  }
 
     public void placeAllPlayers() {
         // Clear any previous icons (if you re-call this)
         tokenLayer.getChildren().clear();
         playerIcons.clear();
 
-        for (Player player : players) {
+        for (SnakeLadderPlayer player : players) {
             ImageView iv = new ImageView(player.getIcon().getImage());
             iv.setFitWidth(32);
             iv.setFitHeight(32);
@@ -462,5 +374,3 @@ public class BoardView extends BorderPane implements Observer {
 
 
 }
-
-

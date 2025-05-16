@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import ntnu.idatt2003.model.snakeandladder.SnakeAndLadderGame;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,14 +15,14 @@ import ntnu.idatt2003.core.PlayerIcon;
 
 class SnakeAndLadderGameTest {
 
-  private Board board;
+  private SnakeLadderBoard board;
   private Tile t1, t2, t3;
-  private Player p1, p2;
-  private List<Player> players;
+  private SnakeLadderPlayer p1, p2;
+  private List<SnakeLadderPlayer> players;
 
   @BeforeEach
   void setUp() {
-    board = new Board();
+    board = new SnakeLadderBoard();
     t1 = new Tile(1);
     t2 = new Tile(2);
     t3 = new Tile(3);
@@ -29,21 +33,21 @@ class SnakeAndLadderGameTest {
     t2.setNextTileId(3);
     t3.setNextTileId(0);
 
-    p1 = new Player("Young", 20, PlayerIcon.CAT, t1);
-    p2 = new Player("Old",   40, PlayerIcon.DOG, t1);
+    p1 = new SnakeLadderPlayer("Young", 20, PlayerIcon.CAT, t1);
+    p2 = new SnakeLadderPlayer("Old",   40, PlayerIcon.DOG, t1);
     players = List.of(p1, p2);
   }
 
   @Test
   void constructor_withTooFewPlayers_throws() {
-    List<Player> one = List.of(p1);
+    List<SnakeLadderPlayer> one = List.of(p1);
     assertThrows(IllegalArgumentException.class,
         () -> new SnakeAndLadderGame(board, one, 1));
   }
 
   @Test
   void players_areSortedByAge_andDiceInitialized() {
-    SnakeAndLadderGame game = new SnakeAndLadderGame(board, List.of(p2, p1), 2);
+    SnakeAndLadderGame game = new SnakeAndLadderGame(board, List.of(), 2);
     assertSame(p1, game.getCurrentPlayer());
     assertEquals(2, game.rollIndividual().size());
   }
