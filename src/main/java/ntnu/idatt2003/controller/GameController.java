@@ -58,24 +58,16 @@ public class GameController {
     Player current = game.getCurrentPlayer();
     int fromId = current.getCurrentTile().getTileId();
 
-    // 1) Roll dice
     List<Integer> lastRoll = game.rollIndividual();
+    boardView.updateDiceResult(lastRoll);
+
     int rolled = lastRoll.stream().mapToInt(Integer::intValue).sum();
-    boardView.updateDiceResult(rolled);
 
-    // 2) Figure out the “mid” tile before any snake/ladder
     int midId = fromId + rolled;
-
-    // 3) Move your model (this will also apply snake/ladder internally,
-    //    but we’ll animate that separately)
     game.moveCurrentPlayer(rolled);
-
-    // 4) Animate the straight walk to midId
     boardView.animatePlayerMove(current, fromId, midId, () -> {
-      // 5) Once that finishes, let the view check for a snake/ladder
       boardView.finishActionJump(current, midId);
 
-      // 6) Then do turn-end logic:
       if (game.gameDone()) {
         boardView.showWinner(game.getWinner().getName());
         boardView.getRollDiceButton().setDisable(true);
