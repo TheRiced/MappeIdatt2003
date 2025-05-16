@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class SnakeLadderBoard {
     private final Map<Integer, Tile> tiles = new HashMap<>();
-
+    private int diceCount = 1;
     /**
      * Adds a tile to the board.
      *
@@ -67,6 +67,7 @@ public class SnakeLadderBoard {
      */
     public String movePlayer(SnakeLadderPlayer player, int steps) {
         StringBuilder log = new StringBuilder();
+
 
         Tile current = player.getCurrentTile();
         current.leavePlayer(player);
@@ -162,4 +163,7 @@ public class SnakeLadderBoard {
         }
     }
 
+  public int getDiceCount() {
+        return  diceCount;
+  }
 }
