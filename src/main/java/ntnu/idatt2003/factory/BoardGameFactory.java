@@ -5,6 +5,9 @@ import java.util.List;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
 import ntnu.idatt2003.file.BoardFileReaderGson;
+import ntnu.idatt2003.model.ludo.LudoBoard;
+import ntnu.idatt2003.model.ludo.LudoGame;
+import ntnu.idatt2003.model.ludo.LudoPlayer;
 import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
 import ntnu.idatt2003.model.BoardGame;
 import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
@@ -18,54 +21,40 @@ import ntnu.idatt2003.model.snakeandladder.Tile;
  */
 public class BoardGameFactory {
 
-  private final BoardFileReaderGson boardReader = new BoardFileReaderGson();
-
-  public BoardGame createSnakeAndLadderGameFromFile(Path jsonPath, List<SnakeLadderPlayer> players
-      , int numberOfDice) throws Exception {
-    SnakeLadderBoard board = boardReader.readBoard(jsonPath);
-    return new SnakeAndLadderGame(board, players, numberOfDice);
+  public SnakeLadderBoard createAdvancedBoard(Path jsonPath) throws Exception {
+    return new BoardFileReaderGson().readBoard(jsonPath);
   }
 
-//
-//  public BoardGame createLudoGameFromFile(Path jsonPath, List<Player> players, int numberOfDice) throws Exception {
-//  }
-
-
-  public BoardGame createGameFromFile(Path jsonPath, List<SnakeLadderPlayer> players, int numberOfDice)
-      throws Exception {
-    if (jsonPath.getFileName().toString().startsWith("snakes_")) {
-      return createSnakeAndLadderGameFromFile(jsonPath, players, numberOfDice);
-    } else if (jsonPath.getFileName().toString().startsWith("ludo_")) {
-//      return createLudoGameFromFile(jsonPath, players, numberOfDice);
-    }
-
-    return null;
+  public BoardGame<SnakeLadderPlayer, SnakeLadderBoard> createGame(SnakeLadderBoard board,
+      List<SnakeLadderPlayer> players, int diceCount) {
+    return new SnakeAndLadderGame(board, players, diceCount);
   }
 
+  public LudoBoard createDefaultLudoBoard() {
+    return new LudoBoard();
+  }
 
+  public BoardGame<LudoPlayer, LudoBoard> createLudoGame (List<LudoPlayer> players,
+      LudoBoard board) {
+    return new LudoGame(players, board);
+  }
 
+  public SnakeLadderBoard createEasyBoard (){
+    SnakeLadderBoard board = new SnakeLadderBoard();
 
-    public BoardGame createDefaultSnakeAndLadderGame (List <SnakeLadderPlayer> players,int numberOfDice){
-      SnakeLadderBoard board = new SnakeLadderBoard();
-
-      for (int i = 0; i <= 90; i++) {
-        board.addTile(new Tile(i));
-      }
-
-      for (int i = 0; i < 90; i++) {
-        board.getTile(i).setNextTileId(i + 1);
-      }
-
-      board.getTile(4).setAction(new LadderAction(14));
-      board.getTile(17).setAction(new SnakeAction(7));
-      board.getTile(19).setAction(new LadderAction(27));
-      board.getTile(50).setAction(new SnakeAction(37));
-      board.getTile(39).setAction(new LadderAction(70));
-      board.getTile(85).setAction(new SnakeAction(67));
-
-      return new SnakeAndLadderGame(board, players, numberOfDice);
+    for (int i = 1; i <= 90; i++) {
+      Tile tile = new Tile(i);
+      if (i < 90) tile.setNextTileId(i + 1);
+      board.addTile(tile);
     }
 
+    board.getTile(18).setAction(new LadderAction(40));
+    board.getTile(23).setAction(new SnakeAction(14));
+    board.getTile(34).setAction(new LadderAction(85));
+    board.getTile(72).setAction(new SnakeAction(43));
+    board.getTile(29).setAction(new LadderAction(70));
+    board.getTile(82).setAction(new SnakeAction(60));
 
-
+    return board;
+  }
 }

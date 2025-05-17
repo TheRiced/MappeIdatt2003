@@ -1,13 +1,11 @@
 package ntnu.idatt2003.view;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.RadioButton;
@@ -24,7 +22,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import ntnu.idatt2003.core.PlayerIcon;
-import ntnu.idatt2003.view.PlayerFormData;
 
 /**
  * PlayerSetupPage lets users pick number of players, dice count, and enter
@@ -164,10 +161,6 @@ public class PlayerSetupPage extends BorderPane {
     HBox startBox = new HBox(start);
     startBox.setAlignment(Pos.CENTER);
     fieldsBox.getChildren().add(startBox);
-    validateForm();
-  }
-
-  private void setupValidation() {
     validateForm();
   }
 
