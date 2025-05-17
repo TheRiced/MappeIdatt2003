@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
@@ -64,13 +65,15 @@ public class LudoSetupPage extends BorderPane {
       TextField ageField = new TextField();
       ageField.setPromptText("Age");
 
-      ChoiceBox<PlayerIcon> iconChoice = new ChoiceBox<>(
+      ComboBox<PlayerIcon> iconChoice = new ComboBox<>(
           FXCollections.observableArrayList(PlayerIcon.values())
       );
+      iconChoice.setPromptText("Select icon");
 
-      ChoiceBox<TokenColor> colorChoice = new ChoiceBox<>(
+      ComboBox<TokenColor> colorChoice = new ComboBox<>(
           FXCollections.observableArrayList(TokenColor.values())
       );
+      colorChoice.setPromptText("Select color");
 
       playersGrid.addRow(i,
           new Label("Player " + (i + 1) + ":"),

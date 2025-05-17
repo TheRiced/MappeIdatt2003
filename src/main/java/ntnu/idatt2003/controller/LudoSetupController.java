@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -48,11 +49,11 @@ public class LudoSetupController {
       TextField nameField = (TextField) getNodeFromGrid(view.getPlayersGrid(), i, 1);
       TextField ageField = (TextField) getNodeFromGrid(view.getPlayersGrid(), i, 2);
       @SuppressWarnings("unchecked")
-      ChoiceBox<PlayerIcon> iconChoice = (ChoiceBox<PlayerIcon>) getNodeFromGrid(view
+      ComboBox<PlayerIcon> iconChoice = (ComboBox<PlayerIcon>) getNodeFromGrid(view
           .getPlayersGrid(), i, 3);
       @SuppressWarnings("unchecked")
-      ChoiceBox<TokenColor> colorChoice = (ChoiceBox<TokenColor>) getNodeFromGrid(view
-          .getPlayersGrid(), i, 2);
+      ComboBox<TokenColor> colorChoice = (ComboBox<TokenColor>) getNodeFromGrid(view
+          .getPlayersGrid(), i, 4);
 
       String name = nameField.getText().trim();
       if (name.isEmpty()) {
