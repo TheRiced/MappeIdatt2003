@@ -3,6 +3,7 @@ package ntnu.idatt2003.model.ludo;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javafx.scene.paint.Color;
 import ntnu.idatt2003.core.PlayerIcon;
 import ntnu.idatt2003.model.Player;
 
@@ -33,7 +34,7 @@ public class LudoPlayer extends Player {
         homeTiles.get(i))).collect(Collectors.toUnmodifiableList());
   }
 
-  public TokenColor getColor() { return color; }
+  public Color getColor() { return color.toFXColor(); }
 
   /**
    * @return unmodifiable list of this player's tokens.
