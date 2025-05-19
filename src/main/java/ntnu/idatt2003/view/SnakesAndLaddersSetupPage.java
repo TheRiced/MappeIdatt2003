@@ -164,10 +164,6 @@ public class SnakesAndLaddersSetupPage extends BorderPane {
     validateForm();
   }
 
-  private void setupValidation() {
-    validateForm();
-  }
-
   private void validateForm() {
     boolean allValid = true;
 

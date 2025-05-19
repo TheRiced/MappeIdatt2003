@@ -1,42 +1,29 @@
 package ntnu.idatt2003.controller;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import ntnu.idatt2003.factory.BoardGameFactory;
 import ntnu.idatt2003.model.BoardGame;
 import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
 import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
-import ntnu.idatt2003.model.snakeandladder.SnakeAndLadderGame;
 import ntnu.idatt2003.view.Animator;
 import ntnu.idatt2003.view.BoardView;
 
-
 public class GameController {
-
   private final Stage stage;
   private final BoardView boardView;
   private final BoardGame<SnakeLadderPlayer, SnakeLadderBoard> game;
 
-  public GameController(Stage stage, Path boardJson, List<SnakeLadderPlayer> players, int diceCount) throws
-      Exception {
+  public GameController(Stage stage, BoardGame<SnakeLadderPlayer, SnakeLadderBoard> game) {
     this.stage = stage;
+    this.game = game;
+    this.boardView = new BoardView(game.getBoard(), game.getPlayers(), new Animator());
+    initView();
+  }
 
-    BoardGameFactory factory = new BoardGameFactory();
-    this.game = factory.createGameFromFile(boardJson, players, diceCount);
-
-    // 1) Create the Animator
-    Animator animator = new Animator();
-
-    // 2) Inject it into your BoardView
-    this.boardView = new BoardView(game.getBoard(), game.getPlayers(), animator);
-
+  private void initView() {
     boardView.drawActions();
     game.addObserver(boardView);
-
     boardView.getRollDiceButton().setOnAction(e -> handleRoll());
   }
 
@@ -44,12 +31,7 @@ public class GameController {
     Scene scene = new Scene(boardView, 900, 600);
     stage.setScene(scene);
     stage.show();
-
-
-
-    // 3) Optionally, start the drift for all players immediately:
     game.getPlayers().forEach(boardView::startPlayerDrift);
-
     boardView.updateCurrentPlayer(game.getCurrentPlayer().getName());
 
   }

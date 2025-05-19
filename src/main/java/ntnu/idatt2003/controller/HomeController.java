@@ -2,8 +2,10 @@ package ntnu.idatt2003.controller;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ntnu.idatt2003.model.GameType;
 import ntnu.idatt2003.view.HomePage;
-import ntnu.idatt2003.view.SnakesAndLaddersSetupPage;
+import ntnu.idatt2003.view.LevelSelectionPage;
+import ntnu.idatt2003.view.LudoSetupPage;
 
 public class HomeController {
   private final Stage stage;
@@ -12,9 +14,8 @@ public class HomeController {
   public HomeController(Stage stage, HomePage view) {
     this.stage = stage;
     this.view = view;
-    // Wire up both labels to go to the setup screen
-    view.getSnakesLabel().setOnMouseClicked(e -> goToSetup());
-    view.getLudoLabel().setOnMouseClicked(e -> goToSetup());
+    view.getSnakesLabel().setOnMouseClicked(e -> goToLevelSelection(GameType.SNAKE_AND_LADDERS));
+    view.getLudoLabel().setOnMouseClicked(e -> goToLevelSelection(GameType.LUDO));
   }
 
   public void showHome() {
@@ -23,10 +24,15 @@ public class HomeController {
     stage.show();
   }
 
-  private void goToSetup() {
+  private void goToLevelSelection(GameType gameType) {
+    if (gameType == GameType.SNAKE_AND_LADDERS) {
+      LevelSelectionPage levelView = new LevelSelectionPage();
+      LevelSelectionController lvlCtrl = new LevelSelectionController(stage, levelView, gameType);
+      lvlCtrl.show();
+    } else {
+      LudoSetupPage ludoView = new LudoSetupPage();
+      new LudoSetupController(stage, ludoView).showSetup();
+    }
 
-    SnakesAndLaddersSetupPage setupView = new SnakesAndLaddersSetupPage();
-    PlayerSetupController sc = new PlayerSetupController(stage, setupView);
-    sc.showSetup();
   }
 }
