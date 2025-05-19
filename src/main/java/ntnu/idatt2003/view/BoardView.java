@@ -203,7 +203,7 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
      * @param rolled
      */
 
-    public void updateDiceResult(int rolled) {
+    public void updateDiceResult(List<Integer> rolled) {
         rolledLabel.setText("Last Roll: " + rolled);
     }
 
