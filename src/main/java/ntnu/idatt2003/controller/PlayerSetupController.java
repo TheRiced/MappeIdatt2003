@@ -12,13 +12,13 @@ import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
 import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 import ntnu.idatt2003.model.snakeandladder.Tile;
 import ntnu.idatt2003.view.PlayerFormData;
-import ntnu.idatt2003.view.PlayerSetupPage;
+import ntnu.idatt2003.view.SnakesAndLaddersSetupPage;
 
 public class PlayerSetupController {
   private final Stage stage;
-  private final PlayerSetupPage view;
+  private final SnakesAndLaddersSetupPage view;
 
-  public PlayerSetupController(Stage stage, PlayerSetupPage view) {
+  public PlayerSetupController(Stage stage, SnakesAndLaddersSetupPage view) {
     this.stage = stage;
     this.view = view;
     view.getGenerateButton().setOnAction(e -> view.createFields());
