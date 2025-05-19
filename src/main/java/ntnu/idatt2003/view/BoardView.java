@@ -21,8 +21,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
@@ -60,7 +58,6 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
     private final Button rollDiceButton = new Button("Roll Dice");
     private final Label statusLabel = new Label();
 
-    private DieDiceView diceView;
     private final Map<Integer, StackPane> tilePanes = new HashMap<>();
     private final Map<SnakeLadderPlayer, ImageView> playerIcons = new HashMap<>();
     private final Animator animator;
@@ -70,12 +67,6 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         this.players = players;
         this.animator = animator;
         setupBoard();
-
-        diceView = new DieDiceView(board.getDiceCount());
-
-        boardContainer.setPadding(new Insets(20));
-        boardContainer.setStyle("-fx-background-color: ivory; -fx-border-color: sienna; -fx-border-width: 5; -fx-border-radius: 10; -fx-background-radius: 10;");
-        BorderPane.setAlignment(boardContainer, Pos.CENTER);
 
         boardContainer.getChildren().setAll(boardGrid, overlay);
         boardContainer.setAlignment(Pos.TOP_LEFT);
@@ -88,36 +79,12 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
 
         boardContainer.getChildren().setAll(boardGrid, overlay, tokenLayer);
 
-        currentPlayerLabel.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 18));
-        rolledLabel.setFont(Font.font("Comic Sans MS", FontWeight.NORMAL, 16));
-        rollDiceButton.setStyle("-fx-font-family: 'Comic Sans MS'; -fx-font-size: 14;");
-        diceView.getChildren().forEach(iv -> {
-            ((ImageView)iv).setFitWidth(48);
-            ((ImageView)iv).setFitHeight(48);
-        });
 
         placeAllPlayers();
 
         setupSidebar();
-        HBox content = new HBox(20, boardContainer, sidebar);
-        content.setAlignment(Pos.CENTER);
-        content.setPadding(new Insets(20));
-        HBox.setHgrow(boardContainer, Priority.NEVER);
-        HBox.setHgrow(sidebar, Priority.ALWAYS);
-
-        setCenter(content);
-
-        sidebar.setPadding(new Insets(15));
-        sidebar.setSpacing(12);
-        sidebar.setStyle(
-            "-fx-background-color: #fdf6e3; " +
-                "-fx-border-color: #b58900; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-radius: 8; " +
-                "-fx-background-radius: 8;"
-        );
-
-        sidebar.setAlignment(Pos.TOP_CENTER);
+        setCenter(boardContainer);
+        setRight(sidebar);
         drawActions();
 
     }
@@ -208,33 +175,11 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         return id == 7 || id == 45 || id == 77;
     }
 
-    private void setupSidebar() {        sidebar.setPrefWidth(200);
-        sidebar.setMinWidth(200);
-        sidebar.setMaxWidth(200);
-
-        sidebar.setPadding(new Insets(15));
-        sidebar.setSpacing(12);
-        sidebar.setAlignment(Pos.TOP_CENTER);
-        sidebar.setStyle(
-            "-fx-background-color: #fdf6e3; " +
-                "-fx-border-color: #b58900; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-radius: 8; " +
-                "-fx-background-radius: 8;"
-        );
-
-        currentPlayerLabel.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 18));
-        rolledLabel.setFont(Font.font("Comic Sans MS", FontWeight.NORMAL, 16));
-        rollDiceButton.setStyle("-fx-font-family: 'Comic Sans MS'; -fx-font-size: 14;");
-
-
-        sidebar.getChildren().addAll(
-            currentPlayerLabel,
-            rolledLabel,
-            diceView,
-            rollDiceButton,
-            statusLabel
-        );
+    private void setupSidebar() {
+        sidebar.setPadding(new Insets(10));
+        currentPlayerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        rolledLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        sidebar.getChildren().addAll(currentPlayerLabel, rolledLabel, rollDiceButton, statusLabel);
     }
 
 
@@ -253,17 +198,14 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         currentPlayerLabel.setText("Current player: " + playerName);
     }
 
+    /**
+     *
+     * @param rolled
+     */
 
-    public void updateDiceResult(List<Integer> rolls) {
-        // push the raw rolls into the DieDiceView
-        diceView.updateDice(rolls);
-
-        // update the text label too
-        rolledLabel.setText("Rolled: " +
-            rolls.stream().map(String::valueOf).collect(Collectors.joining(", "))
-        );
+    public void updateDiceResult(List<Integer> rolled) {
+        rolledLabel.setText("Last Roll: " + rolled);
     }
-
 
     public SnakeLadderBoard getBoard() {
         return board;
@@ -311,7 +253,7 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
             })
             .collect(Collectors.toList());
 
-        animator.moveAlong(iv, path, Duration.millis(700), onFinished);
+        animator.moveAlong(iv, path, Duration.millis(600), onFinished);
     }
 
 
@@ -389,18 +331,6 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         super.layoutChildren();
 
         boardContainer.resize(getWidth(), getHeight());
-    }
-
-    @Override
-    public void onDiceRolled(List<Integer> values) {
-
-        diceView.updateDice(values);
-
-        rolledLabel.setText("Last Roll: " +
-            values.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(", "))
-        );
     }
 
     /**

@@ -1,184 +1,127 @@
 package ntnu.idatt2003.view;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import ntnu.idatt2003.model.ludo.LudoBoard;
 import ntnu.idatt2003.model.ludo.LudoPlayer;
-import ntnu.idatt2003.model.ludo.LudoTile;
-import ntnu.idatt2003.model.ludo.Token;
-import ntnu.idatt2003.model.ludo.TokenColor;
 
+import java.util.List;
 
 /**
- * A JavaFX view for the Ludo board.  It draws the main path, start yards,
- * finish lanes, and the players' tokens, and listens to game events.
+ * A StackPane-based view of a Ludo board with coordinate grid and tokens overlayed.
  */
-public class LudoBoardView extends Pane implements Observer<LudoPlayer> {
-  private static final double TILE_SIZE = 40;
+public class LudoBoardView extends StackPane {
+  private static final int TILE_SIZE = 40;
+  private static final int BOARD_PIXELS = 600;
+  private static final int GRID_SIZE = 15;
+
+  private static final double[][] RED_HOME_POSITIONS = {
+      {2, 2}, {4, 2}, {2, 4}, {4, 4}
+  };
+  private static final double[][] BLUE_HOME_POSITIONS = {
+      {8, 8}, {10, 8}, {8, 10}, {10, 10}
+  };
 
   private final LudoBoard board;
   private final List<LudoPlayer> players;
 
-  private final Map<LudoTile, Rectangle> tileNodes = new HashMap<>();
-  private final Map<Token, Circle>       tokenNodes = new HashMap<>();
-
-  private final Button rollButton       = new Button("Roll");
-  private final Button nextPlayerButton = new Button("Next");
-  private final Label  statusLabel      = new Label();
-
+  /**
+   * Constructs the Ludo board view with tokens and grid coordinates.
+   *
+   * @param board   the LudoBoard model
+   * @param players the list of players
+   */
   public LudoBoardView(LudoBoard board, List<LudoPlayer> players) {
-    this.board   = board;
+    this.board = board;
     this.players = players;
 
-    setPrefSize(600, 600);
+    // Load and size the background board image
+    Image boardImage = new Image(getClass().getResourceAsStream("/images/ludo.jpg"));
+    ImageView imageView = new ImageView(boardImage);
+    imageView.setFitWidth(BOARD_PIXELS);
+    imageView.setFitHeight(BOARD_PIXELS);
+    imageView.setPreserveRatio(true);
 
-    // add controls
-    getChildren().addAll(rollButton, nextPlayerButton, statusLabel);
-    rollButton.relocate(500,  50);
-    nextPlayerButton.relocate(500, 100);
-    statusLabel.relocate(10, 10);
+    // Stack image and coordinate overlay
+    StackPane boardLayer = new StackPane(imageView, createCoordinateGrid());
+    boardLayer.setPrefSize(BOARD_PIXELS, BOARD_PIXELS);
 
-    // draw tiles and tokens
-    drawBoard();
-    placeAllTokens();
+    getChildren().add(boardLayer);
+
+    // Draw red home tokens
+    for (double[] pos : RED_HOME_POSITIONS) {
+      Circle token = createToken(Color.web("#F44336"));
+      token.setTranslateX(gridToPixel(pos[0]));
+      token.setTranslateY(gridToPixel(pos[1]));
+      getChildren().add(token);
+    }
+
+    // Draw blue home tokens
+    for (double[] pos : BLUE_HOME_POSITIONS) {
+      Circle token = createToken(Color.web("#2196F3"));
+      token.setTranslateX(gridToPixel(pos[0]));
+      token.setTranslateY(gridToPixel(pos[1]));
+      getChildren().add(token);
+    }
   }
 
   /**
-   * Draws the main path, start yards (home) and finish lanes, storing each rectangle in tileNodes.
+   * Converts a grid coordinate to a centered pixel offset.
+   *
+   * @param gridCoord the tile index (0–14)
+   * @return pixel offset relative to board center
    */
-  private void drawBoard() {
-    // main loop
-    for (LudoTile tile : board.getMainPath()) {
-      Rectangle r = makeTileRect(tile);
-      double angle = 2 * Math.PI * tile.getIndex() / board.getMainPath().size();
-      double x = 200 + TILE_SIZE * Math.cos(angle);
-      double y = 200 + TILE_SIZE * Math.sin(angle);
-      r.relocate(x, y);
-      tileNodes.put(tile, r);
-      getChildren().add(r);
-    }
+  private double gridToPixel(double gridCoord) {
+    double half = BOARD_PIXELS / 2.0;
+    return gridCoord * TILE_SIZE - half + TILE_SIZE / 2.0;
+  }
 
-    // start yards (HOME)
-    for (TokenColor color : TokenColor.values()) {
-      List<LudoTile> yard = board.getHome(color);
-      for (int i = 0; i < yard.size(); i++) {
-        LudoTile tile = yard.get(i);
-        Rectangle r = makeTileRect(tile);
-        double baseX = (color == TokenColor.RED || color == TokenColor.GREEN) ? 50 : 450;
-        double baseY = (color == TokenColor.RED || color == TokenColor.BLUE) ?  50 : 450;
-        double x = baseX + (i * TILE_SIZE);
-        double y = baseY;
-        r.relocate(x, y);
-        tileNodes.put(tile, r);
-        getChildren().add(r);
+  /**
+   * Creates a circular token shape.
+   *
+   * @param fill the fill color of the token
+   * @return a styled Circle representing the token
+   */
+  private Circle createToken(Color fill) {
+    Circle token = new Circle(TILE_SIZE * 0.3);
+    token.setFill(fill);
+    token.setStroke(Color.BLACK);
+    token.setStrokeWidth(2);
+    return token;
+  }
+
+  /**
+   * Creates an overlay with (x, y) coordinate labels for each tile.
+   *
+   * @return a Pane containing coordinate text for all tiles
+   */
+  private Pane createCoordinateGrid() {
+    Pane overlay = new Pane();
+    overlay.setPrefSize(BOARD_PIXELS, BOARD_PIXELS);
+
+    for (int row = 0; row < GRID_SIZE; row++) {
+      for (int col = 0; col < GRID_SIZE; col++) {
+        double x = col * TILE_SIZE;
+        double y = row * TILE_SIZE;
+
+        Text coord = new Text("(" + col + "," + row + ")");
+        coord.setFont(Font.font("Consolas", 10));
+        coord.setFill(Color.DARKBLUE);
+
+        // Position centered inside the tile
+        coord.setLayoutX(x + TILE_SIZE / 2.0 - 15); // horizontal centering
+        coord.setLayoutY(y + TILE_SIZE / 2.0 + 4);  // vertical centering
+
+        overlay.getChildren().add(coord);
       }
     }
 
-    // finish lanes
-    for (TokenColor color : TokenColor.values()) {
-      List<LudoTile> lane = board.getFinishLanes(color);
-      for (int i = 0; i < lane.size(); i++) {
-        LudoTile tile = lane.get(i);
-        Rectangle r = makeTileRect(tile);
-        // example: horizontal lines toward center
-        double dir = (color == TokenColor.RED || color == TokenColor.GREEN) ? 1 : -1;
-        double x = 300 + dir * (i + 1) * TILE_SIZE;
-        double y = 300;
-        r.relocate(x, y);
-        tileNodes.put(tile, r);
-        getChildren().add(r);
-      }
-    }
-  }
-
-  /**
-   * Creates a rectangle colored by tile type
-   */
-  private Rectangle makeTileRect(LudoTile tile) {
-    Rectangle r = new Rectangle(TILE_SIZE, TILE_SIZE);
-    switch (tile.getType()) {
-      case HOME         -> r.setFill(Color.LIGHTGRAY);
-      case NORMAL       -> r.setFill(Color.BEIGE);
-      case SAFE         -> r.setFill(Color.GOLD);
-      case FINISH_ENTRY -> r.setFill(Color.ORANGE);
-      case FINISH       -> r.setFill(Color.LIGHTGREEN);
-    }
-    r.setStroke(Color.BLACK);
-    return r;
-  }
-
-  /**
-   * Positions all tokens on their current tiles
-   */
-  public void placeAllTokens() {
-    // remove old
-    getChildren().removeAll(tokenNodes.values());
-    tokenNodes.clear();
-
-    // draw each token
-    for (LudoPlayer player : players) {
-      for (Token token : player.getTokens()) {
-        Circle c = new Circle(TILE_SIZE / 4);
-        // color by player
-        switch (player.getColor()) {
-          case RED    -> c.setFill(Color.RED);
-          case BLUE   -> c.setFill(Color.BLUE);
-          case GREEN  -> c.setFill(Color.GREEN);
-          case YELLOW -> c.setFill(Color.YELLOW);
-        }
-        // place on the correct tile
-        LudoTile pos = token.getPosition();
-        Rectangle r = tileNodes.get(pos);
-        c.relocate(r.getLayoutX() + TILE_SIZE / 4, r.getLayoutY() + TILE_SIZE / 4);
-
-        c.setOnMouseClicked(evt -> {
-          c.setStroke(Color.BLACK);
-          c.setStrokeWidth(3);
-        });
-
-        tokenNodes.put(token, c);
-        getChildren().add(c);
-      }
-    }
-  }
-
-  public Button getRollButton()       { return rollButton; }
-  public Button getNextPlayerButton() { return nextPlayerButton; }
-  public Label  getStatusLabel()      { return statusLabel; }
-
-  /**
-   * Expose the token nodes so controller can register click handlers
-   */
-  public Map<Token, Circle> getTokenNodes() {
-    return tokenNodes;
-  }
-
-  @Override
-  public void onPlayerMoved(LudoPlayer player, int fromTileIndex, int toTileIndex) {
-    placeAllTokens();
-    statusLabel.setText(
-        player.getName()
-            + " moved from " + fromTileIndex
-            + " to "   + toTileIndex
-    );
-  }
-
-  @Override
-  public void onNextPlayer(LudoPlayer next) {
-    statusLabel.setText("Now it's " + next.getName() + "'s turn");
-  }
-
-  @Override
-  public void onGameOver(LudoPlayer winner) {
-    statusLabel.setText("Game Over! Winner: " + winner.getName());
-    rollButton.setDisable(true);
-    nextPlayerButton.setDisable(true);
+    return overlay;
   }
 }

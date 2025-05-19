@@ -27,7 +27,7 @@ import ntnu.idatt2003.core.PlayerIcon;
  * PlayerSetupPage lets users pick number of players, dice count, and enter
  * player names, ages, and icons (via PNG images).
  */
-public class PlayerSetupPage extends BorderPane {
+public class SnakesAndLaddersSetupPage extends BorderPane {
 
   private final Spinner<Integer> playerCountSpinner = new Spinner<>(2, 5, 2);
   private final ToggleGroup diceGroup = new ToggleGroup();
@@ -41,7 +41,7 @@ public class PlayerSetupPage extends BorderPane {
   private List<Label> ageErrors;
   private List<Label> iconErrors;
 
-  public PlayerSetupPage() {
+  public SnakesAndLaddersSetupPage() {
     // Title
     Text title = new Text("Player Setup");
     title.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 28));

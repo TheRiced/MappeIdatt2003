@@ -1,6 +1,7 @@
 package ntnu.idatt2003.model.ludo;
 
 import java.util.List;
+import javafx.scene.paint.Color;
 
 /**
  * Enumeration of the four Ludo player colors, each with the index of its START square on the main
@@ -48,6 +49,15 @@ public enum TokenColor {
       throw new IllegalArgumentException("Finish-lane must be a list of 6 tiles");
     }
     this.finishLaneTiles = List.copyOf(tiles);
+  }
+
+  public Color toFXColor() {
+    return switch (this) {
+      case RED -> Color.RED;
+      case BLUE -> Color.ROYALBLUE;
+      case GREEN -> Color.LIMEGREEN;
+      case YELLOW -> Color.GOLD;
+    };
   }
 
   /**
