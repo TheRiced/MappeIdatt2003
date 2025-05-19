@@ -3,7 +3,7 @@ package ntnu.idatt2003.controller;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ntnu.idatt2003.view.HomePage;
-import ntnu.idatt2003.view.PlayerSetupPage;
+import ntnu.idatt2003.view.SnakesAndLaddersSetupPage;
 
 public class HomeController {
   private final Stage stage;
@@ -25,7 +25,7 @@ public class HomeController {
 
   private void goToSetup() {
 
-    PlayerSetupPage setupView = new PlayerSetupPage();
+    SnakesAndLaddersSetupPage setupView = new SnakesAndLaddersSetupPage();
     PlayerSetupController sc = new PlayerSetupController(stage, setupView);
     sc.showSetup();
   }
