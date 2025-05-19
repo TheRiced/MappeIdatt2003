@@ -1,13 +1,11 @@
 package ntnu.idatt2003.view;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.RadioButton;
@@ -24,13 +22,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import ntnu.idatt2003.core.PlayerIcon;
-import ntnu.idatt2003.view.PlayerFormData;
 
 /**
  * PlayerSetupPage lets users pick number of players, dice count, and enter
  * player names, ages, and icons (via PNG images).
  */
-public class PlayerSetupPage extends BorderPane {
+public class SnakesAndLaddersSetupPage extends BorderPane {
 
   private final Spinner<Integer> playerCountSpinner = new Spinner<>(2, 5, 2);
   private final ToggleGroup diceGroup = new ToggleGroup();
@@ -44,7 +41,7 @@ public class PlayerSetupPage extends BorderPane {
   private List<Label> ageErrors;
   private List<Label> iconErrors;
 
-  public PlayerSetupPage() {
+  public SnakesAndLaddersSetupPage() {
     // Title
     Text title = new Text("Player Setup");
     title.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 28));
