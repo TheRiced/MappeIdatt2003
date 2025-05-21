@@ -1,17 +1,17 @@
 package ntnu.idatt2003.view;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Shows X amount of dice by swapping one of six face images.
  */
 public class DieDiceView extends HBox {
+
   private final List<ImageView> dice = new ArrayList<>();
   private final Image[] faces = new Image[7]; // ignore index 0
 

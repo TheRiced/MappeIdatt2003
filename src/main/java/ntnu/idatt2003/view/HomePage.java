@@ -1,9 +1,8 @@
 package ntnu.idatt2003.view;
 
-
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,14 +11,23 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-
-
+/**
+ * HomePage represents the application's home screen with a background image
+ * and two clickable, animated labels for selecting Snakes and Ladders or Ludo.
+ *
+ * <p>Provides accessors for the root node and each game label, so
+ * event handlers (for navigation) can be attached externally.
+ * </p>
+ */
 public class HomePage {
+
   private final StackPane root;
   private final Label snakesLabel;
   private final Label ludoLabel;
 
-
+  /**
+   * Constructs the home page UI, with a background image and animated labels for game selection.
+   */
   public HomePage() {
     root = new StackPane();
     root.setStyle("-fx-background-color: linear-gradient(to bottom right, #111111, #000000);");
@@ -63,7 +71,15 @@ public class HomePage {
     return label;
   }
 
-  public Parent getRoot() { return root;}
-  public Label getSnakesLabel() { return snakesLabel;}
-  public Label getLudoLabel() { return ludoLabel;}
+  public Parent getRoot() {
+    return root;
+  }
+
+  public Label getSnakesLabel() {
+    return snakesLabel;
+  }
+
+  public Label getLudoLabel() {
+    return ludoLabel;
+  }
 }

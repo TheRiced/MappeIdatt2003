@@ -14,6 +14,13 @@ import ntnu.idatt2003.actions.SnakeAction;
 import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
 import ntnu.idatt2003.model.snakeandladder.Tile;
 
+/**
+ * A {@link BoardFileReader} implementation that reads a Snakes and Ladders board configuration from
+ * a JSON file using Gson. Supports loading from both the classpath and the file system.
+ *
+ * <p>The JSON file must contain a "tiles" array, where each tile can have an "id", "nextTile",
+ * and optionally an "action" object (with "type" and other action-specific fields).
+ */
 public class BoardFileReaderGson implements BoardFileReader {
 
   @Override

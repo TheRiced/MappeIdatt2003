@@ -13,24 +13,34 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import ntnu.idatt2003.model.GameLevel;
 
+/**
+ * A JavaFX page for selecting the difficulty level before starting a board game.
+ *
+ * <p>Provides radio buttons for Easy, Advanced, or Custom game levels, and a confirm button to
+ * proceed with the selected option.
+ * </p>
+ */
 public class LevelSelectionPage extends BorderPane {
+
   private final ToggleGroup levelGroup = new ToggleGroup();
   private final RadioButton easyRb = new RadioButton("Easy");
   private final RadioButton advRb = new RadioButton("Advanced");
   private final RadioButton customRb = new RadioButton("Custom");
   private final Button confirmBtn = new Button("Confirm");
 
+  /**
+   * Constructs the level selection page with all UI components.
+   */
   public LevelSelectionPage() {
     Label title = new Label("Select Game Level");
     title.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 30));
-
-    Font rbFont = Font.font("Comic Sans MS", FontWeight.NORMAL, 20);
 
     easyRb.setToggleGroup(levelGroup);
     advRb.setToggleGroup(levelGroup);
     advRb.setSelected(true);
     customRb.setToggleGroup(levelGroup);
 
+    Font rbFont = Font.font("Comic Sans MS", FontWeight.NORMAL, 20);
     easyRb.setFont(rbFont);
     advRb.setFont(rbFont);
     customRb.setFont(rbFont);
@@ -51,6 +61,11 @@ public class LevelSelectionPage extends BorderPane {
     this.setCenter(vBox);
   }
 
+  /**
+   * Returns the selected {@link GameLevel} based on the checked radio button.
+   *
+   * @return the selected GameLevel (EASY, ADVANCED, or CUSTOM)
+   */
   public GameLevel getSelectedLevel() {
     if (easyRb.isSelected()) {
       return GameLevel.EASY;
