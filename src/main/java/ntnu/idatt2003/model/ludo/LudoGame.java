@@ -122,11 +122,12 @@ public class LudoGame implements BoardGame<LudoPlayer, LudoBoard> {
    *
    * @param token the token to move (must belong to current player)
    */
-  public void selectToken(Token token) {
-    if (!token.getOwner().equals(getCurrentPlayer())) {
-      throw new
-          IllegalArgumentException("Not your token");
-    }
+  public void selectToken(Token token, int diceValue) {
+    LudoPlayer player = getCurrentPlayer();
+    if (!token.getOwner().equals(player))
+      throw new IllegalArgumentException("Not your token");
+    if (!player.getMovableTokens(diceValue).contains(token))
+      throw new IllegalArgumentException("This token cannot be moved with the current dice value.");
     this.selectedToken = token;
   }
 

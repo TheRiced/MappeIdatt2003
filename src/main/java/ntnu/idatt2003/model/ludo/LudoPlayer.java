@@ -106,4 +106,23 @@ public class LudoPlayer extends Player {
     return tokens.stream().filter(Token::isFinished).count();
   }
 
+  /**
+   * Returns a list of this player's tokens that are allowed to move with the given dice value.
+   * - If a token is at HOME, it can only move if diceValue == 6.
+   * - If a token is on the board or finish lane (and not finished), it can always move.
+   * - Tokens that are already at FINISH cannot move.
+   *
+   * @param diceValue the rolled value
+   * @return list of tokens allowed to move
+   */
+  public List<Token> getMovableTokens(int diceValue) {
+    return tokens.stream()
+        .filter(token -> {
+          if (token.isAtHome()) {
+            return diceValue == 6; // Only move out of HOME if rolled 6
+          }
+          return !token.isFinished(); // All tokens not finished can move
+        })
+        .collect(Collectors.toList());
+  }
 }
