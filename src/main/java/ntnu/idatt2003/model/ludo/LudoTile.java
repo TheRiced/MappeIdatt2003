@@ -4,40 +4,76 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A single square (tile) on the Ludo board.
- * Keeps track of which tokens are currently on it, applies collision rules, and knows whether it's
- * a "safe" star square.
+ * Represents a single square (tile) on the Ludo board.
+ *
+ * <p>Each tile keeps track of the tokens currently on it, applies collision rules
+ * when tokens enter, and knows whether it is a "safe star" square where tokens cannot be captured.
+ * </p>
+ * <ul>
+ *   <li>{@code HOME} and {@code SAFE} tiles are considered "safe stars": multiple tokens can share
+ *   them, and no token can be captured here.</li>
+ *   <li>Other tile types allow only one player's tokens at a time. If an opponent's token is
+ *   present when a new token enters, the opponent's token(s) are sent home.</li>
+ * </ul>
  */
 public class LudoTile {
+
   private final int index;
   private final LudoTileType type;
   private final List<Token> tokens = new ArrayList<>();
 
   /**
+   * Constructs a Ludo tile.
+   *
    * @param index position index on main loop or finish lane.
-   * @param type tile type (HOME, NORMAL, SAFE, FINISH_ENTRY, FINISH)
+   * @param type  tile type (HOME, NORMAL, SAFE, FINISH_ENTRY, FINISH)
    */
   public LudoTile(int index, LudoTileType type) {
     this.index = index;
     this.type = type;
   }
 
-  public int getIndex() { return index; }
-  public LudoTileType getType() { return type; }
-
   /**
-   * @return unmodifiable list of tokens currently on this tile.
+   * Gets the index of this tile (position in main loop or finish lane).
+   *
+   * @return tile index (interpretation depends on type and color)
    */
-  public List<Token> getTokens() { return List.copyOf(tokens); }
+  public int getIndex() {
+    return index;
+  }
 
   /**
-   * @return number of tokens present on this tile.
+   * Gets the type of this tile.
+   *
+   * @return the tile's type (HOME, NORMAL, SAFE, etc.)
    */
-  public int occupantCount() { return tokens.size(); }
+  public LudoTileType getType() {
+    return type;
+  }
 
   /**
-   * @param token the reference token.
-   * @return true if at least one token here belongs to a different player.
+   * Returns an unmodifiable list of tokens currently present on this tile.
+   *
+   * @return list of tokens on this tile
+   */
+  public List<Token> getTokens() {
+    return List.copyOf(tokens);
+  }
+
+  /**
+   * Gets the number of tokens currently on this tile.
+   *
+   * @return number of tokens occupying this tile
+   */
+  public int occupantCount() {
+    return tokens.size();
+  }
+
+  /**
+   * Returns true if at least one token present here belongs to a different player.
+   *
+   * @param token the reference token (the arriving or checking token)
+   * @return true if there is at least one opponent's token on this tile
    */
   public boolean hasOpponent(Token token) {
     return tokens.stream().anyMatch(other -> !other.getOwner().equals(token.getOwner()));
@@ -64,8 +100,9 @@ public class LudoTile {
   }
 
   /**
-   * Removes the token form this tile.
-   * @param token
+   * Removes the token from this tile.
+   *
+   * @param token the token to be removed
    */
   public void leave(Token token) {
     tokens.remove(token);

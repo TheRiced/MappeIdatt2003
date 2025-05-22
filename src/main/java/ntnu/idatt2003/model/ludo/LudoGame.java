@@ -6,6 +6,13 @@ import ntnu.idatt2003.core.Die;
 import ntnu.idatt2003.model.BoardGame;
 import ntnu.idatt2003.view.Observer;
 
+/**
+ * Implements the core game logic for a Ludo game.
+ *
+ * <p>Manages the list of players, the game board, die rolls, token selection, and
+ * player turns. Integrates with the Observer interface for UI updates.
+ * </p>
+ */
 public class LudoGame implements BoardGame<LudoPlayer, LudoBoard> {
 
   private final List<LudoPlayer> players;
@@ -15,9 +22,18 @@ public class LudoGame implements BoardGame<LudoPlayer, LudoBoard> {
   private final List<Observer<LudoPlayer>> observers = new ArrayList<>();
   private Token selectedToken;
 
+  /**
+   * Constructs a new Ludo game with the given players and board.
+   *
+   * @param players the list of players (2–4 required)
+   * @param board   the Ludo board instance
+   * @throws IllegalArgumentException if player count is not 2–4
+   */
   public LudoGame(List<LudoPlayer> players, LudoBoard board) {
-    if (players.size() < 2 || players.size() > 4) throw new
-        IllegalArgumentException("Need 2-4 players");
+    if (players.size() < 2 || players.size() > 4) {
+      throw new
+          IllegalArgumentException("Need 2-4 players");
+    }
     this.players = new ArrayList<>(players);
     this.board = new LudoBoard();
   }
@@ -33,12 +49,22 @@ public class LudoGame implements BoardGame<LudoPlayer, LudoBoard> {
   }
 
   @Override
-  public LudoBoard getBoard() { return board; }
+  public LudoBoard getBoard() {
+    return board;
+  }
 
+  /**
+   * Moves the selected token (must call selectToken() first) by the given number of steps. Notifies
+   * observers after movement and checks for victory.
+   *
+   * @param steps number of tiles to move
+   */
   @Override
   public void moveCurrentPlayer(int steps) {
-    if (selectedToken == null) throw new
-        IllegalArgumentException("selectedToken() must be called first");
+    if (selectedToken == null) {
+      throw new
+          IllegalArgumentException("selectedToken() must be called first");
+    }
     int from = selectedToken.getPosition().getIndex();
     LudoTile dest = board.getNextTile(selectedToken, steps);
     selectedToken.moveTo(dest);
@@ -82,26 +108,43 @@ public class LudoGame implements BoardGame<LudoPlayer, LudoBoard> {
   }
 
   @Override
-  public void addObserver(Observer<LudoPlayer> observer) { observers.add(observer); }
+  public void addObserver(Observer<LudoPlayer> observer) {
+    observers.add(observer);
+  }
 
   @Override
-  public void removeObserver(Observer<LudoPlayer> observer) { observers.remove(observer); }
+  public void removeObserver(Observer<LudoPlayer> observer) {
+    observers.remove(observer);
+  }
 
+  /**
+   * Selects which token to move for the current player.
+   *
+   * @param token the token to move (must belong to current player)
+   */
   public void selectToken(Token token) {
-    if (!token.getOwner().equals(getCurrentPlayer())) throw new
-        IllegalArgumentException("Not your token");
+    if (!token.getOwner().equals(getCurrentPlayer())) {
+      throw new
+          IllegalArgumentException("Not your token");
+    }
     this.selectedToken = token;
   }
 
   private void notifyPlayerMoved(LudoPlayer player, int from, int to) {
-    for (var observer : observers) observer.onPlayerMoved(player, from, to);
+    for (var observer : observers) {
+      observer.onPlayerMoved(player, from, to);
+    }
   }
 
   private void notifyNextPlayer(LudoPlayer next) {
-    for (var observer : observers) observer.onNextPlayer(next);
+    for (var observer : observers) {
+      observer.onNextPlayer(next);
+    }
   }
 
   private void notifyGameOver(LudoPlayer player) {
-    for (var observer : observers) observer.onGameOver(player);
+    for (var observer : observers) {
+      observer.onGameOver(player);
+    }
   }
 }
