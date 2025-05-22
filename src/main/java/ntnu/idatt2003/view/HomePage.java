@@ -6,6 +6,8 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -39,13 +41,35 @@ public class HomePage {
     imageView.setFitWidth(700); // Adjust this as needed
     imageView.setOpacity(0.9);  // Optional: make it semi-transparent
 
+    // Welcome
+    Label welcomeLabel = new Label("Welcome to board games \uD83C\uDFB2\uD83D\uDE0A");
+    welcomeLabel.setFont(Font.font("Comic Sans MS", 42));
+    welcomeLabel.setTextFill(Color.BURLYWOOD);
+    welcomeLabel.setEffect(new DropShadow(15, Color.SADDLEBROWN));
+
+    HBox welcomeBox = new HBox(15,welcomeLabel);
+    welcomeBox.setAlignment(Pos.CENTER);
+
     snakesLabel = createHoverLabel("Snakes And Ladders", Color.ORANGERED);
     ludoLabel = createHoverLabel("Ludo", Color.LIMEGREEN);
 
     VBox content = new VBox(40, snakesLabel, ludoLabel);
     content.setAlignment(Pos.CENTER);
 
-    root.getChildren().addAll(imageView, content);
+    AnchorPane anchorPane = new AnchorPane();
+    anchorPane.setPickOnBounds(false);
+
+    anchorPane.getChildren().add(welcomeBox);
+    AnchorPane.setTopAnchor(welcomeBox, 50.0);
+    AnchorPane.setLeftAnchor(welcomeBox, 0.0);
+    AnchorPane.setRightAnchor(welcomeBox, 0.0);
+
+    anchorPane.getChildren().add(content);
+    AnchorPane.setTopAnchor(content, 180.0);
+    AnchorPane.setLeftAnchor(content, 0.0);
+    AnchorPane.setRightAnchor(content, 0.0);
+
+    root.getChildren().addAll(imageView, anchorPane);
   }
 
   private Label createHoverLabel(String text, Color glowColor) {
