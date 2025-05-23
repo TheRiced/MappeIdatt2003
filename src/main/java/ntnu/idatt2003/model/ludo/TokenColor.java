@@ -45,7 +45,7 @@ public enum TokenColor {
    * @param tiles a list of exactly 6 finish-lane tiles.
    */
   void setFinishLaneTiles(List<LudoTile> tiles) {
-    if (tiles == null || tiles.size() != 6) {
+    if (tiles == null || tiles.size() != 5) {
       throw new IllegalArgumentException("Finish-lane must be a list of 6 tiles");
     }
     this.finishLaneTiles = List.copyOf(tiles);
@@ -76,5 +76,7 @@ public enum TokenColor {
       case GREEN  -> 59;
     };
   }
+
+
 
 }
