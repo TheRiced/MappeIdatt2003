@@ -12,36 +12,45 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 
 /**
- * Renders a wiggling snake-like polyline between two points, with a round head,
- * eyes, and an additional highlight line along the body.
+ * Renders a wiggling snake-like polyline between two points, with a round head, eyes, and an
+ * additional highlight line along the body.
  */
 public class SnakeActionView implements ActionView {
+
   private final int wiggles;
   private final double thickness;
 
   // Example constant; replace or import from your tile/map config
   private static final double TILE_SIZE = 40.0;
 
+  /**
+   * Constructs a SnakeActionView with the specified visual parameters.
+   *
+   * @param wiggles   the number of wiggles (body undulations)
+   * @param thickness the thickness of the snake body
+   */
   public SnakeActionView(int wiggles, double thickness) {
-    this.wiggles   = wiggles;
+    this.wiggles = wiggles;
     this.thickness = thickness;
   }
 
   /**
-   * Builds a Path from 'from' to 'to' that follows the same sine-wavy
-   * curve you used in drawSnake().
+   * Builds a Path from 'from' to 'to' that follows the same sine-wavy curve you used in
+   * drawSnake().
    */
   public Path buildSnakePath(Point2D from, Point2D to, double iconWidth, double iconHeight) {
     // how much to shift so that Path coords == node.translate coords
-    double dxShift = -iconWidth  / 2.0;
+    double dxShift = -iconWidth / 2.0;
     double dyShift = -iconHeight / 2.0;
 
     // compute your usual snake geometry…
     double dx = to.getX() - from.getX();
     double dy = to.getY() - from.getY();
     double length = Math.hypot(dx, dy);
-    double ux = dx / length, uy = dy / length;
-    double px = -uy, py = ux;
+    double ux = dx / length;
+    double uy = dy / length;
+    double px = -uy;
+    double py = ux;
 
     int wiggles = 2;
     int segments = wiggles * 20;
@@ -54,8 +63,8 @@ public class SnakeActionView implements ActionView {
 
     // intermediate wiggly points
     for (int i = 1; i <= segments; i++) {
-      double t = (double)i / segments;
-      double sine   = Math.sin(2 * Math.PI * wiggles * t);
+      double t = (double) i / segments;
+      double sine = Math.sin(2 * Math.PI * wiggles * t);
       double offset = sine * thickness;
       double bx = from.getX() + dx * t + px * offset + dxShift;
       double by = from.getY() + dy * t + py * offset + dyShift;
@@ -71,14 +80,16 @@ public class SnakeActionView implements ActionView {
   }
 
 
-
   @Override
   public Group build(Point2D p1, Point2D p2) {
-    Group g = new Group();
 
-    double dx = p2.getX() - p1.getX(), dy = p2.getY() - p1.getY();
-    double len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len;
-    double px = -uy, py = ux;
+    double dx = p2.getX() - p1.getX();
+    double dy = p2.getY() - p1.getY();
+    double len = Math.hypot(dx, dy);
+    double ux = dx / len;
+    double uy = dy / len;
+    double px = -uy;
+    double py = ux;
 
     // Draw main body as a wiggling curve
     int segments = wiggles * 20;
@@ -87,7 +98,6 @@ public class SnakeActionView implements ActionView {
     body.setStrokeWidth(thickness);
     body.setStrokeLineCap(StrokeLineCap.ROUND);
     body.setStrokeLineJoin(StrokeLineJoin.ROUND);
-
 
     Polyline highlight = new Polyline();
     highlight.setStroke(Color.YELLOWGREEN);
@@ -110,6 +120,7 @@ public class SnakeActionView implements ActionView {
       double hy = by + py * off2;
       highlight.getPoints().addAll(hx, hy);
     }
+    Group g = new Group();
     g.getChildren().addAll(body, highlight);
 
     // Draw round head
@@ -121,9 +132,9 @@ public class SnakeActionView implements ActionView {
 
     // Draw eyes
     double eyeDistance = headRadius * 0.25;
-    double eyeOffset   = headRadius * 0.45;
-    double eyeRadius   = TILE_SIZE * 0.04;
-    double raise       = headRadius * 0.6;
+    double eyeOffset = headRadius * 0.45;
+    double eyeRadius = TILE_SIZE * 0.04;
+    double raise = headRadius * 0.6;
 
     // Left eye
     double lx = p1.getX() + ux * eyeDistance + px * eyeOffset;

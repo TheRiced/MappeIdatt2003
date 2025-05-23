@@ -4,14 +4,21 @@ import java.util.List;
 import javafx.scene.paint.Color;
 
 /**
- * Enumeration of the four Ludo player colors, each with the index of its START square on the main
- * track and the index where it branches into its private finish lane.
+ * Enumeration of the four Ludo player colors, each associated with its unique start index (the main
+ * track position where its tokens enter play) and finish-entry index (where tokens branch into
+ * their color's private finish lane).
+ *
+ * <p>Also holds a reference to the finish lane tiles for each color, set by the board during
+ * initialization.
+ * </p>
  */
 public enum TokenColor {
+
   YELLOW(0, 43),
   BLUE(11, 9),
   RED(22, 20),
   GREEN(33, 31);
+
 
   private final int startIndex;
   private final int finishEntryIndex;
@@ -19,7 +26,8 @@ public enum TokenColor {
 
   /**
    * Constructors a TokenColor with the given start and finish-entry indices.
-   * @param startIndex the index in the main loop where tokens enter play
+   *
+   * @param startIndex       the index in the main loop where tokens enter play
    * @param finishEntryIndex the index in the main loop where tokens branch into the finish lane
    */
   TokenColor(int startIndex, int finishEntryIndex) {
@@ -29,19 +37,27 @@ public enum TokenColor {
 
   /**
    * Returns the index of the starting square on the main track for this color.
+   *
    * @return the main-path start index for this color.
    */
-  public int getStartIndex() { return startIndex; }
+  public int getStartIndex() {
+    return startIndex;
+  }
 
   /**
-   * Returns the index on the main track at which this color's token enters its private finish lane.
+   * Returns the index on the main track at which this color's token enters its private finish
+   * lane.
+   *
    * @return the main-path finish-entry index for this color.
    */
-  public int getFinishEntryIndex() { return finishEntryIndex; }
+  public int getFinishEntryIndex() {
+    return finishEntryIndex;
+  }
 
   /**
-   * Package-private: sets the private finish-lane tiles for this color.
-   * Called once by LudoBoard during initialization.
+   * Package-private: sets the private finish-lane tiles for this color. Called once by LudoBoard
+   * during initialization.
+   *
    * @param tiles a list of exactly 6 finish-lane tiles.
    */
   void setFinishLaneTiles(List<LudoTile> tiles) {
@@ -61,8 +77,11 @@ public enum TokenColor {
   }
 
   /**
-   * @return unmodifiable list of this color's private finish-lane tiles.
+   * Gets an unmodifiable list of this color's private finish-lane tiles.
+   *
+   * @return the list of finish-lane tiles for this color.
    */
+
   public List<LudoTile> getFinishLaneTiles() { return finishLaneTiles; }
 
   /**
@@ -76,7 +95,5 @@ public enum TokenColor {
       case GREEN  -> 59;
     };
   }
-
-
 
 }

@@ -10,8 +10,9 @@ public class SnakeAction implements TileAction {
   private final int destinationTileId;
 
   /**
-   * Constructs a new SnakeAction
-   * @param destinationTileId The tile ID where the player should be moved after hitting the snake.
+   * Constructs a new SnakeAction.
+   *
+   * @param destinationTileId The tile ID where the player should be moved after hitting the snake
    */
   public SnakeAction(int destinationTileId) {
     this.destinationTileId = destinationTileId;
@@ -27,6 +28,8 @@ public class SnakeAction implements TileAction {
     player.setPendingMoveTo(destinationTileId);
   }
 
-  public int getDestinationTileId() { return destinationTileId; }
+  public int getDestinationTileId() {
+    return destinationTileId;
+  }
 
 }
