@@ -8,10 +8,10 @@ import javafx.scene.paint.Color;
  * track and the index where it branches into its private finish lane.
  */
 public enum TokenColor {
-  RED(0, 50),
-  BLUE(13, 11),
-  GREEN(26, 24),
-  YELLOW(39, 37);
+  YELLOW(0, 43),
+  BLUE(11, 9),
+  RED(22, 20),
+  GREEN(33, 31);
 
   private final int startIndex;
   private final int finishEntryIndex;
@@ -45,7 +45,7 @@ public enum TokenColor {
    * @param tiles a list of exactly 6 finish-lane tiles.
    */
   void setFinishLaneTiles(List<LudoTile> tiles) {
-    if (tiles == null || tiles.size() != 6) {
+    if (tiles == null || tiles.size() != 5) {
       throw new IllegalArgumentException("Finish-lane must be a list of 6 tiles");
     }
     this.finishLaneTiles = List.copyOf(tiles);
@@ -64,4 +64,19 @@ public enum TokenColor {
    * @return unmodifiable list of this color's private finish-lane tiles.
    */
   public List<LudoTile> getFinishLaneTiles() { return finishLaneTiles; }
+
+  /**
+   * Returns the index in the overall tile numbering where this color's finish‐lane begins.
+   */
+  public int getFinishStartIndex() {
+    return switch(this) {
+      case YELLOW -> 44;
+      case BLUE   -> 49;
+      case RED    -> 54;
+      case GREEN  -> 59;
+    };
+  }
+
+
+
 }

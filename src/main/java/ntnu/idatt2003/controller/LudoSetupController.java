@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import ntnu.idatt2003.core.PlayerIcon;
 import ntnu.idatt2003.factory.BoardGameFactory;
 import ntnu.idatt2003.model.ludo.LudoBoard;
+import ntnu.idatt2003.model.ludo.LudoGame;
 import ntnu.idatt2003.model.ludo.LudoPlayer;
 import ntnu.idatt2003.model.ludo.LudoTile;
 import ntnu.idatt2003.model.ludo.TokenColor;
@@ -22,6 +23,7 @@ import ntnu.idatt2003.view.LudoSetupPage;
 public class LudoSetupController {
   private final Stage stage;
   private final LudoSetupPage view;
+
 
   public LudoSetupController(Stage stage, LudoSetupPage view) {
     this.stage = stage;
@@ -46,14 +48,10 @@ public class LudoSetupController {
     LudoBoard board = factory.createDefaultLudoBoard();
 
     for (int i = 0; i < count; i++) {
-      TextField nameField = (TextField) getNodeFromGrid(view.getPlayersGrid(), i, 1);
-      TextField ageField = (TextField) getNodeFromGrid(view.getPlayersGrid(), i, 2);
-      @SuppressWarnings("unchecked")
-      ComboBox<PlayerIcon> iconChoice = (ComboBox<PlayerIcon>) getNodeFromGrid(view
-          .getPlayersGrid(), i, 3);
-      @SuppressWarnings("unchecked")
-      ComboBox<TokenColor> colorChoice = (ComboBox<TokenColor>) getNodeFromGrid(view
-          .getPlayersGrid(), i, 4);
+      TextField nameField = view.getNameFields().get(i);
+      TextField ageField = view.getAgeFields().get(i);
+      PlayerIcon icon = view.getIconFields().get(i).getValue();
+      TokenColor color = view.getColorFields().get(i).getValue();
 
       String name = nameField.getText().trim();
       if (name.isEmpty()) {
@@ -69,13 +67,11 @@ public class LudoSetupController {
         return;
       }
 
-      PlayerIcon icon = iconChoice.getValue();
       if (icon == null) {
         showError("Invalid Icon", "Icon for player " + (i+1) + " cannot be empty.");
         return;
       }
 
-      TokenColor color = colorChoice.getValue();
       if (color == null) {
         showError("Invalid Color", "Color for player " + (i+1) + " cannot be empty.");
         return;
@@ -85,8 +81,10 @@ public class LudoSetupController {
       players.add(new LudoPlayer(name, age, icon, color, homeTiles));
     }
 
+
     var game = factory.createLudoGame(players, board);
-    new LudoGameController(stage, game).start();
+    LudoGameController ctrl = new LudoGameController(stage, (LudoGame) game);
+    ctrl.start();
   }
 
   private Node getNodeFromGrid(GridPane grid, int row, int col) {
