@@ -56,6 +56,7 @@ import ntnu.idatt2003.view.actions.SnakeActionView;
  */
 public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer> {
 
+
     private static final int ROWS = 9;
     private static final int COLS = 10;
     private static final int TILE_SIZE = 60;
@@ -137,7 +138,8 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         sidebar.setAlignment(Pos.TOP_CENTER);
         drawActions();
 
-    }
+
+  }
 
     private void setupBoard() {
         boardGrid.setGridLinesVisible(true);
@@ -155,8 +157,18 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
                 boardGrid.add(pane, col, row);
                 tilePanes.put(tileId, pane);
             }
+
         }
+        rect.setFill(base);
+        Text idText = new Text(String.valueOf(tileId));
+        idText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+        pane.getChildren().addAll(rect, idText);
+        boardGrid.add(pane, col, row);
+        tilePanes.put(tileId, pane);
+      }
     }
+  }
+
 
     private Rectangle getRectangle(int row, int col, int tileId) {
         Rectangle rect = new Rectangle(TILE_SIZE, TILE_SIZE);
@@ -198,8 +210,23 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
                 overlay.getChildren().add(av.build(p1, p2));
             }
         }
-    }
 
+    }
+  }
+
+  /**
+   * Computes the center of a zig-zag tileId.
+   */
+  private Point2D tileCenter(int tileId) {
+    int idx = tileId - 1;
+    int logicalRow = idx / COLS;
+    int idxInRow = idx % COLS;
+    int gridCol = (logicalRow % 2 == 0) ? idxInRow : (COLS - 1 - idxInRow);
+    int gridRow = ROWS - 1 - logicalRow;
+    double x = gridCol * TILE_SIZE + TILE_SIZE / 2.0;
+    double y = gridRow * TILE_SIZE + TILE_SIZE / 2.0;
+    return new Point2D(x, y);
+  }
 
     private Point2D tileCenter(int tileId) {
         int idx = tileId - 1;
@@ -226,9 +253,12 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         };
     }
 
-    private boolean isBonusTile(int id) {
-        return id == 7 || id == 45 || id == 77;
+  public void startPlayerDrift(SnakeLadderPlayer player) {
+    ImageView iv = playerIcons.get(player);
+    if (iv != null) {
+      animator.drift(iv);
     }
+  }
 
 
 
@@ -266,12 +296,8 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
      * @param player
      */
 
-    public void startPlayerDrift(SnakeLadderPlayer player) {
-        ImageView iv = playerIcons.get(player);
-        if (iv != null) {
-            animator.drift(iv);
-        }
-    }
+
+
 
     /**
      *
@@ -312,7 +338,10 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
      */
     public SnakeLadderBoard getBoard() {
         return board;
+
     }
+    iv.toFront();
+
 
     /**
      *
@@ -322,15 +351,17 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         rollDiceButton.setDisable(true);
         statusLabel.setText("Winner: " + name);
 
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Game Over");
-            alert.setHeaderText(null);
-            alert.setContentText(name + " wins the game!");
-            alert.showAndWait();
-        });
+    animator.moveAlong(iv, path, Duration.millis(700), onFinished);
+  }
 
+  private void finishActionJump(ImageView iv, int landed) {
+    Tile tile = board.getTile(landed);
+    if (tile == null) {
+      System.out.println("No tile found for landed: " + landed);
+      placeAllPlayers();
+      return;
     }
+
 
     /**
      *
@@ -357,13 +388,10 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
             .collect(Collectors.toList());
 
         animator.moveAlong(iv, path, Duration.millis(700), onFinished);
-    }
 
-    /**
-     *
-     * @param iv
-     * @param landed
-     */
+    }
+  }
+
 
     private void finishActionJump(ImageView iv, int landed) {
         Tile tile = board.getTile(landed);
@@ -394,7 +422,10 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         } else {
             placeAllPlayers();
         }
+
     }
+  }
+
 
     /**
      *
@@ -451,7 +482,9 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
     @Override
     public void onDiceRolled(List<Integer> values) {
 
-        diceView.updateDice(values);
+
+    diceView.updateDice(values);
+
 
         rolledLabel.setText("Last Roll: "
             + values.stream()
@@ -460,15 +493,38 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         );
     }
 
-    /**
-     *
-     * @param next
-     */
-    @Override
-    public void onNextPlayer(SnakeLadderPlayer next) {
-        updateCurrentPlayer(next.getName());
-    }
 
+  @Override
+  public void onNextPlayer(SnakeLadderPlayer next) {
+    updateCurrentPlayer(next.getName());
+  }
+
+
+
+  /**
+   * Places all player tokens on their current tiles. Clears any previous tokens from the token
+   * layer, and re-adds all icons centered on their tiles.
+   */
+  public void placeAllPlayers() {
+    // Clear any previous icons (if you re-call this)
+    tokenLayer.getChildren().clear();
+    playerIcons.clear();
+
+    for (SnakeLadderPlayer player : players) {
+      ImageView iv = new ImageView(player.getIcon().getImage());
+      iv.setFitWidth(32);
+      iv.setFitHeight(32);
+
+      Point2D c = tileCenter(player.getCurrentTile().getTileId());
+      // Center the icon on the tile
+      iv.setTranslateX(c.getX() - iv.getFitWidth() / 2);
+      iv.setTranslateY(c.getY() - iv.getFitHeight() / 2);
+
+      // Record and add to the tokenLayer (on top of snakes/ladders)
+      playerIcons.put(player, iv);
+      tokenLayer.getChildren().add(iv);
+    }
+  }
 
     /**
      *
@@ -503,4 +559,5 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
             tokenLayer.getChildren().add(iv);
         }
     }
+
 }

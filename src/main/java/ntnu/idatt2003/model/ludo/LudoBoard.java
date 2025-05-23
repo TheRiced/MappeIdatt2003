@@ -14,11 +14,14 @@ import javafx.geometry.Point2D;
 public class LudoBoard implements Serializable {
   private static final long serialVersionUID = 1L;
 
+
   public static final int MAIN_PATH_SIZE = 44;
 
   private final List<LudoTile> mainPath;
   private final Map<TokenColor, List<LudoTile>> home;
   private final Map<TokenColor, List<LudoTile>> finishLanes;
+
+
 
   /** Measured pixel‐coordinates (from your Figma) for every tile index. */
   private static final Map<Integer, Point2D> tileCoordinates;
@@ -124,6 +127,7 @@ public class LudoBoard implements Serializable {
     tileCoordinates = Collections.unmodifiableMap(m);
   }
 
+
   public LudoBoard() {
     this.mainPath    = buildMainPath();
     this.home        = buildHome();
@@ -132,9 +136,13 @@ public class LudoBoard implements Serializable {
     finishLanes.forEach((c, tiles) -> c.setFinishLaneTiles(tiles));
   }
 
-  private static final Set<Integer> SAFE_INDICES = Set.of(6, 18, 29, 40);
 
-  /** Build the 0–43 looping main path, marking safe stars. */
+  /**
+   * Builds the main path of the board, marking safe tiles.
+   *
+   * @return an unmodifiable list of LudoTile representing the main path.
+   */
+private static final Set<Integer> SAFE_INDICES = Set.of(6, 18, 29, 40);
   private List<LudoTile> buildMainPath() {
     var p = new ArrayList<LudoTile>(MAIN_PATH_SIZE);
     for (int i = 0; i < MAIN_PATH_SIZE; i++) {
@@ -146,7 +154,12 @@ public class LudoBoard implements Serializable {
     return Collections.unmodifiableList(p);
   }
 
-  /** Build each colour’s 4 home‐yard tiles (indices 64–79). */
+  /**
+   * Builds the home yard tiles for each color.
+   *
+   * @return a map from each TokenColor to its list of home tiles.
+   */
+
   private Map<TokenColor, List<LudoTile>> buildHome() {
     var m = new EnumMap<TokenColor, List<LudoTile>>(TokenColor.class);
     m.put(TokenColor.YELLOW, createHomeTiles(64));
@@ -165,6 +178,11 @@ public class LudoBoard implements Serializable {
     return Collections.unmodifiableList(list);
   }
 
+  /**
+   * Builds the finish lanes for each color.
+   *
+   * @return a map from each TokenColor to its list of finish lane tiles.
+   */
   private Map<TokenColor, List<LudoTile>> buildFinishLanes() {
     var map = new EnumMap<TokenColor, List<LudoTile>>(TokenColor.class);
 
@@ -184,6 +202,7 @@ public class LudoBoard implements Serializable {
     }
     return Collections.unmodifiableMap(map);
   }
+
 
   /** @return the circular main path. */
   public List<LudoTile> getMainPath() {
@@ -237,8 +256,9 @@ public class LudoBoard implements Serializable {
     return dest;
   }
 
-  /** @return colour→finish-lane map. */
+
   public Map<TokenColor, List<LudoTile>> getFinishLanesMap() {
     return finishLanes;
+
   }
 }

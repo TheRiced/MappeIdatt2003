@@ -25,14 +25,18 @@ public enum PlayerIcon {
     );
   }
 
-  /** The JavaFX Image you can show in an ImageView. */
+  /**
+   * The JavaFX Image you can show in an ImageView.
+   */
   public Image getImage() {
     return image;
   }
 
-  /** So ComboBox’s toString() isn’t the filename. */
+  /**
+   * So ComboBox’s toString() isn’t the filename.
+   */
   @Override
   public String toString() {
-    return name().replace('_',' ');
+    return name().replace('_', ' ');
   }
 }

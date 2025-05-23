@@ -24,8 +24,12 @@ import javafx.scene.text.Text;
 import ntnu.idatt2003.core.PlayerIcon;
 
 /**
- * PlayerSetupPage lets users pick number of players, dice count, and enter
- * player names, ages, and icons (via PNG images).
+ * PlayerSetupPage allows users to configure the number of players, dice count, and enter player
+ * information (name, age, and icon) before starting a game.
+ *
+ * <p>Fields are dynamically generated and validated. The start button
+ * is enabled only when all entries are valid.
+ * </p>
  */
 public class PlayerSetupPage extends BorderPane {
 
@@ -35,12 +39,16 @@ public class PlayerSetupPage extends BorderPane {
   private List<TextField> ages;
   private List<ComboBox<PlayerIcon>> icons;
   private final Button generate = new Button("Generate Fields");
-  private final Button start    = new Button("Start Game");
-  private final VBox fieldsBox  = new VBox(15);
+  private final Button start = new Button("Start Game");
+  private final VBox fieldsBox = new VBox(15);
   private List<Label> nameErrors;
   private List<Label> ageErrors;
   private List<Label> iconErrors;
 
+  /**
+   * Constructs the player setup page with controls for selecting player count, dice count, and
+   * entering player information.
+   */
   public PlayerSetupPage() {
     // Title
     Text title = new Text("Player Setup");
@@ -57,15 +65,15 @@ public class PlayerSetupPage extends BorderPane {
     // Style buttons
     generate.setFont(Font.font(14));
     generate.setStyle(
-        "-fx-background-color: #59753c;" +
-            "-fx-text-fill: white;" +
-            "-fx-background-radius: 10;"
+        "-fx-background-color: #59753c;"
+            + "-fx-text-fill: white;"
+            + "-fx-background-radius: 10;"
     );
     start.setFont(Font.font(14));
     start.setStyle(
-        "-fx-background-color: #89b391;" +
-            "-fx-text-fill: white;" +
-            "-fx-background-radius: 10;"
+        "-fx-background-color: #89b391;"
+            + "-fx-text-fill: white;"
+            + "-fx-background-radius: 10;"
     );
     start.setDisable(true);
     // Wire the Generate button to build fields
@@ -80,9 +88,9 @@ public class PlayerSetupPage extends BorderPane {
     centerBox.setAlignment(Pos.CENTER);
     centerBox.setPadding(new Insets(30));
     centerBox.setStyle(
-        "-fx-background-color: #faf0e3;" +
-            "-fx-border-color: #aeca7e;" +
-            "-fx-border-radius: 15;"
+        "-fx-background-color: #faf0e3;"
+            + "-fx-border-color: #aeca7e;"
+            + "-fx-border-radius: 15;"
     );
     setCenter(centerBox);
   }
@@ -91,7 +99,7 @@ public class PlayerSetupPage extends BorderPane {
   public void createFields() {
     fieldsBox.getChildren().clear();
     names = new ArrayList<>();
-    ages  = new ArrayList<>();
+    ages = new ArrayList<>();
     icons = new ArrayList<>();
     nameErrors = new ArrayList<>();
     ageErrors = new ArrayList<>();
@@ -100,7 +108,7 @@ public class PlayerSetupPage extends BorderPane {
     for (int i = 0; i < getPlayerCount(); i++) {
       TextField name = new TextField();
       name.setPromptText("Name");
-      TextField age  = new TextField();
+      TextField age = new TextField();
       age.setPromptText("Age");
 
       ComboBox<PlayerIcon> iconCb = new ComboBox<>();
@@ -109,6 +117,7 @@ public class PlayerSetupPage extends BorderPane {
 
       iconCb.setCellFactory(cb -> new ListCell<>() {
         private final ImageView iv = new ImageView();
+
         @Override
         protected void updateItem(PlayerIcon item, boolean empty) {
           super.updateItem(item, empty);
@@ -130,6 +139,7 @@ public class PlayerSetupPage extends BorderPane {
       Label nameErr = new Label(); nameErr.setTextFill(Color.RED);
       Label ageErr  = new Label(); ageErr.setTextFill(Color.RED);
       Label iconErr = new Label(); iconErr.setTextFill(Color.RED);
+
 
       names.add(name);
       ages.add(age);
@@ -171,6 +181,10 @@ public class PlayerSetupPage extends BorderPane {
     validateForm();
   }
 
+  /**
+   * Validates all player entry fields (name, age, icon). Shows error messages
+   * next to invalid fields, and enables the start button only when all are valid.
+   */
   private void validateForm() {
     boolean allValid = true;
 
@@ -208,6 +222,13 @@ public class PlayerSetupPage extends BorderPane {
     start.setDisable(!allValid);
   }
 
+  /**
+   * Creates a styled radio button for dice selection.
+   *
+   * @param text the label for the radio button
+   * @param selected whether this radio button is initially selected
+   * @return the created RadioButton
+   */
   private RadioButton createDiceRadio(String text, boolean selected) {
     RadioButton rb = new RadioButton(text);
     rb.setToggleGroup(diceGroup);
@@ -215,14 +236,50 @@ public class PlayerSetupPage extends BorderPane {
     return rb;
   }
 
-  public Button getGenerateButton() { return generate; }
-  public Button getStartButton()    { return start;    }
-  public int getPlayerCount()       { return playerCountSpinner.getValue(); }
+  /**
+   * Returns the button for generating player fields.
+   *
+   * @return the generate fields Button
+   */
+  public Button getGenerateButton() {
+    return generate;
+  }
+
+  /**
+   * Returns the button for starting the game.
+   *
+   * @return the start game Button
+   */
+  public Button getStartButton() {
+    return start;
+  }
+
+  /**
+   * Returns the selected number of players.
+   *
+   * @return the player count (minimum 2, maximum 5)
+   */
+  public int getPlayerCount() {
+    return playerCountSpinner.getValue();
+  }
+
+  /**
+   * Returns the selected number of dice (1 or 2).
+   *
+   * @return the dice count
+   */
   public int getDiceCount() {
     RadioButton sel = (RadioButton) diceGroup.getSelectedToggle();
     return sel.getText().contains("1") ? 1 : 2;
   }
 
+
+  /**
+   * Collects and returns form data for all players, to be used by the controller.
+   * The returned list contains PlayerFormData objects with name, age, and icon for each player.
+   *
+   * @return a list of PlayerFormData for all players
+   */
 
   public List<PlayerFormData> collectPlayers() {
     List<PlayerFormData> data = new ArrayList<>();

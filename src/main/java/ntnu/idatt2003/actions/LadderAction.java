@@ -6,6 +6,7 @@ import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
  * Represents a ladder that moves the player up to a higher tile.
  */
 public class LadderAction implements TileAction {
+
   private final int destinationTileId;
 
   /**
@@ -27,7 +28,8 @@ public class LadderAction implements TileAction {
     player.setPendingMoveTo(destinationTileId);
   }
 
-  public int getDestinationTileId() { return destinationTileId; }
-
+  public int getDestinationTileId() {
+    return destinationTileId;
+  }
 
 }
