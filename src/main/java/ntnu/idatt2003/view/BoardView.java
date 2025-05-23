@@ -77,6 +77,12 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
     private final Map<SnakeLadderPlayer, ImageView> playerIcons = new HashMap<>();
     private final Animator animator;
 
+    /**
+     *
+     * @param board
+     * @param players
+     * @param animator
+     */
     public BoardView(SnakeLadderBoard board, List<SnakeLadderPlayer> players, Animator animator) {
         this.board = board;
         this.players = players;
@@ -142,19 +148,7 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
                 int tileId = actualRow * COLS + indexInRow + 1;
                 StackPane pane = new StackPane();
                 pane.setPrefSize(TILE_SIZE, TILE_SIZE);
-                Rectangle rect = new Rectangle(TILE_SIZE, TILE_SIZE);
-                rect.setStroke(Color.BLACK);
-                Color base = ((row + col) % 2 == 0) ? Color.BEIGE : Color.LIGHTBLUE;
-                if (tileId == ROWS * COLS) {
-                    base = Color.DARKGREEN;
-                } else if (isRedTile(tileId)) {
-                    base = Color.CRIMSON;
-                } else if (isYellowTile(tileId)) {
-                    base = Color.GOLD;
-                } else if (isBonusTile(tileId)) {
-                    base = Color.MEDIUMPURPLE;
-                }
-                rect.setFill(base);
+                Rectangle rect = getRectangle(row, col, tileId);
                 Text idText = new Text(String.valueOf(tileId));
                 idText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
                 pane.getChildren().addAll(rect, idText);
@@ -164,10 +158,25 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         }
     }
 
+    private Rectangle getRectangle(int row, int col, int tileId) {
+        Rectangle rect = new Rectangle(TILE_SIZE, TILE_SIZE);
+        rect.setStroke(Color.BLACK);
+        Color base = ((row + col) % 2 == 0) ? Color.BEIGE : Color.LIGHTBLUE;
+        if (tileId == ROWS * COLS) {
+            base = Color.DARKGREEN;
+        } else if (isRedTile(tileId)) {
+            base = Color.CRIMSON;
+        } else if (isYellowTile(tileId)) {
+            base = Color.GOLD;
+        } else if (isBonusTile(tileId)) {
+            base = Color.MEDIUMPURPLE;
+        }
+        rect.setFill(base);
+        return rect;
+    }
+
     /**
-     * Draws all snake and ladder actions on the overlay layer. Clears previous graphics, iterates
-     * over all tiles, and draws the correct {@link ActionView} between tiles for any tile with a
-     * SnakeAction or LadderAction.
+     *
      */
     public void drawActions() {
         overlay.getChildren().clear();
@@ -191,9 +200,7 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         }
     }
 
-    /**
-     * Computes the center of a zig-zag tileId.
-     */
+
     private Point2D tileCenter(int tileId) {
         int idx = tileId - 1;
         int logicalRow = idx / COLS;
@@ -222,6 +229,8 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
     private boolean isBonusTile(int id) {
         return id == 7 || id == 45 || id == 77;
     }
+
+
 
     private void setupSidebar() {
         sidebar.setPrefWidth(200);
@@ -252,6 +261,11 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         );
     }
 
+    /**
+     *
+     * @param player
+     */
+
     public void startPlayerDrift(SnakeLadderPlayer player) {
         ImageView iv = playerIcons.get(player);
         if (iv != null) {
@@ -259,29 +273,51 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         }
     }
 
+    /**
+     *
+     * @return
+     */
+
     public Button getRollDiceButton() {
         return rollDiceButton;
     }
+
+    /**
+     *
+     * @param playerName
+     */
 
     public void updateCurrentPlayer(String playerName) {
         currentPlayerLabel.setText("Current player: " + playerName);
     }
 
+    /**
+     *
+     * @param rolls
+     */
 
     public void updateDiceResult(List<Integer> rolls) {
-        // push the raw rolls into the DieDiceView
+
         diceView.updateDice(rolls);
 
-        // update the text label too
+
         rolledLabel.setText("Rolled: "
             + rolls.stream().map(String::valueOf).collect(Collectors.joining(", "))
         );
     }
 
+    /**
+     *
+     * @return
+     */
     public SnakeLadderBoard getBoard() {
         return board;
     }
 
+    /**
+     *
+     * @param name
+     */
     public void showWinner(String name) {
         rollDiceButton.setDisable(true);
         statusLabel.setText("Winner: " + name);
@@ -297,13 +333,11 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
     }
 
     /**
-     * Animates a player's token from one tile to another, moving step-by-step through intermediate
-     * tiles, then calls the callback (typically to finish action jumps).
      *
-     * @param player     the player whose token to animate
-     * @param fromId     the tile ID to move from
-     * @param toId       the tile ID to move to
-     * @param onFinished callback to run after the animation is done
+     * @param player
+     * @param fromId
+     * @param toId
+     * @param onFinished
      */
     public void animatePlayerMove(SnakeLadderPlayer player, int fromId, int toId,
                                   Runnable onFinished) {
@@ -317,12 +351,19 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         List<Point2D> path = IntStream.rangeClosed(1, steps)
             .mapToObj(i -> {
                 Point2D c = tileCenter(fromId + i * dir);
-                return new Point2D(c.getX() - iv.getFitWidth() / 2, c.getY() - iv.getFitHeight() / 2);
+                return new Point2D(c.getX() - iv.getFitWidth() / 2,
+                    c.getY() - iv.getFitHeight() / 2);
             })
             .collect(Collectors.toList());
 
         animator.moveAlong(iv, path, Duration.millis(700), onFinished);
     }
+
+    /**
+     *
+     * @param iv
+     * @param landed
+     */
 
     private void finishActionJump(ImageView iv, int landed) {
         Tile tile = board.getTile(landed);
@@ -334,7 +375,7 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         TileAction action = tile.getAction();
         if (action instanceof SnakeAction snake) {
             Point2D start = tileCenter(landed), end = tileCenter(snake.getDestinationTileId());
-            // Create a SnakeActionView with its own wiggles & thickness…
+
             SnakeActionView sav = new SnakeActionView(2, TILE_SIZE * .25);
 
             Path snakePath = sav.buildSnakePath(
@@ -355,6 +396,12 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         }
     }
 
+    /**
+     *
+     * @param player
+     * @param midId
+     */
+
     public void finishActionJump(SnakeLadderPlayer player, int midId) {
         ImageView iv = playerIcons.get(player);
         if (iv == null) {
@@ -364,9 +411,12 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         }
     }
 
+
     /**
-     * Observer callback: animates the movement of a player's token from its previous tile to a new
-     * tile, then animates action jump if needed.
+     *
+     * @param player
+     * @param fromId
+     * @param toId
      */
     @Override
     public void onPlayerMoved(SnakeLadderPlayer player, int fromId, int toId) {
@@ -393,13 +443,11 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         );
     }
 
-    @Override
-    protected void layoutChildren() {
-        super.layoutChildren();
 
-        boardContainer.resize(getWidth(), getHeight());
-    }
-
+    /**
+     *
+     * @param values
+     */
     @Override
     public void onDiceRolled(List<Integer> values) {
 
@@ -412,11 +460,20 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
         );
     }
 
+    /**
+     *
+     * @param next
+     */
     @Override
     public void onNextPlayer(SnakeLadderPlayer next) {
         updateCurrentPlayer(next.getName());
     }
 
+
+    /**
+     *
+     * @param winner
+     */
     @Override
     public void onGameOver(SnakeLadderPlayer winner) {
         showWinner(winner.getName());
@@ -424,11 +481,10 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
     }
 
     /**
-     * Places all player tokens on their current tiles. Clears any previous tokens from the token
-     * layer, and re-adds all icons centered on their tiles.
+     *
      */
     public void placeAllPlayers() {
-        // Clear any previous icons (if you re-call this)
+
         tokenLayer.getChildren().clear();
         playerIcons.clear();
 
@@ -438,11 +494,11 @@ public class BoardView extends BorderPane implements Observer<SnakeLadderPlayer>
             iv.setFitHeight(32);
 
             Point2D c = tileCenter(player.getCurrentTile().getTileId());
-            // Center the icon on the tile
+
             iv.setTranslateX(c.getX() - iv.getFitWidth() / 2);
             iv.setTranslateY(c.getY() - iv.getFitHeight() / 2);
 
-            // Record and add to the tokenLayer (on top of snakes/ladders)
+
             playerIcons.put(player, iv);
             tokenLayer.getChildren().add(iv);
         }
