@@ -102,13 +102,9 @@ public class Token {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof Token)) {
-      return false;
-    }
-    Token that = (Token) o;
+    if (this == o) return true;
+    if (!(o instanceof Token that)) return false;
+
     return id == that.id && owner.equals(that.owner);
   }
 
