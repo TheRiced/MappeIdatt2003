@@ -6,18 +6,30 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import ntnu.idatt2003.actions.BonusTileAction;
 import ntnu.idatt2003.actions.LadderAction;
 import ntnu.idatt2003.actions.SnakeAction;
-import ntnu.idatt2003.model.Board;
-import ntnu.idatt2003.model.Tile;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderBoard;
+import ntnu.idatt2003.model.snakeandladder.Tile;
 
+/**
+ * A {@link BoardFileReader} implementation that reads a Snakes and Ladders board configuration from
+ * a JSON file using Gson. Supports loading from both the classpath and the file system.
+ *
+ * <p>The JSON file must contain a "tiles" array, where each tile can have an "id", "nextTile",
+ * and optionally an "action" object (with "type" and other action-specific fields).
+ */
 public class BoardFileReaderGson implements BoardFileReader {
 
   @Override
-  public Board readBoard(Path path) throws Exception {
+  public SnakeLadderBoard readBoard(Path path) throws Exception {
     InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path.toString());
+    if (inputStream == null) {
+      // Fallback to file system
+      inputStream = Files.newInputStream(path);
+    }
     if (inputStream == null) {
       throw new IllegalArgumentException("File not found: " + path);
     }
@@ -25,7 +37,7 @@ public class BoardFileReaderGson implements BoardFileReader {
     JsonObject json = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
     JsonArray tileArray = json.getAsJsonArray("tiles");
 
-    Board board = new Board();
+    SnakeLadderBoard board = new SnakeLadderBoard();
 
     for (JsonElement element : tileArray) {
       JsonObject tileJson = element.getAsJsonObject();

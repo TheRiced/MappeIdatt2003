@@ -1,11 +1,12 @@
 package ntnu.idatt2003.actions;
 
-import ntnu.idatt2003.model.Player;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 
 /**
  * Represents a ladder that moves the player up to a higher tile.
  */
 public class LadderAction implements TileAction {
+
   private final int destinationTileId;
 
   /**
@@ -23,11 +24,12 @@ public class LadderAction implements TileAction {
    * @param player The player who landed on the ladder tile.
    */
   @Override
-  public void perform(Player player) {
+  public void perform(SnakeLadderPlayer player) {
     player.setPendingMoveTo(destinationTileId);
   }
 
-  public int getDestinationTileId() { return destinationTileId; }
-
+  public int getDestinationTileId() {
+    return destinationTileId;
+  }
 
 }
