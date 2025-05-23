@@ -1,184 +1,230 @@
 package ntnu.idatt2003.view;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import ntnu.idatt2003.model.ludo.LudoBoard;
 import ntnu.idatt2003.model.ludo.LudoPlayer;
-import ntnu.idatt2003.model.ludo.LudoTile;
 import ntnu.idatt2003.model.ludo.Token;
-import ntnu.idatt2003.model.ludo.TokenColor;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
 
-/**
- * A JavaFX view for the Ludo board.  It draws the main path, start yards,
- * finish lanes, and the players' tokens, and listens to game events.
- */
 public class LudoBoardView extends Pane implements Observer<LudoPlayer> {
-  private static final double TILE_SIZE = 40;
+  private static final int BOARD_PIXELS = 525;
+  private static final int GRID_SIZE    = 10;
+  private static final int TILE_SIZE    = BOARD_PIXELS / GRID_SIZE;
 
-  private final LudoBoard board;
+  private final Pane tokenLayer   = new Pane();
+  private final Button rollButton   = new Button(" Roll");
+  private final DieDiceView diceView;
+  private final Label rolledLabel;
+  private final Label currentLabel = new Label("Current: –");
+  private final Label nextLabel = new Label("Next: –");
   private final List<LudoPlayer> players;
 
-  private final Map<LudoTile, Rectangle> tileNodes = new HashMap<>();
-  private final Map<Token, Circle>       tokenNodes = new HashMap<>();
 
-  private final Button rollButton       = new Button("Roll");
-  private final Button nextPlayerButton = new Button("Next");
-  private final Label  statusLabel      = new Label();
+  private final Set<Token> highlightable = new HashSet<>();
 
-  public LudoBoardView(LudoBoard board, List<LudoPlayer> players) {
-    this.board   = board;
-    this.players = players;
+  private Consumer<Token> onTokenClick;
 
-    setPrefSize(600, 600);
+  public LudoBoardView(
+      LudoBoard board,
+      DieDiceView diceView,
+      Label rolledLabel,
+      List<LudoPlayer> players
+  ) {
+    this.diceView    = diceView;
+    this.rolledLabel = rolledLabel;
+    this.players     = players;
 
-    // add controls
-    getChildren().addAll(rollButton, nextPlayerButton, statusLabel);
-    rollButton.relocate(500,  50);
-    nextPlayerButton.relocate(500, 100);
-    statusLabel.relocate(10, 10);
+    setPrefSize(BOARD_PIXELS, BOARD_PIXELS + 80);
 
-    // draw tiles and tokens
-    drawBoard();
-    placeAllTokens();
-  }
+    ImageView bg = new ImageView(new Image(
+        Objects.requireNonNull(getClass().getResourceAsStream("/images/ludo.png"))));
+    bg.setFitWidth(BOARD_PIXELS);
+    bg.setFitHeight(BOARD_PIXELS);
+    bg.setPreserveRatio(false);
 
-  /**
-   * Draws the main path, start yards (home) and finish lanes, storing each rectangle in tileNodes.
-   */
-  private void drawBoard() {
-    // main loop
-    for (LudoTile tile : board.getMainPath()) {
-      Rectangle r = makeTileRect(tile);
-      double angle = 2 * Math.PI * tile.getIndex() / board.getMainPath().size();
-      double x = 200 + TILE_SIZE * Math.cos(angle);
-      double y = 200 + TILE_SIZE * Math.sin(angle);
-      r.relocate(x, y);
-      tileNodes.put(tile, r);
-      getChildren().add(r);
-    }
 
-    // start yards (HOME)
-    for (TokenColor color : TokenColor.values()) {
-      List<LudoTile> yard = board.getHome(color);
-      for (int i = 0; i < yard.size(); i++) {
-        LudoTile tile = yard.get(i);
-        Rectangle r = makeTileRect(tile);
-        double baseX = (color == TokenColor.RED || color == TokenColor.GREEN) ? 50 : 450;
-        double baseY = (color == TokenColor.RED || color == TokenColor.BLUE) ?  50 : 450;
-        double x = baseX + (i * TILE_SIZE);
-        double y = baseY;
-        r.relocate(x, y);
-        tileNodes.put(tile, r);
-        getChildren().add(r);
-      }
-    }
+    tokenLayer.setPrefSize(BOARD_PIXELS, BOARD_PIXELS);
 
-    // finish lanes
-    for (TokenColor color : TokenColor.values()) {
-      List<LudoTile> lane = board.getFinishLanes(color);
-      for (int i = 0; i < lane.size(); i++) {
-        LudoTile tile = lane.get(i);
-        Rectangle r = makeTileRect(tile);
-        // example: horizontal lines toward center
-        double dir = (color == TokenColor.RED || color == TokenColor.GREEN) ? 1 : -1;
-        double x = 300 + dir * (i + 1) * TILE_SIZE;
-        double y = 300;
-        r.relocate(x, y);
-        tileNodes.put(tile, r);
-        getChildren().add(r);
-      }
-    }
-  }
 
-  /**
-   * Creates a rectangle colored by tile type
-   */
-  private Rectangle makeTileRect(LudoTile tile) {
-    Rectangle r = new Rectangle(TILE_SIZE, TILE_SIZE);
-    switch (tile.getType()) {
-      case HOME         -> r.setFill(Color.LIGHTGRAY);
-      case NORMAL       -> r.setFill(Color.BEIGE);
-      case SAFE         -> r.setFill(Color.GOLD);
-      case FINISH_ENTRY -> r.setFill(Color.ORANGE);
-      case FINISH       -> r.setFill(Color.LIGHTGREEN);
-    }
-    r.setStroke(Color.BLACK);
-    return r;
-  }
+    rollButton.setFont(Font.font("Comic Sans MS", 14));
+    rollButton.setLayoutX(10);
+    rollButton.setLayoutY(BOARD_PIXELS + 10);
 
-  /**
-   * Positions all tokens on their current tiles
-   */
-  public void placeAllTokens() {
-    // remove old
-    getChildren().removeAll(tokenNodes.values());
-    tokenNodes.clear();
+    diceView.setLayoutX(200);
+    diceView.setLayoutY(BOARD_PIXELS + 5);
+    rolledLabel.setFont(Font.font("Comic Sans MS", 14));
+    rolledLabel.setLayoutX(280);
+    rolledLabel.setLayoutY(BOARD_PIXELS + 12);
 
-    // draw each token
-    for (LudoPlayer player : players) {
-      for (Token token : player.getTokens()) {
-        Circle c = new Circle(TILE_SIZE / 4);
-        // color by player
-        switch (player.getColor()) {
-          case RED    -> c.setFill(Color.RED);
-          case BLUE   -> c.setFill(Color.BLUE);
-          case GREEN  -> c.setFill(Color.GREEN);
-          case YELLOW -> c.setFill(Color.YELLOW);
-        }
-        // place on the correct tile
-        LudoTile pos = token.getPosition();
-        Rectangle r = tileNodes.get(pos);
-        c.relocate(r.getLayoutX() + TILE_SIZE / 4, r.getLayoutY() + TILE_SIZE / 4);
 
-        c.setOnMouseClicked(evt -> {
-          c.setStroke(Color.BLACK);
-          c.setStrokeWidth(3);
-        });
+    currentLabel.setFont(Font.font("Comic Sans MS", 14));
+    currentLabel.setLayoutX(10);
+    currentLabel.setLayoutY(BOARD_PIXELS + 40);
+    nextLabel.setFont(Font.font("Comic Sans MS", 14));
+    nextLabel.setLayoutX(200);
+    nextLabel.setLayoutY(BOARD_PIXELS + 40);
 
-        tokenNodes.put(token, c);
-        getChildren().add(c);
-      }
-    }
-  }
-
-  public Button getRollButton()       { return rollButton; }
-  public Button getNextPlayerButton() { return nextPlayerButton; }
-  public Label  getStatusLabel()      { return statusLabel; }
-
-  /**
-   * Expose the token nodes so controller can register click handlers
-   */
-  public Map<Token, Circle> getTokenNodes() {
-    return tokenNodes;
-  }
-
-  @Override
-  public void onPlayerMoved(LudoPlayer player, int fromTileIndex, int toTileIndex) {
-    placeAllTokens();
-    statusLabel.setText(
-        player.getName()
-            + " moved from " + fromTileIndex
-            + " to "   + toTileIndex
+    getChildren().addAll(
+        bg,
+        tokenLayer,
+        rollButton,
+        diceView,
+        rolledLabel,
+        currentLabel,
+        nextLabel
     );
   }
 
-  @Override
-  public void onNextPlayer(LudoPlayer next) {
-    statusLabel.setText("Now it's " + next.getName() + "'s turn");
+  /**
+   *
+   * @param handler
+   */
+  public void setOnTokenClick(Consumer<Token> handler) {
+    this.onTokenClick = handler;
   }
 
+
+  /**
+   *
+   * @param valid
+   */
+  public void setHighlightableTokens(List<Token> valid) {
+    highlightable.clear();
+    highlightable.addAll(valid);
+    placeAllPlayers();
+  }
+
+  /**
+   *
+   * @param name
+   */
+  public void setNextPlayer(String name) {
+    nextLabel.setText("Next: " + name);
+  }
+
+  /**
+   *
+   */
+  @Override
+  public void placeAllPlayers() {
+    tokenLayer.getChildren().clear();
+    for (LudoPlayer pl : players) {
+      for (Token tk : pl.getTokens()) {
+        int idx = tk.getPosition().getIndex();
+        Point2D p = LudoBoard.getTileCoordinates().get(idx);
+        if (p == null) continue;
+
+        Circle dot = new Circle(TILE_SIZE * 0.2);
+        dot.setFill(pl.getColor());
+        dot.setStroke(Color.BLACK);
+        dot.setStrokeWidth(2);
+
+
+        if (highlightable.contains(tk)) {
+          dot.setStroke(Color.LIGHTPINK);
+          dot.setStrokeWidth(4);
+        }
+
+        dot.setLayoutX(p.getX());
+        dot.setLayoutY(p.getY());
+        dot.setOnMouseClicked(e -> {
+          if (onTokenClick != null) onTokenClick.accept(tk);
+        });
+
+        tokenLayer.getChildren().add(dot);
+      }
+    }
+  }
+
+  /**
+   *
+   * @param values
+   */
+  @Override
+  public void onDiceRolled(List<Integer> values) {
+    diceView.updateDice(values);
+    rolledLabel.setText("Last roll: " + values.getFirst());
+  }
+
+  /**
+   *
+   * @param p
+   * @param from
+   * @param to
+   */
+
+  @Override
+  public void onPlayerMoved(LudoPlayer p, int from, int to) {
+    placeAllPlayers();
+  }
+
+  /**
+   *
+   * @param next
+   */
+  @Override
+  public void onNextPlayer(LudoPlayer next) {
+    setNextPlayer(next.getName());
+  }
+
+
+  /**
+   *
+   * @param winner
+   */
   @Override
   public void onGameOver(LudoPlayer winner) {
-    statusLabel.setText("Game Over! Winner: " + winner.getName());
+    currentLabel.setText("Winner: " + winner.getName());
     rollButton.setDisable(true);
-    nextPlayerButton.setDisable(true);
   }
+
+  /**
+   *
+   * @param name
+   */
+  public void setCurrentPlayer(String name) {
+    currentLabel.setText("Current: " + name);
+  }
+
+
+  /**
+   *
+   * @param tk
+   * @return
+   */
+  public boolean isHighlightable(Token tk) {
+    return highlightable.contains(tk);
+  }
+
+
+  /**
+   *
+   */
+
+  public void clearHighlighting() {
+    highlightable.clear();
+
+  }
+
+  /**
+   *
+   * @return
+   */
+  public Button getRollButton() { return rollButton; }
+
+
+
 }

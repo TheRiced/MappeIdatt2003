@@ -34,7 +34,6 @@ public class HomePage {
     root = new StackPane();
     root.setStyle("-fx-background-color: linear-gradient(to bottom right, #111111, #000000);");
 
-    // Load the background image
     ImageView imageView = new ImageView(new Image(getClass()
         .getResource("/images/homeimage.png").toExternalForm()));
     imageView.setPreserveRatio(true);

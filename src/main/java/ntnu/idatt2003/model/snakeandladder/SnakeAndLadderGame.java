@@ -135,11 +135,6 @@ public class SnakeAndLadderGame implements BoardGame<SnakeLadderPlayer, SnakeLad
     observers.add(observer);
   }
 
-  @Override
-  public void removeObserver(Observer<SnakeLadderPlayer> observer) {
-    observers.remove(observer);
-  }
-
   private void notifyPlayerMoved(SnakeLadderPlayer player, int from, int to) {
     Platform.runLater(() -> {
       for (var observer : observers) {
@@ -164,6 +159,11 @@ public class SnakeAndLadderGame implements BoardGame<SnakeLadderPlayer, SnakeLad
         observer.onGameOver(winner);
       }
     });
+  }
+
+  @Override
+  public void selectToken(ntnu.idatt2003.model.ludo.Token token) {
+    // no use for this, but its part of the observer
   }
 
 }

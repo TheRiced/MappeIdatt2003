@@ -1,8 +1,10 @@
 package ntnu.idatt2003.model.ludo;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javafx.scene.paint.Color;
 import ntnu.idatt2003.core.PlayerIcon;
 import ntnu.idatt2003.model.Player;
 
@@ -14,7 +16,9 @@ import ntnu.idatt2003.model.Player;
  * through the {@link Token} class, and are initialized to their home tiles.
  * </p>
  */
-public class LudoPlayer extends Player {
+public class LudoPlayer extends Player implements Serializable {
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   private final TokenColor color;
   private final List<Token> tokens;
@@ -29,7 +33,7 @@ public class LudoPlayer extends Player {
    * @param homeTiles the four Yard tiles where this player's tokens start
    */
   public LudoPlayer(String name, int age, PlayerIcon icon, TokenColor color,
-      List<LudoTile> homeTiles) {
+                     List<LudoTile> homeTiles) {
     super(name, age, icon);
     if (color == null) {
       throw new IllegalArgumentException("Color cannot be null");
@@ -39,44 +43,25 @@ public class LudoPlayer extends Player {
     }
 
     this.color = color;
-    this.tokens = IntStream.range(0, 4).mapToObj(i -> new Token(i, this, color,
-        homeTiles.get(i))).collect(Collectors.toUnmodifiableList());
+    this.tokens = IntStream.range(0, 4)
+        .mapToObj(i -> new Token(i, this, color, homeTiles.get(i)))
+        .toList();
   }
 
   /**
-   * Gets the player's token color.
+   * Returns the JavaFX color for rendering this player's tokens.
    *
-   * @return the token color
+   * @return the JavaFX Color
    */
-  public TokenColor getColor() {
-    return color;
+  public Color getColor() {
+    return color.toFXColor();
   }
 
   /**
-   * Gets an unmodifiable list of this player's tokens.
-   *
-   * @return list of four tokens controlled by this player
+   * @return unmodifiable list of this player's tokens.
    */
   public List<Token> getTokens() {
-    return this.tokens;
-  }
-
-  /**
-   * Gets the index on the main path where this player's tokens enter play.
-   *
-   * @return start index for this player's color
-   */
-  public int getStartPosition() {
-    return color.getStartIndex();
-  }
-
-  /**
-   * Gets the main-path index where this player's tokens branch into their finish lane.
-   *
-   * @return finish-entry index for this player's color
-   */
-  public int getFinishEntry() {
-    return color.getFinishEntryIndex();
+    return tokens;
   }
 
   /**
@@ -89,40 +74,9 @@ public class LudoPlayer extends Player {
   }
 
   /**
-   * Counts the number of this player's tokens currently at HOME.
-   *
-   * @return number of tokens on HOME tiles
+   * @return the first token (convenience).
    */
-  public long countAtHome() {
-    return tokens.stream().filter(Token::isAtHome).count();
-  }
-
-  /**
-   * Counts the number of this player's tokens that have reached FINISH.
-   *
-   * @return number of tokens at FINISH tiles
-   */
-  public long countFinished() {
-    return tokens.stream().filter(Token::isFinished).count();
-  }
-
-  /**
-   * Returns a list of this player's tokens that are allowed to move with the given dice value.
-   * - If a token is at HOME, it can only move if diceValue == 6.
-   * - If a token is on the board or finish lane (and not finished), it can always move.
-   * - Tokens that are already at FINISH cannot move.
-   *
-   * @param diceValue the rolled value
-   * @return list of tokens allowed to move
-   */
-  public List<Token> getMovableTokens(int diceValue) {
-    return tokens.stream()
-        .filter(token -> {
-          if (token.isAtHome()) {
-            return diceValue == 6; // Only move out of HOME if rolled 6
-          }
-          return !token.isFinished(); // All tokens not finished can move
-        })
-        .collect(Collectors.toList());
+  public Token getToken() {
+    return tokens.get(0);
   }
 }

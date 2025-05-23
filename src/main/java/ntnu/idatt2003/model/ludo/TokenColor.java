@@ -1,6 +1,7 @@
 package ntnu.idatt2003.model.ludo;
 
 import java.util.List;
+import javafx.scene.paint.Color;
 
 /**
  * Enumeration of the four Ludo player colors, each associated with its unique start index (the main
@@ -12,10 +13,12 @@ import java.util.List;
  * </p>
  */
 public enum TokenColor {
-  RED(0, 50), // Red player: starts at 0, finish entry at 50.
-  BLUE(13, 11), // Blue player: starts at 13, finish entry at 11.
-  GREEN(26, 24), // Green player: starts at 26, finish entry at 24.
-  YELLOW(39, 37); // Yellow player: starts at 39, finish entry at 37.
+
+  YELLOW(0, 43),
+  BLUE(11, 9),
+  RED(22, 20),
+  GREEN(33, 31);
+
 
   private final int startIndex;
   private final int finishEntryIndex;
@@ -58,10 +61,19 @@ public enum TokenColor {
    * @param tiles a list of exactly 6 finish-lane tiles.
    */
   void setFinishLaneTiles(List<LudoTile> tiles) {
-    if (tiles == null || tiles.size() != 6) {
+    if (tiles == null || tiles.size() != 5) {
       throw new IllegalArgumentException("Finish-lane must be a list of 6 tiles");
     }
     this.finishLaneTiles = List.copyOf(tiles);
+  }
+
+  public Color toFXColor() {
+    return switch (this) {
+      case RED -> Color.RED;
+      case BLUE -> Color.ROYALBLUE;
+      case GREEN -> Color.LIMEGREEN;
+      case YELLOW -> Color.GOLD;
+    };
   }
 
   /**
@@ -69,7 +81,19 @@ public enum TokenColor {
    *
    * @return the list of finish-lane tiles for this color.
    */
-  public List<LudoTile> getFinishLaneTiles() {
-    return finishLaneTiles;
+
+  public List<LudoTile> getFinishLaneTiles() { return finishLaneTiles; }
+
+  /**
+   * Returns the index in the overall tile numbering where this color's finish‐lane begins.
+   */
+  public int getFinishStartIndex() {
+    return switch(this) {
+      case YELLOW -> 44;
+      case BLUE   -> 49;
+      case RED    -> 54;
+      case GREEN  -> 59;
+    };
   }
+
 }

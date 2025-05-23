@@ -75,8 +75,7 @@ public class PlayerSetupPage extends BorderPane {
             + "-fx-text-fill: white;"
             + "-fx-background-radius: 10;"
     );
-    start.setDisable(true);  // only enabled after fields are generated
-
+    start.setDisable(true);
     // Wire the Generate button to build fields
     generate.setOnAction(e -> createFields());
 
@@ -96,9 +95,7 @@ public class PlayerSetupPage extends BorderPane {
     setCenter(centerBox);
   }
 
-  /**
-   * Dynamically generates name/age/icon fields for each player.
-   */
+
   public void createFields() {
     fieldsBox.getChildren().clear();
     names = new ArrayList<>();
@@ -118,7 +115,6 @@ public class PlayerSetupPage extends BorderPane {
       iconCb.getItems().addAll(PlayerIcon.values());
       iconCb.setPromptText("Select Icon");
 
-      // Render each PNG in the dropdown
       iconCb.setCellFactory(cb -> new ListCell<>() {
         private final ImageView iv = new ImageView();
 
@@ -137,15 +133,13 @@ public class PlayerSetupPage extends BorderPane {
           }
         }
       });
-      // Show selected icon in the combo button
+
       iconCb.setButtonCell(iconCb.getCellFactory().call(null));
 
-      Label nameErr = new Label();
-      nameErr.setTextFill(Color.RED);
-      Label ageErr = new Label();
-      ageErr.setTextFill(Color.RED);
-      Label iconErr = new Label();
-      iconErr.setTextFill(Color.RED);
+      Label nameErr = new Label(); nameErr.setTextFill(Color.RED);
+      Label ageErr  = new Label(); ageErr.setTextFill(Color.RED);
+      Label iconErr = new Label(); iconErr.setTextFill(Color.RED);
+
 
       names.add(name);
       ages.add(age);
@@ -154,23 +148,35 @@ public class PlayerSetupPage extends BorderPane {
       ageErrors.add(ageErr);
       iconErrors.add(iconErr);
 
-      HBox fieldsLine = new HBox(10, new Label("Player " + (i + 1) + ":"), name, age, iconCb);
-      fieldsLine.setAlignment(Pos.CENTER_LEFT);
-      HBox errorsLine = new HBox(10, new Label("                "), nameErr, ageErr, iconErr);
-      errorsLine.setAlignment(Pos.CENTER_LEFT);
+
+      HBox fieldsLine = new HBox(10,
+          new Label("Player " + (i + 1) + ":"),
+          name, age, iconCb
+      );
+      fieldsLine.setAlignment(Pos.CENTER);
+
+      fieldsLine.setMaxWidth(Double.MAX_VALUE);
+
+
+      HBox errorsLine = new HBox(10, nameErr, ageErr, iconErr);
+      errorsLine.setAlignment(Pos.CENTER);
+      errorsLine.setMaxWidth(Double.MAX_VALUE);
 
       VBox playerBox = new VBox(2, fieldsLine, errorsLine);
+
+      playerBox.setMaxWidth(Double.MAX_VALUE);
+
       fieldsBox.getChildren().add(playerBox);
 
       name.textProperty().addListener((obs, o, n) -> validateForm());
       age.textProperty().addListener((obs, o, n) -> validateForm());
       iconCb.valueProperty().addListener((obs, o, n) -> validateForm());
-
     }
 
-    // Add and enable the Start button once fields exist
+
     HBox startBox = new HBox(start);
     startBox.setAlignment(Pos.CENTER);
+    startBox.setMaxWidth(Double.MAX_VALUE);
     fieldsBox.getChildren().add(startBox);
     validateForm();
   }
@@ -267,12 +273,14 @@ public class PlayerSetupPage extends BorderPane {
     return sel.getText().contains("1") ? 1 : 2;
   }
 
+
   /**
    * Collects and returns form data for all players, to be used by the controller.
    * The returned list contains PlayerFormData objects with name, age, and icon for each player.
    *
    * @return a list of PlayerFormData for all players
    */
+
   public List<PlayerFormData> collectPlayers() {
     List<PlayerFormData> data = new ArrayList<>();
     for (int i = 0; i < names.size(); i++) {

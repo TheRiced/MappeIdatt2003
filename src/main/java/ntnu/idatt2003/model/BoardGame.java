@@ -1,6 +1,9 @@
 package ntnu.idatt2003.model;
 
 import java.util.List;
+import ntnu.idatt2003.model.ludo.LudoPlayer;
+import ntnu.idatt2003.model.ludo.Token;
+import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 import ntnu.idatt2003.view.Observer;
 
 /**
@@ -93,10 +96,6 @@ public interface BoardGame<P, B> {
    */
   void addObserver(Observer<P> observer);
 
-  /**
-   * Removes an observer from receiving game state updates.
-   *
-   * @param observer the observer to remove
-   */
-  void removeObserver(Observer<P> observer);
+  void selectToken(Token token);
+
 }

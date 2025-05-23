@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 import ntnu.idatt2003.model.GameLevel;
 import ntnu.idatt2003.model.GameType;
 import ntnu.idatt2003.view.LevelSelectionPage;
-import ntnu.idatt2003.view.LudoSetupPage;
+
 import ntnu.idatt2003.view.PlayerSetupPage;
 
 public class LevelSelectionController {
@@ -23,36 +23,30 @@ public class LevelSelectionController {
   }
 
   private void onConfirm() {
-    GameLevel selectedLevel  = view.getSelectedLevel();
+    GameLevel selectedLevel = view.getSelectedLevel();
 
-    switch (gameType) {
-      case SNAKE_AND_LADDERS -> {
-        if (selectedLevel == GameLevel.CUSTOM) {
-          FileChooser chooser = new FileChooser();
-          chooser.setTitle("Select custom board JSON");
-          chooser.getExtensionFilters().add(
-              new FileChooser.ExtensionFilter("JSON files", "*.json"));
-          File file = chooser.showOpenDialog(stage);
-          if (file != null) {
-            PlayerSetupPage setupPage = new PlayerSetupPage();
-            PlayerSetupController setupCtrl = new PlayerSetupController(stage, setupPage,
-                selectedLevel, file.toPath());
-            setupCtrl.showSetup();
-          }
-        } else {
+    if (gameType == GameType.SNAKE_AND_LADDERS) {
+      if (selectedLevel == GameLevel.CUSTOM) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Select custom board JSON");
+        chooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("JSON files", "*.json"));
+        File file = chooser.showOpenDialog(stage);
+        if (file != null) {
           PlayerSetupPage setupPage = new PlayerSetupPage();
           PlayerSetupController setupCtrl = new PlayerSetupController(stage, setupPage,
-              selectedLevel);
+              selectedLevel, file.toPath());
           setupCtrl.showSetup();
         }
-      }
-      case LUDO -> {
-        LudoSetupPage ludoPage = new LudoSetupPage();
-        LudoSetupController ludoCtrl = new LudoSetupController(stage, ludoPage);
-        ludoCtrl.showSetup();
+      } else {
+        PlayerSetupPage setupPage = new PlayerSetupPage();
+        PlayerSetupController setupCtrl = new PlayerSetupController(stage, setupPage,
+            selectedLevel);
+        setupCtrl.showSetup();
       }
     }
   }
+
 
   public void show() {
     Scene scene = new Scene(view, 800, 600);
@@ -62,4 +56,3 @@ public class LevelSelectionController {
   }
 
 }
-
