@@ -50,16 +50,16 @@ public class LudoTile {
    * 3) Finally, place the arriving token here.
    */
   public void enter(Token token) {
-    // Handle collisions if not a safe star
+
     if (!isSafeStar()) {
-      // Send home the token belonging to other player
+
       tokens.stream().filter(other -> !other.getOwner().equals(token.getOwner()))
           .forEach(Token::sendHome);
-      // Remove them from this tile
+
       tokens.removeIf(other -> !other.getOwner().equals(token.getOwner()));
     }
 
-    // Place the arriving token on this tile
+
     tokens.add(token);
   }
 
