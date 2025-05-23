@@ -13,7 +13,7 @@ Games moving x and y coordinates
 
 ## Prerequisties
 Java 23
-Maven
+Maven 4
 
 
 ## Installation
