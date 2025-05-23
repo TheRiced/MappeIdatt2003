@@ -7,13 +7,14 @@ Snakes and Ladders, and Ludo
 Where snakes and ladders is the mvp. 
 
 ## Features
-Graphical User interface
-Unit Testing
-Games moving x and y coordinates
+- Graphical User interface
+- Unit Testing
+- Games moving x and y coordinates
 
 ## Prerequisties
-Java 23
-Maven 4
+- Java 23
+
+- Maven 4
 
 
 ## Installation
