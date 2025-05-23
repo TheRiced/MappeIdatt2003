@@ -14,12 +14,25 @@ import ntnu.idatt2003.model.snakeandladder.Tile;
 import ntnu.idatt2003.view.PlayerFormData;
 import ntnu.idatt2003.view.PlayerSetupPage;
 
+/**
+ * Controller for the player setup process for Snakes and Ladders.
+ * Handles user input (player info, dice count), validates entries,
+ * and initializes the game with the specified players and board level.
+ */
 public class PlayerSetupController {
+
   private final Stage stage;
   private final PlayerSetupPage view;
   private final GameLevel level;
   private final Path customJson;
 
+  /**
+   * Constructs a controller for player setup using a specified difficulty level (non-custom board).
+   *
+   * @param stage  The application window
+   * @param view   The player setup view
+   * @param level  The selected game level (EASY or ADVANCED)
+   */
   public PlayerSetupController(Stage stage, PlayerSetupPage view, GameLevel level) {
     this.stage = stage;
     this.view = view;
@@ -28,7 +41,16 @@ public class PlayerSetupController {
     initializeListeners();
   }
 
-  public PlayerSetupController(Stage stage, PlayerSetupPage view, GameLevel level, Path customJson) {
+  /**
+   * Constructs a controller for player setup using a custom board loaded from JSON.
+   *
+   * @param stage      The application window
+   * @param view       The player setup view
+   * @param level      The game level (should be CUSTOM)
+   * @param customJson Path to the custom board JSON file
+   */
+  public PlayerSetupController(Stage stage, PlayerSetupPage view, GameLevel level,
+      Path customJson) {
     this.stage = stage;
     this.view = view;
     this.level = level;
@@ -41,6 +63,9 @@ public class PlayerSetupController {
     view.getStartButton().setOnAction(e -> onStartGame());
   }
 
+  /**
+   * Displays the player setup view on the stage.
+   */
   public void showSetup() {
     stage.setScene(new Scene(view, 800, 600));
     stage.setTitle("Setup Players");

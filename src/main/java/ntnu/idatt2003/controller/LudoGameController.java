@@ -4,20 +4,26 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import ntnu.idatt2003.model.ludo.LudoGame;
-
 import ntnu.idatt2003.model.ludo.LudoTile;
 import ntnu.idatt2003.model.ludo.Token;
 import ntnu.idatt2003.view.DieDiceView;
 import ntnu.idatt2003.view.LudoBoardView;
 
+/**
+ * Controller for handling the game flow, logic, and UI updates for a running Ludo game session.
+ *
+ * <p>Connects the Ludo model (game state) to the graphical interface (LudoBoardView), manages
+ * turns, dice rolls, legal token selection, auto-saving, and winning logic.
+ * </p>
+ */
 public class LudoGameController {
+
   private final Stage stage;
   private final LudoGame game;
   private final LudoBoardView view;
@@ -26,19 +32,18 @@ public class LudoGameController {
   private final File autosaveFile =
       new File(System.getProperty("user.home"), "ludo_autosave.ludosav");
 
-
   /**
+   * Constructs a LudoGameController for the given stage and Ludo game.
    *
-   * @param stage
-   * @param game
+   * @param stage the JavaFX Stage to show the game on
+   * @param game  the LudoGame model instance
    */
   public LudoGameController(Stage stage, LudoGame game) {
     this.stage = stage;
-    this.game  = game;
+    this.game = game;
 
     DieDiceView diceView = new DieDiceView(1);
-    Label      rolledLbl = new Label("Last roll: -");
-
+    Label rolledLbl = new Label("Last roll: -");
 
     this.view = new LudoBoardView(
         game.getBoard(),
@@ -49,6 +54,7 @@ public class LudoGameController {
 
     init();
   }
+
   private void autoSave() {
     try {
       game.saveToFile(autosaveFile);
@@ -63,20 +69,21 @@ public class LudoGameController {
 
     game.addObserver(view);
 
-
     view.getRollButton().setOnAction(e -> {
-      if (game.gameDone()) return;
-
+      if (game.gameDone()) {
+        return;
+      }
 
       lastRoll = game.rollDice();
       view.onDiceRolled(List.of(lastRoll));
       view.setCurrentPlayer(game.getCurrentPlayer().getName());
 
-
       List<Token> legal = game.getCurrentPlayer().getTokens().stream()
           .filter(tk -> {
 
-            if (tk.isAtHome()) return lastRoll == 6;
+            if (tk.isAtHome()) {
+              return lastRoll == 6;
+            }
 
             LudoTile dest = game.getBoard().getNextTile(tk, lastRoll);
             return dest.getIndex() != tk.getPosition().getIndex();
@@ -97,9 +104,10 @@ public class LudoGameController {
 
     });
 
-
     view.setOnTokenClick(tk -> {
-      if (!view.isHighlightable(tk)) return;
+      if (!view.isHighlightable(tk)) {
+        return;
+      }
 
       try {
         game.selectToken(tk);
@@ -120,7 +128,6 @@ public class LudoGameController {
           view.setNextPlayer(nextName());
         }
 
-
         view.clearHighlighting();
         view.getRollButton().setDisable(false);
 
@@ -133,7 +140,8 @@ public class LudoGameController {
 
 
   /**
-   *
+   * Starts the Ludo game UI, showing the board and setting the initial state. Places all players,
+   * displays the current player, and initializes the JavaFX Scene.
    */
   public void start() {
     view.placeAllPlayers();
@@ -148,8 +156,9 @@ public class LudoGameController {
 
 
   /**
+   * Gets the name of the next player in turn order.
    *
-   * @return
+   * @return the next player's name
    */
   private String nextName() {
     var players = game.getPlayers();

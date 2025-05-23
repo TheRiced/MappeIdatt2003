@@ -140,7 +140,6 @@ public class PlayerSetupPage extends BorderPane {
       Label ageErr  = new Label(); ageErr.setTextFill(Color.RED);
       Label iconErr = new Label(); iconErr.setTextFill(Color.RED);
 
-
       names.add(name);
       ages.add(age);
       icons.add(iconCb);

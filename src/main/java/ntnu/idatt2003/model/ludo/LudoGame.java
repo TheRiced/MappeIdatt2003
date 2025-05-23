@@ -133,11 +133,6 @@ public class LudoGame implements BoardGame<LudoPlayer, LudoBoard>, Serializable 
     observers.add(observer);
   }
 
-  @Override
-  public void removeObserver(Observer<LudoPlayer> observer) {
-    observers.remove(observer);
-  }
-
   /**
    * Selects which token to move for the current player.
    *

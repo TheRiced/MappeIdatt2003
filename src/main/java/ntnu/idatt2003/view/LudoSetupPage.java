@@ -3,7 +3,6 @@ package ntnu.idatt2003.view;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,19 +18,19 @@ import ntnu.idatt2003.model.ludo.TokenColor;
 
 /**
  * A JavaFX page for setting up a new Ludo game.
- * <p>
- * Allows the user to select the number of players, enter each player's
+ *
+ * <p>Allows the user to select the number of players, enter each player's
  * name and age, choose a player icon and token color, and then start the game.
  * </p>
  */
 public class LudoSetupPage extends VBox {
+
   private final GridPane playerGrid = new GridPane();
 
   private final List<TextField> nameFields = new ArrayList<>();
   private final List<TextField> ageFields = new ArrayList<>();
   private final List<ChoiceBox<PlayerIcon>> iconFields = new ArrayList<>();
   private final List<ChoiceBox<TokenColor>> colorFields = new ArrayList<>();
-
   private final ComboBox<Integer> numPlayersCb = new ComboBox<>();
   private final Button startButton = new Button("🎲 Let's Play!");
 
@@ -39,8 +38,8 @@ public class LudoSetupPage extends VBox {
    * Constructs the setup page.
    *
    * @param board   the LudoBoard model used to obtain home tiles for each player
-   * @param onStart callback to invoke with the list of created {@link LudoPlayer}
-   *                when the user has completed setup and clicks the start button
+   * @param onStart callback to invoke with the list of created {@link LudoPlayer} when the user has
+   *                completed setup and clicks the start button
    */
   public LudoSetupPage(LudoBoard board, Consumer<List<LudoPlayer>> onStart) {
     setSpacing(25);
@@ -80,7 +79,9 @@ public class LudoSetupPage extends VBox {
         int age;
         try {
           age = Integer.parseInt(ageText);
-          if (age < 0) throw new NumberFormatException();
+          if (age < 0) {
+            throw new NumberFormatException();
+          }
         } catch (NumberFormatException ex) {
           showAlert(" Please enter a valid non-negative age for player " + (i + 1));
           return;
@@ -108,8 +109,8 @@ public class LudoSetupPage extends VBox {
 
   /**
    * Rebuilds the player-input rows whenever the selected number of players changes.
-   * <p>
-   * Clears existing rows and fields, then adds one row per player containing:
+   *
+   * <p>Clears existing rows and fields, then adds one row per player containing:
    * <ul>
    *   <li>Label ("P1:", "P2:", ...)</li>
    *   <li>TextField for name (default "PlayerX")</li>
