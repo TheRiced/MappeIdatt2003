@@ -53,7 +53,7 @@ The first player to reach the final tile wins!
 Autosave after each turn. (Ludo only)
 
 On restart, the game will resume from the last saved state.
----
-Testing
+
+## Testing
 ```bash
 mvn test
