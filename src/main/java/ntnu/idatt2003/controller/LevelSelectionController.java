@@ -7,14 +7,26 @@ import javafx.stage.Stage;
 import ntnu.idatt2003.model.GameLevel;
 import ntnu.idatt2003.model.GameType;
 import ntnu.idatt2003.view.LevelSelectionPage;
-
 import ntnu.idatt2003.view.PlayerSetupPage;
 
+/**
+ * Controller responsible for handling the selection of game level and subsequent navigation.
+ * Supports transition to the player setup page for Snakes and Ladders, with optional custom board
+ * import.
+ */
 public class LevelSelectionController {
+
   private final Stage stage;
   private final LevelSelectionPage view;
   private final GameType gameType;
 
+  /**
+   * Constructs a controller for game level selection.
+   *
+   * @param stage    the JavaFX application stage
+   * @param view     the level selection view
+   * @param gameType the selected game type (e.g., Snakes and Ladders)
+   */
   public LevelSelectionController(Stage stage, LevelSelectionPage view, GameType gameType) {
     this.stage = stage;
     this.view = view;
@@ -47,7 +59,9 @@ public class LevelSelectionController {
     }
   }
 
-
+  /**
+   * Displays the game level selection page.
+   */
   public void show() {
     Scene scene = new Scene(view, 800, 600);
     stage.setScene(scene);

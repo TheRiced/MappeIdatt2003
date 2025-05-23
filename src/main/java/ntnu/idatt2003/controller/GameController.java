@@ -9,11 +9,23 @@ import ntnu.idatt2003.model.snakeandladder.SnakeLadderPlayer;
 import ntnu.idatt2003.view.Animator;
 import ntnu.idatt2003.view.BoardView;
 
+/**
+ * Controller for managing the gameplay flow for Snakes and Ladders. Responsible for connecting the
+ * game model (BoardGame) with the GUI (BoardView), handling player moves, dice rolls, updating the
+ * view, and ending the game.
+ */
 public class GameController {
+
   private final Stage stage;
   private final BoardView boardView;
   private final BoardGame<SnakeLadderPlayer, SnakeLadderBoard> game;
 
+  /**
+   * Constructs the controller and initializes the main game view.
+   *
+   * @param stage the JavaFX stage where the game will be displayed
+   * @param game  the board game model (Snakes and Ladders game logic)
+   */
   public GameController(Stage stage, BoardGame<SnakeLadderPlayer, SnakeLadderBoard> game) {
     this.stage = stage;
     this.game = game;
@@ -27,13 +39,15 @@ public class GameController {
     boardView.getRollDiceButton().setOnAction(e -> handleRoll());
   }
 
+  /**
+   * Starts the game by displaying the board view and initializing player state.
+   */
   public void start() {
     Scene scene = new Scene(boardView, 900, 600);
     stage.setScene(scene);
     stage.show();
     game.getPlayers().forEach(boardView::startPlayerDrift);
     boardView.updateCurrentPlayer(game.getCurrentPlayer().getName());
-
   }
 
   private void handleRoll() {
@@ -54,10 +68,11 @@ public class GameController {
         boardView.showWinner(game.getWinner().getName());
         boardView.getRollDiceButton().setDisable(true);
       } else {
-        if (!game.playerGetsExtraTurn(lastRoll)) game.nextPlayer();
+        if (!game.playerGetsExtraTurn(lastRoll)) {
+          game.nextPlayer();
+        }
         boardView.updateCurrentPlayer(game.getCurrentPlayer().getName());
       }
     });
   }
-
 }

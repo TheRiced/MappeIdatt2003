@@ -20,11 +20,21 @@ import ntnu.idatt2003.model.ludo.LudoTile;
 import ntnu.idatt2003.model.ludo.TokenColor;
 import ntnu.idatt2003.view.LudoSetupPage;
 
+/**
+ * Controller responsible for handling the player setup process for the Ludo game.
+ * Validates user input, creates Ludo players, initializes the game board,
+ * and starts the game controller.
+ */
 public class LudoSetupController {
   private final Stage stage;
   private final LudoSetupPage view;
 
-
+  /**
+   * Constructs a controller for the Ludo player setup.
+   *
+   * @param stage the JavaFX window (primary stage)
+   * @param view  the setup page for configuring Ludo players
+   */
   public LudoSetupController(Stage stage, LudoSetupPage view) {
     this.stage = stage;
     this.view  = view;
@@ -35,6 +45,9 @@ public class LudoSetupController {
     view.getStartButton().setOnAction(e -> onStartGame());
   }
 
+  /**
+   * Displays the player setup page for Ludo on the application stage.
+   */
   public void showSetup() {
     stage.setScene(new Scene(view, 800, 600));
     stage.setTitle("Setup Ludo Players");
@@ -80,7 +93,6 @@ public class LudoSetupController {
       List<LudoTile> homeTiles = board.getHome(color);
       players.add(new LudoPlayer(name, age, icon, color, homeTiles));
     }
-
 
     var game = factory.createLudoGame(players, board);
     LudoGameController ctrl = new LudoGameController(stage, (LudoGame) game);
